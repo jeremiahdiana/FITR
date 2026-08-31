@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Dashboard – FITR</title>
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    body { background: #f0f2f5; }
+
+    /* ── LOADING ── */
+    .loading-screen { min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #e3e6e8; border-top-color: #00C9A7; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── LAYOUT ── */
+    .dash-wrap {
+      max-width: 1120px; margin: 0 auto;
+      padding: 88px 24px 80px;
+      display: grid; grid-template-columns: 220px 1fr; gap: 28px;
+    }
+    @media (max-width: 768px) { .dash-wrap { grid-template-columns: 1fr; padding: 80px 16px 60px; } }
+
+    /* ── SIDEBAR ── */
+    .dash-sidebar { display: flex; flex-direction: column; gap: 4px; }
+    .brand-id-box {
+      background: #fff; border: 1px solid #e3e6e8; border-radius: 14px;
+      padding: 16px; margin-bottom: 8px; text-align: center;
+    }
+    .brand-id-name { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; color: #111; margin-bottom: 2px; }
+    .brand-id-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: #00C9A7; background: #e8faf7; border: 1px solid #00C9A733;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .sub-dot { width: 5px; height: 5px; border-radius: 50%; background: #00C9A7; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .dash-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-radius: 10px; cursor: pointer;
+      font-size: 14px; font-weight: 500; color: #555;
+      transition: all 0.2s; border: none; background: none; width: 100%; text-align: left;
+    }
+    .dash-nav-item:hover { background: #fff; color: #111; }
+    .dash-nav-item.active { background: #fff; color: #111; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .nav-icon { font-size: 15px; }
+    .dash-nav-divider { height: 1px; background: #e3e6e8; margin: 6px 0; }
+
+    /* ── CARDS ── */
+    .dash-card { background: #fff; border: 1px solid #e3e6e8; border-radius: 16px; padding: 28px 28px; }
+    .dash-card + .dash-card { margin-top: 20px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1.5px; color: #111; }
+
+    /* ── SECTIONS ── */
+    .dash-section { display: none; }
+    .dash-section.active { display: block; }
+
+    /* ── FORM ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-label { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 0.5px; text-transform: uppercase; }
+    .form-input, .form-select, .form-textarea {
+      background: #f7f8fa; border: 1px solid #e3e6e8; border-radius: 10px;
+      padding: 11px 13px; font-size: 14px; color: #111;
+      font-family: 'DM Sans', sans-serif; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #00C9A755; box-shadow: 0 0 0 3px #00C9A710; }
+    .form-input::placeholder, .form-textarea::placeholder { color: #bbb; }
+    .form-textarea { resize: vertical; min-height: 88px; }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-hint { font-size: 11px; color: #aaa; margin-top: 3px; }
+
+    .btn-save {
+      background: #00C9A7; color: #080f18;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+      padding: 11px 26px; border-radius: 10px; border: none; cursor: pointer;
+      transition: all 0.2s; margin-top: 6px;
+    }
+    .btn-save:hover { background: #00DFB9; transform: translateY(-1px); }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .save-msg { font-size: 13px; color: #00875a; margin-top: 8px; display: none; }
+    .save-msg.show { display: block; }
+    .save-msg.err { color: #dc2626; }
+
+    /* ── OVERVIEW STATS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+    .stat-box { background: #f7f8fa; border: 1px solid #e3e6e8; border-radius: 12px; padding: 16px 18px; }
+    .stat-label { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; color: #111; }
+
+    .setup-list { display: flex; flex-direction: column; gap: 10px; }
+    .setup-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 16px; background: #f7f8fa; border: 1px solid #e3e6e8;
+      border-radius: 12px;
+    }
+    .setup-check { font-size: 18px; flex-shrink: 0; }
+    .setup-info { flex: 1; }
+    .setup-info strong { font-size: 14px; color: #111; display: block; }
+    .setup-info span { font-size: 12px; color: #888; }
+    .setup-go { font-size: 12px; color: #00C9A7; background: none; border: none; cursor: pointer; font-weight: 700; margin-left: auto; flex-shrink: 0; }
+
+    /* ── PRODUCTS ── */
+    .product-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .product-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 16px; background: #f7f8fa; border: 1px solid #e3e6e8; border-radius: 12px;
+    }
+    .product-img-wrap {
+      width: 50px; height: 50px; border-radius: 8px; overflow: hidden;
+      background: #e3e6e8; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .product-info { flex: 1; min-width: 0; }
+    .product-name { font-size: 14px; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .product-price { font-size: 15px; font-weight: 700; color: #111; flex-shrink: 0; }
+    .btn-icon { background: #fff; border: 1px solid #e3e6e8; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif; transition: all 0.2s; color: #555; }
+    .btn-icon:hover { border-color: #dc2626; color: #dc2626; }
+
+    .empty-state { text-align: center; padding: 44px 24px; border: 2px dashed #e3e6e8; border-radius: 14px; }
+    .empty-icon { font-size: 36px; margin-bottom: 10px; }
+    .empty-state h3 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .empty-state p { font-size: 13px; color: #888; }
+
+    .btn-add {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #f0f2f5; border: 2px dashed #d5d9d9; color: #555;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+      padding: 11px 22px; border-radius: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-add:hover { border-color: #00C9A7; color: #00C9A7; background: #e8faf7; }
+
+    /* ── ORDERS ── */
+    .orders-note {
+      background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px;
+      padding: 16px 20px; font-size: 13px; color: #92400e; line-height: 1.6; margin-bottom: 20px;
+    }
+    .order-card {
+      background: #f7f8fa; border: 1px solid #e3e6e8;
+      border-radius: 14px; margin-bottom: 14px; overflow: hidden;
+    }
+    .order-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+      padding: 14px 18px; border-bottom: 1px solid #e3e6e8;
+      cursor: pointer; user-select: none;
+    }
+    .order-card-header:hover { background: #f0f2f5; }
+    .order-id { font-weight: 700; color: #111; font-size: 14px; }
+    .order-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .order-header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .order-total { font-weight: 700; color: #111; font-size: 14px; }
+    .order-status {
+      padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .status-processing { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+    .status-shipped    { background: #e8faf7; color: #00875a; border: 1px solid #00C9A733; }
+    .status-refunded   { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+    .order-card-body { padding: 18px; display: none; }
+    .order-card-body.open { display: block; }
+    .order-section-label {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+      color: #888; margin-bottom: 8px; margin-top: 16px;
+    }
+    .order-section-label:first-child { margin-top: 0; }
+    .order-addr {
+      background: #fff; border: 1px solid #e3e6e8; border-radius: 10px;
+      padding: 12px 16px; font-size: 13px; color: #111;
+    }
+    .order-addr-invalid { border-color: #fca5a5; background: #fff5f5; }
+    .addr-row {
+      display: flex; align-items: baseline; gap: 10px;
+      padding: 4px 0; border-bottom: 1px solid #f0f2f5;
+    }
+    .addr-row:last-child { border-bottom: none; }
+    .addr-label {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.8px; color: #888; min-width: 68px; flex-shrink: 0;
+    }
+    .addr-val { color: #111; font-size: 13px; font-weight: 500; }
+    .addr-missing { color: #bbb; font-style: italic; font-weight: 400; }
+    .addr-warn {
+      font-size: 12px; color: #dc2626; margin-top: 6px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .order-items-list { list-style: none; padding: 0; margin: 0; }
+    .order-items-list li {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 6px 0; border-bottom: 1px solid #f0f2f5; font-size: 13px; color: #333;
+      gap: 8px;
+    }
+    .order-items-list li:last-child { border-bottom: none; }
+    .order-item-name { flex: 1; }
+    .order-item-var { font-size: 11px; color: #888; }
+    .order-item-price { font-weight: 600; color: #111; white-space: nowrap; }
+    .order-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn-ship {
+      background: #00C9A7; color: #080f18; border: none; border-radius: 10px;
+      padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    }
+    .btn-ship:hover { background: #00DFB9; }
+    .btn-ship:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-refund {
+      background: #fff; color: #dc2626; border: 1px solid #fca5a5;
+      border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    }
+    .btn-refund:hover { background: #fef2f2; }
+    .tracking-info {
+      font-size: 12px; color: #555; margin-top: 10px;
+      background: #e8faf7; border-radius: 8px; padding: 8px 12px;
+    }
+    /* Ship modal */
+    .modal-field { margin-bottom: 14px; }
+    .modal-label { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+    .modal-input {
+      width: 100%; box-sizing: border-box;
+      background: #f7f8fa; border: 1px solid #d5d9d9; border-radius: 10px;
+      padding: 10px 14px; font-size: 14px; color: #111; font-family: 'DM Sans', sans-serif;
+      outline: none; transition: border-color 0.2s;
+    }
+    .modal-input:focus { border-color: #00C9A7; }
+    .modal-select {
+      width: 100%; box-sizing: border-box;
+      background: #f7f8fa; border: 1px solid #d5d9d9; border-radius: 10px;
+      padding: 10px 14px; font-size: 14px; color: #111; font-family: 'DM Sans', sans-serif;
+      outline: none; appearance: none; cursor: pointer;
+    }
+
+    /* ── SUBSCRIPTION ── */
+    .sub-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
+    @media (max-width: 600px) { .sub-grid { grid-template-columns: 1fr; } }
+    .sub-box { background: #f7f8fa; border: 1px solid #e3e6e8; border-radius: 12px; padding: 16px 18px; }
+    .sub-box-label { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .sub-box-val { font-size: 18px; font-weight: 700; color: #111; }
+    .sub-active-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #e8faf7; color: #00875a; border: 1px solid #00C9A733;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px;
+    }
+
+    /* ── MODAL ── */
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .modal-bg.hidden { display: none; }
+    .modal-card {
+      background: #fff; border-radius: 20px; padding: 32px; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+    }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1.5px; color: #111; margin-bottom: 24px; }
+    .modal-footer { display: flex; gap: 12px; margin-top: 20px; }
+    .btn-cancel { background: #f0f2f5; border: 1px solid #e3e6e8; color: #555; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 11px 20px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .btn-cancel:hover { background: #e3e6e8; }
+    .modal-err { font-size: 13px; color: #dc2626; margin-top: 10px; display: none; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-img"></span>FIT<span>R</span></a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="partners" class="nav-link">For Brands</a>
+      </div>
+      <div class="nav-actions">
+        <button id="btnSignOut" class="btn-secondary" style="cursor:pointer;font-family:'DM Sans',sans-serif;">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="loadingState" class="loading-screen">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="dashState" style="display:none;">
+    <div class="dash-wrap">
+
+      <!-- Sidebar -->
+      <div class="dash-sidebar">
+        <div class="brand-id-box">
+          <div class="brand-id-name" id="sidebarBrandName">YOUR BRAND</div>
+          <div class="brand-id-badge"><span class="sub-dot"></span> Active</div>
+        </div>
+
+        <button class="dash-nav-item active" data-section="overview"><span class="nav-icon">📊</span> Overview</button>
+        <button class="dash-nav-item" data-section="profile"><span class="nav-icon">🏷️</span> Brand Profile</button>
+        <button class="dash-nav-item" data-section="products"><span class="nav-icon">📦</span> Products</button>
+        <button class="dash-nav-item" data-section="shipping"><span class="nav-icon">🚚</span> Shipping</button>
+        <button class="dash-nav-item" data-section="orders"><span class="nav-icon">🧾</span> Orders</button>
+        <div class="dash-nav-divider"></div>
+        <button class="dash-nav-item" data-section="subscription"><span class="nav-icon">💳</span> Subscription</button>
+      </div>
+
+      <!-- Content -->
+      <div>
+
+        <!-- ── OVERVIEW ── -->
+        <div class="dash-section active" id="section-overview">
+          <div class="dash-card">
+            <div class="card-header">
+              <div class="card-title">OVERVIEW</div>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-label">Products Listed</div>
+                <div class="stat-val" id="statProducts">0</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Orders (30 days)</div>
+                <div class="stat-val" id="statOrders">—</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Next Billing</div>
+                <div class="stat-val" id="statBilling" style="font-size:18px;">—</div>
+              </div>
+            </div>
+            <div style="font-size:13px;color:#888;margin-bottom:20px;padding-top:4px;">Complete these steps to go live on the FITR marketplace:</div>
+            <div class="setup-list">
+              <div class="setup-item">
+                <span class="setup-check" id="chkProfile">⬜</span>
+                <div class="setup-info"><strong>Complete your brand profile</strong><span>Name, category, description, logo</span></div>
+                <button class="setup-go" onclick="switchSection('profile')">Go →</button>
+              </div>
+              <div class="setup-item">
+                <span class="setup-check" id="chkShipping">⬜</span>
+                <div class="setup-info"><strong>Set your shipping info</strong><span>Ship-from address, carriers, handling time</span></div>
+                <button class="setup-go" onclick="switchSection('shipping')">Go →</button>
+              </div>
+              <div class="setup-item">
+                <span class="setup-check" id="chkProducts">⬜</span>
+                <div class="setup-info"><strong>Add your first product</strong><span>Name, price, description, photo</span></div>
+                <button class="setup-go" onclick="switchSection('products')">Go →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── BRAND PROFILE ── -->
+        <div class="dash-section" id="section-profile">
+          <div class="dash-card">
+            <div class="card-header"><div class="card-title">BRAND PROFILE</div></div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label class="form-label">Brand Name *</label>
+                <input class="form-input" id="pBrandName" placeholder="Your Brand Co." maxlength="80" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Category *</label>
+                <select class="form-select" id="pCategory">
+                  <option value="">Select category…</option>
+                  <option>Supplements</option>
+                  <option>Gym Gear & Equipment</option>
+                  <option>Apparel & Activewear</option>
+                  <option>Recovery & Wellness</option>
+                  <option>Multiple Categories</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Brand Website</label>
+                <input class="form-input" id="pWebsite" placeholder="https://yourbrand.com" maxlength="200" type="url" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Instagram Handle</label>
+                <input class="form-input" id="pInstagram" placeholder="@yourbrand" maxlength="60" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Logo URL</label>
+                <input class="form-input" id="pLogoUrl" placeholder="https://yourbrand.com/logo.png" maxlength="500" />
+                <span class="form-hint">Link to your logo image (PNG or JPG, square preferred)</span>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Order Contact Email</label>
+                <input class="form-input" id="pContactEmail" placeholder="orders@yourbrand.com" maxlength="200" type="email" />
+                <span class="form-hint">FITR sends order notifications here</span>
+              </div>
+              <div class="form-field full">
+                <label class="form-label">Brand Description</label>
+                <textarea class="form-textarea" id="pDescription" placeholder="Tell FITR shoppers what your brand is about — products, mission, what makes you different…" maxlength="600"></textarea>
+              </div>
+            </div>
+            <button class="btn-save" id="btnSaveProfile">Save Profile</button>
+            <div class="save-msg" id="profileMsg"></div>
+          </div>
+        </div>
+
+        <!-- ── PRODUCTS ── -->
+        <div class="dash-section" id="section-products">
+          <div class="dash-card">
+            <div class="card-header">
+              <div class="card-title">PRODUCTS</div>
+              <button class="btn-add" id="btnOpenAddProduct">+ Add Product</button>
+            </div>
+            <div id="productList" class="product-list" style="display:none;"></div>
+            <div id="productsEmpty" class="empty-state">
+              <div class="empty-icon">📦</div>
+              <h3>No products yet</h3>
+              <p>Add your first product to appear on the FITR marketplace.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SHIPPING ── -->
+        <div class="dash-section" id="section-shipping">
+          <div class="dash-card">
+            <div class="card-header"><div class="card-title">SHIPPING SETTINGS</div></div>
+            <p style="font-size:13px;color:#666;margin-bottom:24px;line-height:1.6;">
+              You are responsible for fulfilling and shipping all FITR orders. Enter your ship-from address and shipping details so customers know what to expect. FITR will email you at your order contact email when a new order comes in.
+            </p>
+            <div class="form-grid">
+              <div class="form-field full">
+                <label class="form-label">Ship-From Business Name</label>
+                <input class="form-input" id="sFromName" placeholder="Your Brand Co." maxlength="100" />
+              </div>
+              <div class="form-field full">
+                <label class="form-label">Street Address</label>
+                <input class="form-input" id="sAddress" placeholder="123 Main St" maxlength="200" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">City</label>
+                <input class="form-input" id="sCity" placeholder="Miami" maxlength="80" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">State</label>
+                <select class="form-select" id="sState">
+                  <option value="">Select state…</option>
+                  <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+                  <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+                  <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+                  <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+                  <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+                  <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+                  <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+                  <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+                  <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+                  <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">ZIP Code</label>
+                <input class="form-input" id="sZip" placeholder="33101" maxlength="10" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Country</label>
+                <select class="form-select" id="sCountry">
+                  <option value="US">United States</option>
+                  <option value="CA">Canada</option>
+                  <option value="GB">United Kingdom</option>
+                  <option value="AU">Australia</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Handling Time (business days)</label>
+                <select class="form-select" id="sHandling">
+                  <option value="1">1 business day</option>
+                  <option value="2" selected>2 business days</option>
+                  <option value="3">3 business days</option>
+                  <option value="5">5 business days</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Carriers Used</label>
+                <input class="form-input" id="sCarriers" placeholder="e.g. USPS, UPS, FedEx" maxlength="100" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Free Shipping on Orders Over ($)</label>
+                <input class="form-input" id="sFreeThreshold" placeholder="e.g. 50 — leave blank if none" type="number" min="0" max="9999" />
+                <span class="form-hint">Leave blank if you don't offer free shipping</span>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Standard Shipping Rate ($)</label>
+                <input class="form-input" id="sRate" placeholder="e.g. 6.99" type="number" min="0" max="99" step="0.01" />
+                <span class="form-hint">What you charge per order for standard shipping</span>
+              </div>
+              <div class="form-field full">
+                <label class="form-label">Shipping Notes (optional)</label>
+                <textarea class="form-textarea" style="min-height:70px;" id="sNotes" placeholder="e.g. We ship Monday–Friday. Orders placed Friday after 3pm ship Monday." maxlength="300"></textarea>
+              </div>
+            </div>
+            <button class="btn-save" id="btnSaveShipping">Save Shipping Settings</button>
+            <div class="save-msg" id="shippingMsg"></div>
+          </div>
+        </div>
+
+        <!-- ── ORDERS ── -->
+        <div class="dash-section" id="section-orders">
+          <div class="dash-card">
+            <div class="card-header"><div class="card-title">ORDERS</div></div>
+            <div class="orders-note">
+              <strong>How orders work:</strong> When a customer purchases your product on FITR, you'll receive an email at your order contact email with the customer's name, shipping address, and order details. Ship the order within your stated handling time and provide tracking via email to app@joinfitr.com so we can update the customer.
+            </div>
+            <div id="ordersList"></div>
+            <div id="ordersEmpty" class="empty-state">
+              <div class="empty-icon">🧾</div>
+              <h3>No orders yet</h3>
+              <p>Once customers start purchasing your products, orders will appear here.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SUBSCRIPTION ── -->
+        <div class="dash-section" id="section-subscription">
+          <div class="dash-card">
+            <div class="card-header">
+              <div class="card-title">SUBSCRIPTION</div>
+              <span class="sub-active-badge"><span class="sub-dot"></span> Active</span>
+            </div>
+            <div class="sub-grid">
+              <div class="sub-box">
+                <div class="sub-box-label">Plan</div>
+                <div class="sub-box-val">$19 / mo</div>
+              </div>
+              <div class="sub-box">
+                <div class="sub-box-label">Next Billing</div>
+                <div class="sub-box-val" id="subNextBilling">—</div>
+              </div>
+              <div class="sub-box">
+                <div class="sub-box-label">Commission</div>
+                <div class="sub-box-val">12% on sales</div>
+              </div>
+            </div>
+            <p style="font-size:13px;color:#555;line-height:1.7;">
+              Your subscription renews automatically each month. To cancel, email
+              <a href="mailto:app@joinfitr.com" style="color:#00C9A7;">app@joinfitr.com</a>
+              from your account email. Your listings stay live until the end of the current billing period.
+            </p>
+            <p style="font-size:13px;color:#555;line-height:1.7;">
+              Questions about billing? Review the
+              <a href="brand-terms" style="color:#00C9A7;" target="_blank">Brand Seller Agreement</a>
+              or contact us.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Mark Shipped Modal -->
+  <div class="modal-bg hidden" id="modalShip">
+    <div class="modal-card">
+      <div class="modal-title">MARK AS SHIPPED</div>
+      <p style="font-size:13px;color:#555;margin-bottom:20px;line-height:1.6;">
+        Enter tracking info below. The customer will receive a shipping notification email and push notification.
+      </p>
+      <div class="modal-field">
+        <label class="modal-label">Tracking Number (optional)</label>
+        <input class="modal-input" id="shipTracking" placeholder="e.g. 1Z999AA10123456784" maxlength="100" />
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Carrier (optional)</label>
+        <select class="modal-select" id="shipCarrier">
+          <option value="">Select carrier…</option>
+          <option>UPS</option>
+          <option>USPS</option>
+          <option>FedEx</option>
+          <option>DHL</option>
+          <option>Amazon Logistics</option>
+          <option>OnTrac</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="modal-err" id="shipErr"></div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="btnCancelShip">Cancel</button>
+        <button class="btn-save" id="btnConfirmShip">Confirm Shipped</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="modal-bg hidden" id="modalAddProduct">
+    <div class="modal-card">
+      <div class="modal-title">ADD PRODUCT</div>
+      <div class="form-grid">
+        <div class="form-field full">
+          <label class="form-label">Product Name *</label>
+          <input class="form-input" id="newPName" placeholder="e.g. Whey Protein 2lb — Chocolate" maxlength="120" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Price (USD) *</label>
+          <input class="form-input" id="newPPrice" type="number" min="0.01" max="9999" step="0.01" placeholder="49.99" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Category *</label>
+          <select class="form-select" id="newPCategory">
+            <option value="">Select…</option>
+            <option>Supplements</option>
+            <option>Gym Gear & Equipment</option>
+            <option>Apparel & Activewear</option>
+            <option>Recovery & Wellness</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Stock Quantity</label>
+          <input class="form-input" id="newPStock" type="number" min="0" placeholder="100" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">SKU / Product Code</label>
+          <input class="form-input" id="newPSku" placeholder="e.g. WP-CHOC-2LB" maxlength="60" />
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Product Image URL</label>
+          <input class="form-input" id="newPImage" placeholder="https://yourbrand.com/product.jpg" maxlength="500" />
+          <span class="form-hint">Upload your image to Imgur, Cloudinary, or your own site — paste the URL here</span>
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="newPDesc" placeholder="Ingredients, size, benefits, flavor options…" maxlength="600"></textarea>
+        </div>
+      </div>
+      <div class="modal-err" id="modalErr"></div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="btnCancelProduct">Cancel</button>
+        <button class="btn-save" id="btnSaveProduct">Add Product</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, doc, getDoc, setDoc, serverTimestamp,
+      collection, addDoc, getDocs, deleteDoc, query, orderBy
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain: "fitr-22814.firebaseapp.com",
+      projectId: "fitr-22814",
+      storageBucket: "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId: "1:900395772549:web:2d48b5877b8d247e7797ec",
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    let currentUser = null;
+    let brandData   = {};
+    let products    = [];
+
+    onAuthStateChanged(auth, async function(user) {
+      if (!user) {
+        window.location.href = 'brand-auth';
+        return;
+      }
+      currentUser = user;
+
+      // Handle post-Stripe redirect
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('subscribed') === 'true' && params.get('session_id')) {
+        await handleSubscriptionReturn(params.get('session_id'));
+        window.history.replaceState({}, '', '/brand-dashboard');
+      }
+
+      // Load brand doc
+      try {
+        var snap = await getDoc(doc(db, 'brands', currentUser.uid));
+        brandData = snap.exists() ? snap.data() : {};
+      } catch(e) { brandData = {}; }
+
+      var status = brandData.subscriptionStatus;
+      var isActive = status === 'active' || status === 'trialing';
+
+      if (!isActive) {
+        // No active subscription — redirect back to auth to complete payment
+        window.location.href = 'brand-auth?canceled=true';
+        return;
+      }
+
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('dashState').style.display = 'block';
+      populateDashboard();
+      await loadProducts();
+      await loadOrders();
+    });
+
+    async function handleSubscriptionReturn(sessionId) {
+      try {
+        // Server writes subscription status — client cannot forge it
+        var res = await fetch('/api/update-brand-subscription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid: currentUser.uid, session_id: sessionId }),
+        });
+        if (!res.ok) console.error('Subscription update failed');
+        // Refresh brandData from Firestore after server writes
+        var snap = await getDoc(doc(db, 'brands', currentUser.uid));
+        brandData = snap.exists() ? snap.data() : brandData;
+      } catch(e) { console.error('Subscription verify error:', e); }
+    }
+
+    function populateDashboard() {
+      var name = brandData.brandName || brandData.contactName || 'Your Brand';
+      document.getElementById('sidebarBrandName').textContent = name.toUpperCase();
+
+      // Billing date
+      if (brandData.currentPeriodEnd) {
+        var d = new Date(brandData.currentPeriodEnd * 1000);
+        var dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        document.getElementById('statBilling').textContent = dateStr;
+        document.getElementById('subNextBilling').textContent = dateStr;
+      }
+
+      // Profile fields
+      setVal('pBrandName', brandData.brandName);
+      setVal('pCategory', brandData.category);
+      setVal('pWebsite', brandData.website);
+      setVal('pInstagram', brandData.instagram);
+      setVal('pLogoUrl', brandData.logoUrl);
+      setVal('pContactEmail', brandData.contactEmail || currentUser.email);
+      setVal('pDescription', brandData.description);
+
+      // Shipping fields
+      var s = brandData.shipping || {};
+      setVal('sFromName', s.fromName);
+      setVal('sAddress', s.address);
+      setVal('sCity', s.city);
+      setVal('sState', s.state);
+      setVal('sZip', s.zip);
+      setVal('sCountry', s.country || 'US');
+      setVal('sHandling', s.handlingDays || '2');
+      setVal('sCarriers', s.carriers);
+      setVal('sFreeThreshold', s.freeThreshold);
+      setVal('sRate', s.rate);
+      setVal('sNotes', s.notes);
+
+      // Setup checks
+      if (brandData.brandName && brandData.category && brandData.description) {
+        document.getElementById('chkProfile').textContent = '✅';
+      }
+      if (s.address && s.city && s.state) {
+        document.getElementById('chkShipping').textContent = '✅';
+      }
+    }
+
+    function setVal(id, val) {
+      var el = document.getElementById(id);
+      if (el && val != null && val !== '') el.value = val;
+    }
+    function getVal(id) {
+      var el = document.getElementById(id);
+      return el ? el.value.trim().replace(/[<>]/g, '') : '';
+    }
+
+    // ── SAVE PROFILE ──
+    document.getElementById('btnSaveProfile').addEventListener('click', async function() {
+      var btn = this;
+      var msg = document.getElementById('profileMsg');
+      btn.disabled = true; btn.textContent = 'Saving…';
+
+      var update = {
+        brandName:    getVal('pBrandName').slice(0,80),
+        category:     getVal('pCategory').slice(0,50),
+        website:      getVal('pWebsite').slice(0,200),
+        instagram:    getVal('pInstagram').slice(0,60),
+        logoUrl:      getVal('pLogoUrl').slice(0,500),
+        contactEmail: getVal('pContactEmail').slice(0,200),
+        description:  getVal('pDescription').slice(0,600),
+        updatedAt:    serverTimestamp(),
+      };
+
+      if (!update.brandName) {
+        showSaveMsg(msg, 'Brand name is required.', true);
+        btn.disabled = false; btn.textContent = 'Save Profile'; return;
+      }
+
+      try {
+        await setDoc(doc(db, 'brands', currentUser.uid), update, { merge: true });
+        Object.assign(brandData, update);
+        document.getElementById('sidebarBrandName').textContent = update.brandName.toUpperCase();
+        if (update.brandName && update.category && update.description) {
+          document.getElementById('chkProfile').textContent = '✅';
+        }
+        showSaveMsg(msg, 'Profile saved!', false);
+      } catch(e) { showSaveMsg(msg, 'Could not save. Try again.', true); }
+      btn.disabled = false; btn.textContent = 'Save Profile';
+    });
+
+    // ── SAVE SHIPPING ──
+    document.getElementById('btnSaveShipping').addEventListener('click', async function() {
+      var btn = this;
+      var msg = document.getElementById('shippingMsg');
+      btn.disabled = true; btn.textContent = 'Saving…';
+
+      var shipping = {
+        fromName:      getVal('sFromName').slice(0,100),
+        address:       getVal('sAddress').slice(0,200),
+        city:          getVal('sCity').slice(0,80),
+        state:         getVal('sState').slice(0,10),
+        zip:           getVal('sZip').slice(0,10),
+        country:       getVal('sCountry').slice(0,10),
+        handlingDays:  getVal('sHandling') || '2',
+        carriers:      getVal('sCarriers').slice(0,100),
+        freeThreshold: getVal('sFreeThreshold') || '',
+        rate:          getVal('sRate') || '',
+        notes:         getVal('sNotes').slice(0,300),
+      };
+
+      try {
+        await setDoc(doc(db, 'brands', currentUser.uid), { shipping, updatedAt: serverTimestamp() }, { merge: true });
+        brandData.shipping = shipping;
+        if (shipping.address && shipping.city && shipping.state) {
+          document.getElementById('chkShipping').textContent = '✅';
+        }
+        showSaveMsg(msg, 'Shipping settings saved!', false);
+      } catch(e) { showSaveMsg(msg, 'Could not save. Try again.', true); }
+      btn.disabled = false; btn.textContent = 'Save Shipping Settings';
+    });
+
+    function showSaveMsg(el, text, isErr) {
+      el.textContent = text;
+      el.className = 'save-msg show' + (isErr ? ' err' : '');
+      setTimeout(function() { el.className = 'save-msg'; }, 3000);
+    }
+
+    // ── PRODUCTS ──
+    async function loadProducts() {
+      try {
+        var col  = collection(db, 'brands', currentUser.uid, 'products');
+        var snap = await getDocs(query(col, orderBy('createdAt', 'desc')));
+        products = [];
+        snap.forEach(function(d) { products.push({ id: d.id, ...d.data() }); });
+      } catch(e) { products = []; }
+      renderProducts();
+    }
+
+    function renderProducts() {
+      var list  = document.getElementById('productList');
+      var empty = document.getElementById('productsEmpty');
+      document.getElementById('statProducts').textContent = products.length;
+
+      if (products.length === 0) {
+        list.style.display = 'none'; empty.style.display = 'block';
+        document.getElementById('chkProducts').textContent = '⬜';
+        return;
+      }
+
+      document.getElementById('chkProducts').textContent = '✅';
+      empty.style.display = 'none'; list.style.display = 'flex';
+      list.innerHTML = '';
+
+      products.forEach(function(p) {
+        var item = document.createElement('div');
+        item.className = 'product-item';
+        var imgHtml = p.imageUrl
+          ? '<div class="product-img-wrap"><img src="' + esc(p.imageUrl) + '" alt="" onerror="this.parentElement.innerHTML=\'📦\'"></div>'
+          : '<div class="product-img-wrap">📦</div>';
+        item.innerHTML = imgHtml +
+          '<div class="product-info">' +
+            '<div class="product-name">' + esc(p.name) + '</div>' +
+            '<div class="product-meta">' + esc(p.category||'') + (p.stock!=null ? ' · ' + p.stock + ' in stock' : '') + (p.sku ? ' · SKU: ' + esc(p.sku) : '') + '</div>' +
+          '</div>' +
+          '<div class="product-price">$' + parseFloat(p.price).toFixed(2) + '</div>' +
+          '<button class="btn-icon" data-id="' + p.id + '">Delete</button>';
+        list.appendChild(item);
+      });
+
+      list.querySelectorAll('.btn-icon').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          if (!confirm('Delete "' + btn.closest('.product-item').querySelector('.product-name').textContent + '"?')) return;
+          try {
+            await deleteDoc(doc(db, 'brands', currentUser.uid, 'products', btn.dataset.id));
+            products = products.filter(function(p) { return p.id !== btn.dataset.id; });
+            renderProducts();
+          } catch(e) { alert('Could not delete product.'); }
+        });
+      });
+    }
+
+    // ── ADD PRODUCT MODAL ──
+    document.getElementById('btnOpenAddProduct').addEventListener('click', function() {
+      document.getElementById('modalAddProduct').classList.remove('hidden');
+    });
+    document.getElementById('btnCancelProduct').addEventListener('click', closeModal);
+    document.getElementById('modalAddProduct').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+    function closeModal() {
+      document.getElementById('modalAddProduct').classList.add('hidden');
+      document.getElementById('modalErr').style.display = 'none';
+      ['newPName','newPPrice','newPImage','newPDesc','newPStock','newPSku'].forEach(function(id) {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('newPCategory').value = '';
+    }
+
+    document.getElementById('btnSaveProduct').addEventListener('click', async function() {
+      var btn = this;
+      var err = document.getElementById('modalErr');
+      err.style.display = 'none';
+
+      var name     = getVal('newPName').slice(0,120);
+      var price    = parseFloat(document.getElementById('newPPrice').value);
+      var category = document.getElementById('newPCategory').value;
+      var stock    = parseInt(document.getElementById('newPStock').value) || null;
+      var sku      = getVal('newPSku').slice(0,60);
+      var imageUrl = getVal('newPImage').slice(0,500);
+      var desc     = getVal('newPDesc').slice(0,600);
+
+      if (!name)  { showModalErr('Product name is required.'); return; }
+      if (!price || price <= 0 || price > 9999) { showModalErr('Enter a valid price (0.01 – 9999).'); return; }
+      if (!category) { showModalErr('Select a category.'); return; }
+
+      btn.disabled = true; btn.textContent = 'Adding…';
+      try {
+        var ref = await addDoc(collection(db, 'brands', currentUser.uid, 'products'), {
+          name, price, category, stock, sku, imageUrl, description: desc,
+          active: true, createdAt: serverTimestamp(),
+        });
+        products.unshift({ id: ref.id, name, price, category, stock, sku, imageUrl, description: desc });
+        renderProducts();
+        closeModal();
+      } catch(e) { showModalErr('Could not add product. Please try again.'); }
+      btn.disabled = false; btn.textContent = 'Add Product';
+    });
+
+    function showModalErr(msg) {
+      var el = document.getElementById('modalErr');
+      el.textContent = msg; el.style.display = 'block';
+    }
+
+    // ── ORDERS ──
+    var orders = [];
+    var shipTarget = null; // { orderId, orderNumber, customerEmail, customerName }
+
+    async function loadOrders() {
+      try {
+        var col  = collection(db, 'brands', currentUser.uid, 'orders');
+        var snap;
+        try {
+          // Try with ordering first
+          snap = await getDocs(query(col, orderBy('createdAt', 'desc')));
+        } catch(indexErr) {
+          // Fallback: no ordering (works without a composite index)
+          console.warn('Orders index missing, loading without sort:', indexErr.message);
+          snap = await getDocs(col);
+        }
+        orders = [];
+        snap.forEach(function(d) { orders.push({ id: d.id, ...d.data() }); });
+        // Sort client-side as fallback
+        orders.sort(function(a, b) {
+          var ta = a.createdAt?.seconds || 0;
+          var tb = b.createdAt?.seconds || 0;
+          return tb - ta;
+        });
+      } catch(e) {
+        console.error('Could not load orders:', e.message);
+        orders = [];
+        document.getElementById('ordersList').innerHTML =
+          '<div style="color:#dc2626;font-size:13px;padding:16px;background:#fff5f5;border-radius:10px;border:1px solid #fca5a5;">' +
+          '⚠ Could not load orders: ' + e.message + '</div>';
+      }
+      renderOrders();
+    }
+
+    // Address validation — must be a real-looking address, not random characters
+    function validateShippingAddress(addr) {
+      if (!addr) return { ok: false, msg: 'No shipping address on this order.' };
+      var street = (addr.address || addr.street || '').trim();
+      var city   = (addr.city   || '').trim();
+      var state  = (addr.state  || '').trim();
+      var zip    = (addr.zip    || '').trim();
+
+      if (!street) return { ok: false, msg: 'Street address is missing.' };
+      if (!city)   return { ok: false, msg: 'City is missing.' };
+      if (!state)  return { ok: false, msg: 'State is missing.' };
+      if (!zip)    return { ok: false, msg: 'ZIP code is missing.' };
+
+      // Street must start with a house/suite number OR be a PO Box
+      var streetOk = /^\d+\s+\S/.test(street) || /^[Pp]\.?[Oo]\.?\s*[Bb][Oo][Xx]\s+\d/i.test(street) ||
+                     /^(Box|PMB|Unit|Apt|Suite|Ste|Bldg)\s+\d/i.test(street);
+      if (!streetOk) return { ok: false, msg: 'Street address must start with a number or be a valid PO Box (e.g. "123 Main St" or "PO Box 456").' };
+
+      // Street can't be all digits
+      if (/^\d+$/.test(street)) return { ok: false, msg: 'Street address looks invalid — enter a real street address.' };
+
+      // City must have at least 2 letters and no more than a couple of digits
+      if (city.replace(/[^a-zA-Z]/g, '').length < 2) return { ok: false, msg: 'City name looks invalid.' };
+      if (/^\d+$/.test(city)) return { ok: false, msg: 'City name cannot be all numbers.' };
+
+      // ZIP: 5 digits or 5+4
+      if (!/^\d{5}(-\d{4})?$/.test(zip)) return { ok: false, msg: 'ZIP code must be 5 digits (e.g. 33101).' };
+
+      return { ok: true };
+    }
+
+    function renderOrders() {
+      var list  = document.getElementById('ordersList');
+      var empty = document.getElementById('ordersEmpty');
+
+      // Stat counter
+      var recent = orders.filter(function(o) {
+        if (!o.createdAt) return false;
+        var ts = o.createdAt.seconds ? o.createdAt.seconds * 1000 : new Date(o.createdAt).getTime();
+        return (Date.now() - ts) < 30 * 24 * 60 * 60 * 1000;
+      });
+      document.getElementById('statOrders').textContent = recent.length;
+
+      if (!orders.length) {
+        list.style.display = 'none'; empty.style.display = 'flex'; return;
+      }
+      empty.style.display = 'none'; list.style.display = 'block';
+      list.innerHTML = '';
+
+      orders.forEach(function(order) {
+        var addr     = order.shippingAddress || {};
+        var addrCheck = validateShippingAddress(addr);
+        var dateStr  = '';
+        if (order.createdAt) {
+          var d = order.createdAt.seconds ? new Date(order.createdAt.seconds * 1000) : new Date(order.createdAt);
+          dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+        var status   = order.status || 'processing';
+        var statusCls = status === 'shipped' ? 'status-shipped' : status === 'refunded' ? 'status-refunded' : 'status-processing';
+
+        // Build address block — labeled rows, always show all fields
+        var country = addr.country || 'United States';
+        if (country === 'US' || country === 'us') country = 'United States';
+        function addrRow(label, value) {
+          return value
+            ? '<div class="addr-row"><span class="addr-label">' + label + '</span><span class="addr-val">' + esc(value) + '</span></div>'
+            : '<div class="addr-row"><span class="addr-label">' + label + '</span><span class="addr-val addr-missing">—</span></div>';
+        }
+        var addrHtml = addr.name || addr.address || addr.city
+          ? addrRow('Recipient', addr.name) +
+            addrRow('Street', addr.address) +
+            addrRow('City', addr.city) +
+            addrRow('State', addr.state) +
+            addrRow('ZIP', addr.zip) +
+            addrRow('Country', country)
+          : '<em style="color:#888">No address on file</em>';
+
+        // Build items list
+        var itemsHtml = (order.items || []).map(function(item) {
+          var varStr = '';
+          if (item.selectedVariants && Object.keys(item.selectedVariants).length) {
+            varStr = ' <span class="order-item-var">(' + Object.entries(item.selectedVariants).map(function(e) { return esc(e[0]) + ': ' + esc(e[1]); }).join(', ') + ')</span>';
+          }
+          return '<li><span class="order-item-name">' + esc(item.name) + (item.qty > 1 ? ' × ' + item.qty : '') + varStr + '</span>' +
+                 '<span class="order-item-price">$' + (parseFloat(item.price || 0) * (item.qty || 1)).toFixed(2) + '</span></li>';
+        }).join('');
+
+        // Tracking info (if shipped)
+        var trackingHtml = '';
+        if (status === 'shipped' && order.trackingNumber) {
+          trackingHtml = '<div class="tracking-info">📦 Shipped via ' + esc(order.carrier || '') + ' · Tracking: <strong>' + esc(order.trackingNumber) + '</strong></div>';
+        }
+
+        // Action buttons
+        var actionsHtml = '';
+        if (status === 'processing') {
+          var shipDisabled = addrCheck.ok ? '' : ' disabled title="' + esc(addrCheck.msg) + '"';
+          actionsHtml += '<button class="btn-ship" data-order-id="' + esc(order.id) + '"' + shipDisabled + '>📦 Mark as Shipped</button>';
+        }
+        if (status === 'processing' || status === 'shipped') {
+          actionsHtml += '<button class="btn-refund" data-order-id="' + esc(order.id) + '">↩ Issue Refund</button>';
+        }
+
+        var card = document.createElement('div');
+        card.className = 'order-card';
+        card.innerHTML =
+          '<div class="order-card-header" data-order-id="' + esc(order.id) + '">' +
+            '<div>' +
+              '<div class="order-id">' + esc(order.orderNumber || order.id) + '</div>' +
+              '<div class="order-meta">' + (dateStr || 'Unknown date') + ' · ' + esc(order.customerName || 'Customer') + '</div>' +
+            '</div>' +
+            '<div class="order-header-right">' +
+              '<span class="order-total">$' + parseFloat(order.brandTotal || order.total || 0).toFixed(2) + '</span>' +
+              '<span class="order-status ' + statusCls + '">' + esc(status) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="order-card-body" id="body-' + esc(order.id) + '">' +
+            '<div class="order-section-label">Shipping Address</div>' +
+            '<div class="order-addr' + (addrCheck.ok ? '' : ' order-addr-invalid') + '">' + addrHtml + '</div>' +
+            (!addrCheck.ok ? '<div class="addr-warn">⚠ ' + esc(addrCheck.msg) + ' — Cannot ship until a valid address is on this order.</div>' : '') +
+            '<div class="order-section-label">Items Ordered</div>' +
+            '<ul class="order-items-list">' + itemsHtml + '</ul>' +
+            trackingHtml +
+            (actionsHtml ? '<div class="order-actions">' + actionsHtml + '</div>' : '') +
+          '</div>';
+
+        list.appendChild(card);
+      });
+
+      // Toggle expand/collapse
+      list.querySelectorAll('.order-card-header').forEach(function(header) {
+        header.addEventListener('click', function(e) {
+          if (e.target.closest('button')) return; // don't collapse when clicking buttons
+          var body = document.getElementById('body-' + header.dataset.orderId);
+          if (body) body.classList.toggle('open');
+        });
+      });
+
+      // Mark shipped buttons
+      list.querySelectorAll('.btn-ship').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var order = orders.find(function(o) { return o.id === btn.dataset.orderId; });
+          if (!order) return;
+          shipTarget = { orderId: order.id, orderNumber: order.orderNumber, customerEmail: order.email, customerName: order.customerName };
+          document.getElementById('shipTracking').value = '';
+          document.getElementById('shipCarrier').value = '';
+          document.getElementById('shipErr').style.display = 'none';
+          document.getElementById('modalShip').classList.remove('hidden');
+        });
+      });
+
+      // Issue refund buttons
+      list.querySelectorAll('.btn-refund').forEach(function(btn) {
+        btn.addEventListener('click', async function(e) {
+          e.stopPropagation();
+          var order = orders.find(function(o) { return o.id === btn.dataset.orderId; });
+          if (!order) return;
+          if (!confirm('Issue a full refund for order ' + (order.orderNumber || order.id) + '? This cannot be undone.')) return;
+          btn.disabled = true; btn.textContent = 'Processing…';
+          try {
+            var idToken = await currentUser.getIdToken();
+            var res = await fetch('/api/refund-order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idToken },
+              body: JSON.stringify({ brandId: currentUser.uid, orderId: order.id, reason: 'requested_by_customer' }),
+            });
+            if (!res.ok) {
+              var d = await res.json();
+              alert('Refund failed: ' + (d.error || 'Unknown error'));
+              btn.disabled = false; btn.textContent = '↩ Issue Refund';
+            } else {
+              await loadOrders(); // re-render with updated status
+            }
+          } catch(err) {
+            alert('Could not process refund. Please try again.');
+            btn.disabled = false; btn.textContent = '↩ Issue Refund';
+          }
+        });
+      });
+    }
+
+    // Ship modal wiring
+    document.getElementById('btnCancelShip').addEventListener('click', function() {
+      document.getElementById('modalShip').classList.add('hidden');
+      shipTarget = null;
+    });
+    document.getElementById('modalShip').addEventListener('click', function(e) {
+      if (e.target === this) { this.classList.add('hidden'); shipTarget = null; }
+    });
+    document.getElementById('btnConfirmShip').addEventListener('click', async function() {
+      if (!shipTarget) return;
+      var btn = this;
+      var errEl = document.getElementById('shipErr');
+      errEl.style.display = 'none';
+      btn.disabled = true; btn.textContent = 'Sending…';
+
+      try {
+        var res = await fetch('/api/notify-shipped', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            brandId:       currentUser.uid,
+            orderId:       shipTarget.orderId,
+            orderNumber:   shipTarget.orderNumber || '',
+            customerEmail: shipTarget.customerEmail || '',
+            customerName:  shipTarget.customerName || '',
+            trackingNumber: document.getElementById('shipTracking').value.trim(),
+            carrier:        document.getElementById('shipCarrier').value,
+          }),
+        });
+        if (!res.ok) {
+          var d = await res.json();
+          errEl.textContent = d.error || 'Could not send notification. Try again.';
+          errEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Confirm Shipped'; return;
+        }
+        document.getElementById('modalShip').classList.add('hidden');
+        shipTarget = null;
+        await loadOrders();
+      } catch(err) {
+        errEl.textContent = 'Network error. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Confirm Shipped';
+      }
+    });
+
+    // ── SIGN OUT ──
+    document.getElementById('btnSignOut').addEventListener('click', async function() {
+      await signOut(auth);
+      window.location.href = 'brand-auth';
+    });
+
+    function esc(str) {
+      var d = document.createElement('div');
+      d.appendChild(document.createTextNode(String(str||'')));
+      return d.innerHTML;
+    }
+
+    // ── NAV ──
+    window.switchSection = function(name) {
+      document.querySelectorAll('.dash-section').forEach(function(s) { s.classList.remove('active'); });
+      document.querySelectorAll('.dash-nav-item').forEach(function(b) { b.classList.remove('active'); });
+      var sec = document.getElementById('section-' + name);
+      var nav = document.querySelector('[data-section="' + name + '"]');
+      if (sec) sec.classList.add('active');
+      if (nav) nav.classList.add('active');
+    };
+
+    document.querySelectorAll('.dash-nav-item').forEach(function(btn) {
+      btn.addEventListener('click', function() { switchSection(btn.dataset.section); });
+    });
+  </script>
+
+</body>
+</html>

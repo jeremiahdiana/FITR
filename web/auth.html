@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In – FITR</title>
+  <meta name="description" content="Sign in or create your FITR account to access the fitness super-store." />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── AUTH PAGE LAYOUT ── */
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background ambient glows */
+    .auth-glow-1 {
+      position: fixed;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 500px;
+      background: radial-gradient(ellipse, #00C9A70d 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .auth-glow-2 {
+      position: fixed;
+      bottom: -80px; right: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(ellipse, #2255ff08 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* ── AUTH CARD ── */
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      background:#f7f8fa;
+      border: 1px solid #e3e6e8;
+      border-radius: 24px;
+      padding: 44px 40px 40px;
+      position: relative;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+      animation: authCardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes authCardIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Subtle top border glow */
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, #00C9A755, transparent);
+    }
+
+    /* ── LOGO ── */
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .auth-logo-img {
+      width: 32px; height: 32px;
+      background: url('fitr-icon.png') no-repeat center center;
+      background-size: contain;
+      mix-blend-mode: screen;
+      flex-shrink: 0;
+    }
+    .auth-logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      color: #00C9A7;
+      line-height: 1;
+    }
+    .auth-logo-text span { color: #111; }
+
+    /* ── HEADING AREA ── */
+    .auth-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 38px;
+      letter-spacing: 2px;
+      color: #111;
+      line-height: 1.05;
+      margin-bottom: 6px;
+    }
+    .auth-heading span { color: #00C9A7; }
+    .auth-sub {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    .auth-sub a { color: #00C9A7; text-decoration: none; }
+    .auth-sub a:hover { text-decoration: underline; }
+
+    /* ── GOOGLE BUTTON ── */
+    .btn-google {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #ffffff;
+      color: #1a1a1a;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      letter-spacing: 0.2px;
+    }
+    .btn-google:hover {
+      background: #f0f0f0;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    }
+    .btn-google:active { transform: translateY(0); }
+    .btn-google svg { flex-shrink: 0; }
+
+    /* ── DIVIDER ── */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e3e6e8;
+    }
+    .auth-divider span {
+      font-size: 12px;
+      color: #888;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── FORM ── */
+    .auth-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .auth-field { display: flex; flex-direction: column; gap: 6px; }
+    .auth-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .auth-input {
+      width: 100%;
+      background:#f0f2f5;
+      border: 1px solid #d5d9d9;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 14px;
+      color: #111;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .auth-input:focus {
+      border-color: #00C9A755;
+      box-shadow: 0 0 0 3px #00C9A710;
+    }
+    .auth-input::placeholder { color: #aaa; }
+
+    /* Password field wrapper (for show/hide toggle) */
+    .auth-input-wrap {
+      position: relative;
+    }
+    .auth-input-wrap .auth-input { padding-right: 44px; }
+    .auth-pw-toggle {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #3a4a5a;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .auth-pw-toggle:hover { color: #00C9A7; }
+
+    /* ── NAME ROW (signup only) ── */
+    .auth-name-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ── FORGOT ── */
+    .auth-forgot {
+      font-size: 12px;
+      color: #3a4a5a;
+      text-decoration: none;
+      text-align: right;
+      display: block;
+      margin-top: -8px;
+      transition: color 0.2s;
+    }
+    .auth-forgot:hover { color: #00C9A7; }
+
+    /* ── SUBMIT BUTTON ── */
+    .btn-auth-submit {
+      width: 100%;
+      background: #00C9A7;
+      color: #080f18;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      letter-spacing: 0.3px;
+      margin-top: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-auth-submit::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transition: left 0.4s ease;
+    }
+    .btn-auth-submit:hover::before { left: 140%; }
+    .btn-auth-submit:hover { background: #00DFB9; transform: translateY(-1px); }
+    .btn-auth-submit:active { transform: translateY(0); }
+    .btn-auth-submit:disabled {
+      background: #e8edf2;
+      color: #aaa;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-auth-submit:disabled::before { display: none; }
+
+    /* ── LOADING SPINNER ── */
+    .btn-auth-submit.loading {
+      color: transparent;
+      pointer-events: none;
+    }
+    .btn-auth-submit.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 18px; height: 18px;
+      margin: -9px 0 0 -9px;
+      border: 2px solid #080f18;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TOGGLE (sign in / sign up) ── */
+    .auth-toggle {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: #444;
+    }
+    .auth-toggle button {
+      background: none;
+      border: none;
+      color: #00C9A7;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .auth-toggle button:hover { color: #00DFB9; }
+
+    /* ── ERROR / SUCCESS MESSAGES ── */
+    .auth-msg {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      display: none;
+    }
+    .auth-msg.error {
+      background: #1f0a0a;
+      border: 1px solid #5a1a1a;
+      color: #ff6b6b;
+      display: block;
+    }
+    .auth-msg.success {
+      background:#e8faf7;
+      border: 1px solid #00C9A733;
+      color: #00C9A7;
+      display: block;
+    }
+
+    /* ── CONSENT CHECKBOXES ── */
+    .auth-consent { margin: 12px 0 4px; }
+    .auth-consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .auth-consent-row input[type="checkbox"] {
+      margin-top: 3px;
+      width: 16px;
+      height: 16px;
+      accent-color: #00C9A7;
+      flex-shrink: 0;
+    }
+    .auth-consent-row span {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+    }
+    .auth-consent-row a { color: #00C9A7; text-decoration: none; }
+    .auth-consent-row a:hover { text-decoration: underline; }
+
+    /* ── PANEL TRANSITIONS ── */
+    .auth-panel {
+      animation: panelIn 0.3s ease both;
+    }
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateX(8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 36px 24px 32px; border-radius: 20px; }
+      .auth-heading { font-size: 32px; }
+      .auth-name-row { grid-template-columns: 1fr; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background glows -->
+  <div class="auth-glow-1"></div>
+  <div class="auth-glow-2"></div>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-img"></span>FIT<span>R</span>
+      </a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <form class="nav-search" action="shop.html" id="navSearchForm">
+        <input type="search" name="q" class="nav-search-input" placeholder="Search FITR…" maxlength="100" autocomplete="off" />
+        <button type="submit" class="nav-search-btn">&#128269;</button>
+      </form>
+      <div class="nav-actions">
+        <a href="shop.html" class="btn-secondary">Browse Shop</a>
+        <div id="navCartWrap"></div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link">Shop</a>
+      <a href="about.html" class="nav-mobile-link">About</a>
+      <a href="contact.html" class="nav-mobile-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Auth page -->
+  <main class="auth-page">
+    <div class="auth-card" id="authCard">
+
+      <!-- Logo -->
+      <div class="auth-logo">
+        <div class="auth-logo-img"></div>
+        <div class="auth-logo-text">FIT<span>R</span></div>
+      </div>
+
+      <!-- Error / success message -->
+      <div class="auth-msg" id="authMsg"></div>
+
+      <!-- ── SIGN IN PANEL ── -->
+      <div id="panelSignIn" class="auth-panel">
+        <h1 class="auth-heading">WELCOME<br><span>BACK.</span></h1>
+        <p class="auth-sub">New here? <a href="#" id="toSignUp">Create a free account →</a></p>
+
+        <!-- Google -->
+        <button class="btn-google" id="btnGoogleSignIn">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+            <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <form class="auth-form" id="formSignIn" novalidate>
+          <div class="auth-field">
+            <label class="auth-label" for="siEmail">Email</label>
+            <input class="auth-input" type="email" id="siEmail" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="siPassword">Password</label>
+            <div class="auth-input-wrap">
+              <input class="auth-input" type="password" id="siPassword" placeholder="••••••••" autocomplete="current-password" required />
+              <button type="button" class="auth-pw-toggle" data-target="siPassword" aria-label="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <a href="#" class="auth-forgot" id="toForgot">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-auth-submit" id="btnSignIn">Sign In</button>
+        </form>
+      </div>
+
+      <!-- ── SIGN UP PANEL ── -->
+      <div id="panelSignUp" class="auth-panel" style="display:none;">
+        <h1 class="auth-heading">JOIN<br><span>FITR.</span></h1>
+        <p class="auth-sub">Already have an account? <a href="#" id="toSignIn">Sign in →</a></p>
+
+        <!-- Google -->
+        <button class="btn-google" id="btnGoogleSignUp">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+            <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          Sign up with Google
+        </button>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <form class="auth-form" id="formSignUp" novalidate>
+          <div class="auth-name-row">
+            <div class="auth-field">
+              <label class="auth-label" for="suFirst">First Name</label>
+              <input class="auth-input" type="text" id="suFirst" placeholder="Alex" autocomplete="given-name" required />
+            </div>
+            <div class="auth-field">
+              <label class="auth-label" for="suLast">Last Name</label>
+              <input class="auth-input" type="text" id="suLast" placeholder="Johnson" autocomplete="family-name" required />
+            </div>
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="suEmail">Email</label>
+            <input class="auth-input" type="email" id="suEmail" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="suPassword">Password</label>
+            <div class="auth-input-wrap">
+              <input class="auth-input" type="password" id="suPassword" placeholder="Min. 8 characters" autocomplete="new-password" required minlength="8" />
+              <button type="button" class="auth-pw-toggle" data-target="suPassword" aria-label="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <!-- Age verification -->
+          <div class="auth-field">
+            <label class="auth-label" for="suAge">Your Age</label>
+            <input class="auth-input" type="number" id="suAge" placeholder="Must be 13 or older" min="13" max="120" required />
+          </div>
+
+          <!-- Consent checkboxes -->
+          <div class="auth-consent">
+            <label class="auth-consent-row">
+              <input type="checkbox" id="consentTerms" required />
+              <span>I have read and agree to FITR's <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>. I confirm I am 13 or older.</span>
+            </label>
+            <label class="auth-consent-row" style="margin-top:10px;">
+              <input type="checkbox" id="consentMarketing" />
+              <span>I'd like to receive exclusive deals and updates from FITR via email (optional — you can unsubscribe anytime).</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-auth-submit" id="btnSignUp">Create Account</button>
+        </form>
+      </div>
+
+      <!-- ── FORGOT PASSWORD PANEL ── -->
+      <div id="panelForgot" class="auth-panel" style="display:none;">
+        <h1 class="auth-heading">RESET<br><span>PASSWORD.</span></h1>
+        <p class="auth-sub">Enter your email and we'll send you a reset link.</p>
+
+        <form class="auth-form" id="formForgot" novalidate>
+          <div class="auth-field">
+            <label class="auth-label" for="fpEmail">Email</label>
+            <input class="auth-input" type="email" id="fpEmail" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <button type="submit" class="btn-auth-submit" id="btnForgot">Send Reset Link</button>
+        </form>
+
+        <div class="auth-toggle">
+          <button id="toSignInFromForgot">← Back to sign in</button>
+        </div>
+      </div>
+
+      <!-- Toggle link (bottom of sign in panel) -->
+      <div class="auth-toggle" id="toggleSignIn">
+        Don't have an account? <button id="toSignUp2">Sign up free →</button>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="contact.html" class="footer-link">Contact</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR. All rights reserved. · joinfitr.com</div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════
+       FIREBASE AUTH
+       ─────────────────────────────────────────────
+       1. Go to https://console.firebase.google.com
+       2. Create a project → Add a web app
+       3. Enable Authentication → Sign-in methods:
+            • Email/Password
+            • Google
+       4. Copy your config into firebaseConfig below
+       ═══════════════════════════════════════════════ -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      signInWithRedirect,
+      getRedirectResult,
+      GoogleAuthProvider,
+      sendPasswordResetEmail,
+      updateProfile,
+      onAuthStateChanged
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain:        "fitr-22814.firebaseapp.com",
+      projectId:         "fitr-22814",
+      storageBucket:     "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId:             "1:900395772549:web:2d48b5877b8d247e7797ec",
+      measurementId:     "G-9MYM0Y78SV"
+    };
+
+    const app      = initializeApp(firebaseConfig);
+    const auth     = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // If already signed in, save user info and redirect to shop
+    onAuthStateChanged(auth, function(user) {
+      if (user) {
+        localStorage.setItem('fitr_user', JSON.stringify({
+          email: user.email,
+          displayName: user.displayName || user.email.split('@')[0],
+          uid: user.uid
+        }));
+        window.location.href = 'shop.html';
+      } else {
+        localStorage.removeItem('fitr_user');
+      }
+    });
+
+    // Handle redirect result when returning from Google sign-in (Safari / mobile flow)
+    getRedirectResult(auth).then(function(result) {
+      // If result is non-null, onAuthStateChanged handles the redirect to shop
+    }).catch(function(err) {
+      if (err && err.code) {
+        console.error('[FITR Auth] Redirect result error:', err.code, err.message);
+        showMsg(friendlyError(err.code), 'error');
+      }
+    });
+
+    // ── HELPERS ──
+    function showMsg(text, type) {
+      var el = document.getElementById('authMsg');
+      el.textContent = text;
+      el.className = 'auth-msg ' + type;
+    }
+    function clearMsg() {
+      var el = document.getElementById('authMsg');
+      el.className = 'auth-msg';
+      el.textContent = '';
+    }
+    function setLoading(btn, on) {
+      if (on) btn.classList.add('loading');
+      else btn.classList.remove('loading');
+    }
+    function friendlyError(code) {
+      // Generic messages prevent user enumeration attacks —
+      // never reveal whether an email exists or if only the password is wrong.
+      var map = {
+        'auth/user-not-found':         'Incorrect email or password.',
+        'auth/wrong-password':         'Incorrect email or password.',
+        'auth/email-already-in-use':   'Could not create account. Please check your details.',
+        'auth/weak-password':          'Password must be at least 8 characters.',
+        'auth/invalid-email':          'Please enter a valid email address.',
+        'auth/popup-closed-by-user':   'Sign-in cancelled.',
+        'auth/popup-blocked':          'Popup was blocked by your browser. Please allow popups for joinfitr.com and try again.',
+        'auth/cancelled-popup-request':'Sign-in cancelled.',
+        'auth/too-many-requests':      'Too many attempts. Please wait a few minutes before trying again.',
+        'auth/network-request-failed': 'Network error. Check your connection and try again.',
+        'auth/invalid-credential':     'Incorrect email or password.',
+        'auth/unauthorized-domain':    'Sign-in is not authorized for this domain. Please contact support.',
+        'auth/operation-not-allowed':  'Google sign-in is not enabled. Please contact support.',
+        'auth/internal-error':         'An internal error occurred. Please try again.',
+      };
+      return map[code] || 'Something went wrong. Please try again.';
+    }
+
+    // ── PANEL SWITCHING ──
+    function showPanel(name) {
+      clearMsg();
+      var panels = ['panelSignIn','panelSignUp','panelForgot'];
+      panels.forEach(function(id) {
+        var el = document.getElementById(id);
+        el.style.display = (id === 'panel' + name) ? 'block' : 'none';
+        if (id === 'panel' + name) el.classList.add('auth-panel');
+      });
+      var toggleEl = document.getElementById('toggleSignIn');
+      if (toggleEl) toggleEl.style.display = (name === 'SignIn') ? 'block' : 'none';
+    }
+
+    document.getElementById('toSignUp').addEventListener('click', function(e) { e.preventDefault(); showPanel('SignUp'); });
+    document.getElementById('toSignUp2').addEventListener('click', function() { showPanel('SignUp'); });
+    document.getElementById('toSignIn').addEventListener('click', function(e) { e.preventDefault(); showPanel('SignIn'); });
+    document.getElementById('toForgot').addEventListener('click', function(e) { e.preventDefault(); showPanel('Forgot'); });
+    document.getElementById('toSignInFromForgot').addEventListener('click', function() { showPanel('SignIn'); });
+
+    // ── GOOGLE SIGN IN ──
+    // Safari and all mobile browsers block popups from third-party origins.
+    // Use redirect flow for those; popup for desktop Chrome/Firefox/Edge.
+    var isSafariOrMobile = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    async function googleSignIn() {
+      clearMsg();
+      try {
+        if (isSafariOrMobile) {
+          // Redirect flow: leaves the page, Google auth, returns back
+          await signInWithRedirect(auth, provider);
+        } else {
+          await signInWithPopup(auth, provider);
+          // onAuthStateChanged will redirect
+        }
+      } catch(err) {
+        console.error('[FITR Auth] Google sign-in error:', err.code, err.message);
+        showMsg(friendlyError(err.code), 'error');
+      }
+    }
+    document.getElementById('btnGoogleSignIn').addEventListener('click', googleSignIn);
+    document.getElementById('btnGoogleSignUp').addEventListener('click', googleSignIn);
+
+    // ── EMAIL SIGN IN ──
+    document.getElementById('formSignIn').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      clearMsg();
+      var email    = document.getElementById('siEmail').value.trim();
+      var password = document.getElementById('siPassword').value;
+      if (!email || !password) { showMsg('Please fill in all fields.', 'error'); return; }
+      var btn = document.getElementById('btnSignIn');
+      setLoading(btn, true);
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // redirect handled by onAuthStateChanged
+      } catch(err) {
+        showMsg(friendlyError(err.code), 'error');
+        setLoading(btn, false);
+      }
+    });
+
+    // ── EMAIL SIGN UP ──
+    document.getElementById('formSignUp').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      clearMsg();
+      var first    = document.getElementById('suFirst').value.trim().slice(0,100).replace(/[<>&"']/g,'');
+      var last     = document.getElementById('suLast').value.trim().slice(0,100).replace(/[<>&"']/g,'');
+      var email    = document.getElementById('suEmail').value.trim().toLowerCase().slice(0,254);
+      var password = document.getElementById('suPassword').value;
+      var age      = parseInt(document.getElementById('suAge').value, 10);
+      var consentTerms    = document.getElementById('consentTerms').checked;
+      var consentMarketing = document.getElementById('consentMarketing').checked;
+
+      if (!first || !last || !email || !password) { showMsg('Please fill in all fields.', 'error'); return; }
+      if (isNaN(age) || age < 13) { showMsg('You must be at least 13 years old to create an account.', 'error'); return; }
+      if (!consentTerms) { showMsg('You must agree to the Terms of Service and Privacy Policy to create an account.', 'error'); return; }
+      if (password.length < 8) { showMsg('Password must be at least 8 characters.', 'error'); return; }
+      if (!/[A-Z]/.test(password)) { showMsg('Password must contain at least one uppercase letter.', 'error'); return; }
+      if (!/[0-9]/.test(password)) { showMsg('Password must contain at least one number.', 'error'); return; }
+      var btn = document.getElementById('btnSignUp');
+      setLoading(btn, true);
+      try {
+        var cred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(cred.user, { displayName: first + ' ' + last });
+        await cred.user.sendEmailVerification();
+        showMsg('Account created! Please check your email to verify your address.', 'success');
+        // redirect handled by onAuthStateChanged
+      } catch(err) {
+        showMsg(friendlyError(err.code), 'error');
+        setLoading(btn, false);
+      }
+    });
+
+    // ── FORGOT PASSWORD ──
+    document.getElementById('formForgot').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      clearMsg();
+      var email = document.getElementById('fpEmail').value.trim().toLowerCase();
+      if (!email) { showMsg('Please enter your email.', 'error'); return; }
+      var btn = document.getElementById('btnForgot');
+      setLoading(btn, true);
+      try {
+        await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        // Always show success — never reveal if email exists
+        showMsg('If an account exists for that email, a reset link has been sent. Check your inbox and spam folder.', 'success');
+      } catch(err) {
+        showMsg('Could not send reset email. Please try again.', 'error');
+      } finally {
+        setLoading(btn, false);
+      }
+    });
+
+    // ── SHOW/HIDE PASSWORD ──
+    document.querySelectorAll('.auth-pw-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var input = document.getElementById(btn.dataset.target);
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.style.color = '#00C9A7';
+        } else {
+          input.type = 'password';
+          btn.style.color = '';
+        }
+      });
+    });
+  </script>
+
+  <!-- Nav hamburger -->
+  <script>
+    (function() {
+      var btn  = document.getElementById('hamburger');
+      var menu = document.getElementById('mobileMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', function() { menu.classList.toggle('open'); });
+      }
+    }());
+  </script>
+
+</body>
+</html>

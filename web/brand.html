@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand – FITR</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://firebasestorage.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.joinfitr.com; frame-ancestors 'none'; upgrade-insecure-requests;" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+
+    /* ── LOADING / ERROR ── */
+    .bp-loading {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:60vh; gap:14px; color:#888; font-size:15px;
+    }
+    .bp-spinner { width:36px; height:36px; border:2px solid #e3e6e8; border-top-color:#00C9A7; border-radius:50%; animation:bpspin .7s linear infinite; }
+    @keyframes bpspin { to { transform:rotate(360deg); } }
+
+    /* ── HERO ── */
+    .bp-banner {
+      width:100%; height:220px; background:linear-gradient(135deg,#e8faf7,#f0f2f5);
+      overflow:hidden; position:relative;
+    }
+    .bp-banner img { width:100%; height:100%; object-fit:cover; }
+    @media(max-width:600px) { .bp-banner { height:140px; } }
+
+    .bp-hero {
+      background:#fff;
+      border-bottom:1px solid #e3e6e8;
+      padding:0 24px 36px;
+    }
+    .bp-hero-inner { max-width:1100px; margin:0 auto; display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; padding-top:0; }
+
+    .bp-avatar-wrap { margin-top:-62px; flex-shrink:0; position:relative; z-index:2; }
+    .bp-avatar {
+      width:124px; height:124px; border-radius:50%;
+      background:linear-gradient(135deg,#00C9A7,#00DFB9);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Bebas Neue',sans-serif; font-size:54px; color:#080f18;
+      border:5px solid #fff; box-shadow:0 6px 28px #00C9A740;
+      overflow:hidden;
+    }
+    .bp-avatar img { width:100%; height:100%; object-fit:cover; }
+    .bp-info { flex:1; min-width:220px; padding-top:20px; }
+    .bp-verified { display:inline-flex; align-items:center; gap:5px; background:#f0fdfb; border:1px solid #00C9A730; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700; color:#00A87D; letter-spacing:.5px; margin-bottom:10px; }
+    .bp-name { font-family:'Bebas Neue',sans-serif; font-size:40px; letter-spacing:1.5px; color:#111; line-height:1; margin-bottom:8px; }
+    .bp-bio  { font-size:15px; color:#555; line-height:1.65; max-width:640px; margin-bottom:16px; }
+
+    .bp-links { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+    .bp-link-btn {
+      display:inline-flex; align-items:center; gap:6px; padding:8px 16px;
+      border:1px solid #d5d9d9; border-radius:10px; font-size:13px; font-weight:600;
+      color:#333; text-decoration:none; background:#fff; transition:all .2s;
+    }
+    .bp-link-btn:hover { border-color:#00C9A7; color:#00A87D; background:#f0fdfb; }
+
+    .bp-stats { display:flex; gap:28px; flex-wrap:wrap; }
+    .bp-stat-val   { font-family:'Bebas Neue',sans-serif; font-size:28px; color:#111; line-height:1; }
+    .bp-stat-label { font-size:11px; color:#888; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+    /* Category chips in hero */
+    .bp-cat-chips { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+    .bp-cat-chip { padding:4px 12px; background:#f5f6f7; border:1px solid #e3e6e8; border-radius:20px; font-size:11px; font-weight:600; color:#555; letter-spacing:.2px; }
+
+    /* Category filter tabs above grid */
+    .bp-cat-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px; }
+    .bp-cat-tab { padding:9px 20px; border-radius:22px; border:1.5px solid #e3e6e8; background:#fff; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:#555; cursor:pointer; transition:all .2s; }
+    .bp-cat-tab:hover { border-color:#00C9A7; color:#00A87D; background:#f0fdfb; }
+    .bp-cat-tab.active { background:#111; border-color:#111; color:#fff; }
+
+    /* ── PRODUCTS SECTION ── */
+    .bp-section { max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
+
+    .bp-section-title {
+      font-family:'Bebas Neue',sans-serif; font-size:26px; color:#111; letter-spacing:.5px;
+      margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #e3e6e8;
+      display:flex; align-items:center; gap:10px;
+    }
+    .bp-section-title .accent { color:#00C9A7; }
+
+    /* Product grid */
+    .bp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; }
+
+    .bp-card {
+      background:#fff; border:1px solid #e8eaec; border-radius:16px;
+      overflow:hidden; transition:all .2s; cursor:pointer;
+    }
+    .bp-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.08); border-color:#00C9A740; }
+
+    .bp-card-img {
+      width:100%; aspect-ratio:1/1; background:#f7f8fa;
+      display:flex; align-items:center; justify-content:center; font-size:56px;
+      overflow:hidden; position:relative;
+    }
+    .bp-card-img img { width:100%; height:100%; object-fit:cover; }
+    .bp-card-badge {
+      position:absolute; top:10px; left:10px; background:#e63946; color:#fff;
+      font-size:10px; font-weight:800; letter-spacing:.5px;
+      border-radius:5px; padding:3px 8px;
+    }
+
+    .bp-card-body { padding:14px; }
+    .bp-card-name  { font-size:14px; font-weight:700; color:#111; line-height:1.35; margin-bottom:8px; height:38px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .bp-card-price-row { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+    .bp-card-price  { font-size:17px; font-weight:800; color:#111; }
+    .bp-card-old    { font-size:12px; color:#aaa; text-decoration:line-through; }
+    .bp-card-actions { display:flex; gap:8px; }
+    .btn-bp-view {
+      flex:1; padding:9px; border-radius:8px; border:none;
+      background:linear-gradient(135deg,#00C9A7,#00DFB9);
+      font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; color:#080f18;
+      cursor:pointer; transition:opacity .2s;
+    }
+    .btn-bp-view:hover { opacity:.88; }
+    .btn-bp-cart {
+      flex:1; padding:9px; border-radius:8px;
+      border:2px solid #111; background:#fff;
+      font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:#111;
+      cursor:pointer; transition:all .15s;
+    }
+    .btn-bp-cart:hover, .btn-bp-cart.added { background:#111; color:#fff; }
+
+    /* ── ALSO LIKE SHELF ── */
+    .bp-shelf-wrap  { margin-top:48px; }
+    .bp-shelf-title { font-family:'Bebas Neue',sans-serif; font-size:22px; color:#111; letter-spacing:.5px; margin-bottom:14px; }
+    .bp-shelf-title .accent { color:#00C9A7; }
+    .bp-shelf-scroll { display:flex; gap:14px; overflow-x:auto; padding-bottom:10px; scrollbar-width:thin; touch-action:pan-x; }
+    .bp-shelf-scroll::-webkit-scrollbar { height:4px; }
+    .bp-shelf-scroll::-webkit-scrollbar-thumb { background:#d5d9d9; border-radius:2px; }
+
+    .bp-shelf-card {
+      flex-shrink:0; width:180px; background:#fff; border:1px solid #e8eaec;
+      border-radius:14px; overflow:hidden; cursor:pointer; transition:all .2s;
+    }
+    .bp-shelf-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.08); border-color:#00C9A740; }
+    .bp-shelf-card-img { width:100%; aspect-ratio:1/1; background:#f7f8fa; display:flex; align-items:center; justify-content:center; font-size:40px; overflow:hidden; }
+    .bp-shelf-card-img img { width:100%; height:100%; object-fit:cover; }
+    .bp-shelf-card-body { padding:10px; }
+    .bp-shelf-card-brand { font-size:9px; font-weight:700; color:#00A87D; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px; }
+    .bp-shelf-card-name  { font-size:12px; font-weight:600; color:#111; line-height:1.3; height:30px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; margin-bottom:6px; }
+    .bp-shelf-card-price { font-size:14px; font-weight:800; color:#111; }
+
+    /* Empty */
+    .bp-empty { text-align:center; padding:60px 24px; }
+    .bp-empty-icon  { font-size:48px; margin-bottom:14px; }
+    .bp-empty-title { font-size:18px; font-weight:700; color:#111; margin-bottom:6px; }
+    .bp-empty-sub   { color:#888; font-size:14px; }
+
+    /* Bell */
+    .nav-bell-wrap { position:relative; }
+    .nav-bell-btn { background:none; border:none; cursor:pointer; color:#e8edf2; padding:8px; border-radius:8px; position:relative; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    .nav-bell-btn:hover { background:rgba(255,255,255,.08); }
+    .bell-badge { position:absolute; top:2px; right:2px; min-width:17px; height:17px; background:#00C9A7; border-radius:9px; font-size:10px; font-weight:800; color:#080f18; display:flex; align-items:center; justify-content:center; padding:0 4px; pointer-events:none; }
+    .bell-dropdown { display:none; position:absolute; top:calc(100% + 8px); right:0; width:320px; background:#111827; border:1px solid #1e2d40; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,.4); z-index:999; overflow:hidden; }
+    .bell-dropdown.open { display:block; }
+    .bell-dd-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #1e2d40; font-size:13px; font-weight:600; color:#e8edf2; }
+    .bell-mark-all { background:none; border:none; cursor:pointer; font-size:11px; color:#00C9A7; font-family:'DM Sans',sans-serif; }
+    .bell-dd-list { max-height:300px; overflow-y:auto; }
+    .bell-empty { padding:20px 16px; text-align:center; font-size:13px; color:#6b7280; }
+    .bell-item { display:block; padding:12px 16px; border-bottom:1px solid #1e2d40; text-decoration:none; transition:background .15s; }
+    .bell-item:hover { background:#1a2233; }
+    .bell-item.unread { border-left:3px solid #00C9A7; }
+    .bell-item-title { font-size:13px; font-weight:600; color:#e8edf2; margin-bottom:2px; }
+    .bell-item-body  { font-size:12px; color:#6b7280; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-img"></span>FIT<span>R</span></a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn-secondary" id="navSignInLink">Sign In</a>
+        <div id="navUser"></div>
+        <div id="navBellWrap" style="display:none;align-items:center;"></div>
+        <a href="shop.html" class="btn-primary" id="navCartBtn" style="position:relative;">
+          &#128722; Cart <span id="navCartCount" style="font-size:12px;"></span>
+        </a>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link active">Shop</a>
+      <a href="about.html" class="nav-mobile-link">About</a>
+      <a href="contact.html" class="nav-mobile-link">Contact</a>
+      <a href="auth.html" class="nav-mobile-link" id="navMobileSignInLink">Sign In</a>
+      <a href="account.html" class="nav-mobile-link" id="navMobileAccount" style="display:none;">My Account</a>
+      <a href="orders.html" class="nav-mobile-link" id="navMobileOrders" style="display:none;">My Orders</a>
+      <a href="wishlist.html" class="nav-mobile-link" id="navMobileWishlist" style="display:none;">Wishlist</a>
+    </div>
+  </nav>
+
+  <!-- LOADING -->
+  <div id="bpLoading" style="margin-top:48px;"><div class="bp-loading"><div class="bp-spinner"></div>Loading brand…</div></div>
+
+  <!-- ERROR -->
+  <div id="bpError" style="display:none;text-align:center;padding:80px 24px;margin-top:48px;">
+    <div style="font-size:48px;margin-bottom:16px;">😕</div>
+    <div style="font-size:18px;font-weight:700;color:#111;margin-bottom:8px;">Brand not found</div>
+    <a href="shop.html" style="color:#00A87D;font-size:14px;font-weight:600;text-decoration:none;">← Back to Shop</a>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="bpContent" style="display:none;margin-top:48px;">
+
+    <!-- BANNER -->
+    <div class="bp-banner" id="bpBanner" style="display:none;">
+      <img id="bpBannerImg" src="" alt="Brand banner" />
+    </div>
+
+    <!-- HERO -->
+    <div class="bp-hero">
+      <div class="bp-hero-inner">
+        <div class="bp-avatar-wrap">
+          <div class="bp-avatar" id="bpAvatar">?</div>
+        </div>
+        <div class="bp-info">
+          <div class="bp-verified">✓ FITR Verified Seller</div>
+          <div class="bp-name" id="bpName">Brand</div>
+          <div class="bp-bio" id="bpBio" style="display:none;"></div>
+          <div class="bp-cat-chips" id="bpCatChips" style="display:none;"></div>
+          <div class="bp-links" id="bpLinks"></div>
+          <div class="bp-stats" id="bpStats">
+            <div>
+              <div class="bp-stat-val" id="statProducts">0</div>
+              <div class="bp-stat-label">Products</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL PRODUCTS -->
+    <div class="bp-section">
+      <div class="bp-section-title">All <span class="accent">Products</span></div>
+      <div id="bpCategoryTabs" class="bp-cat-tabs" style="display:none;"></div>
+      <div id="bpGrid" class="bp-grid"></div>
+
+      <!-- YOU MAY ALSO LIKE -->
+      <div class="bp-shelf-wrap" id="alsoLikeWrap" style="display:none;">
+        <div class="bp-shelf-title">You May <span class="accent">Also Like</span></div>
+        <div class="bp-shelf-scroll" id="alsoLikeShelf"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer" style="margin-top:0;">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms.html" class="footer-link">Terms of Service</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR, Inc. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    });
+    function getCart() { try { return JSON.parse(localStorage.getItem('fitr_cart')||'[]'); } catch(e) { return []; } }
+    function saveCart(c) {
+      localStorage.setItem('fitr_cart', JSON.stringify(c));
+      var el = document.getElementById('navCartCount');
+      if (el) el.textContent = c.length > 0 ? '('+c.length+')' : '';
+    }
+    (function() {
+      var c = getCart(); var el = document.getElementById('navCartCount');
+      if (el && c.length) el.textContent = '('+c.length+')';
+    })();
+  </script>
+
+  <script src="nav-auth.js"></script>
+
+  <script type="module">
+    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, doc, onSnapshot, collection, getDocs,
+      query, where, limit, orderBy, writeBatch,
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const cfg = {
+      apiKey:            "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain:        "fitr-22814.firebaseapp.com",
+      projectId:         "fitr-22814",
+      storageBucket:     "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId:             "1:900395772549:web:2d48b5877b8d247e7797ec",
+    };
+    const firebaseApp = getApps().length ? getApps()[0] : initializeApp(cfg);
+    const auth = getAuth(firebaseApp);
+    const db   = getFirestore(firebaseApp);
+
+    const brandId = new URLSearchParams(window.location.search).get('id');
+
+    if (!brandId) {
+      show('bpError');
+    } else {
+      init();
+    }
+
+    function show(id) {
+      ['bpLoading','bpError','bpContent'].forEach(function(s) {
+        var el = document.getElementById(s);
+        if (el) el.style.display = s === id ? 'block' : 'none';
+      });
+      // Ensure page is at the top when content reveals
+      if (id === 'bpContent') window.scrollTo(0, 0);
+    }
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function emojiFor(cat) {
+      const s=(cat||'').toLowerCase();
+      if(s.includes('protein'))   return '🥛';
+      if(s.includes('pre'))       return '⚡';
+      if(s.includes('creatine'))  return '💪';
+      if(s.includes('vitamin'))   return '🌿';
+      if(s.includes('hydration')) return '💧';
+      if(s.includes('equipment')) return '🏋️';
+      if(s.includes('apparel'))   return '👕';
+      if(s.includes('recovery'))  return '🧊';
+      return '📦';
+    }
+
+    // Track whether the page has done its first load
+    var heroRendered = false;
+
+    function init() {
+      // onSnapshot gives real-time updates — logo/banner changes on dashboard
+      // appear here immediately without the user needing to refresh
+      onSnapshot(doc(db, 'brands', brandId), async function(brandSnap) {
+        if (!brandSnap.exists()) {
+          if (!heroRendered) show('bpError');
+          return;
+        }
+        const brand = brandSnap.data();
+
+        if (!heroRendered) {
+          // First load: render everything
+          heroRendered = true;
+          renderHero(brand);
+          show('bpContent');
+
+          const products = await loadProducts();
+
+          // Load "also like" from the most common category
+          if (products.length) {
+            const catCounts = {};
+            products.forEach(function(p) { if (p.category) catCounts[p.category] = (catCounts[p.category]||0)+1; });
+            const topCat = Object.entries(catCounts).sort(function(a,b){ return b[1]-a[1]; })[0]?.[0];
+            if (topCat) loadAlsoLike(topCat, brandId);
+          }
+
+          // Wire auth for notifications / wishlist nav link
+          onAuthStateChanged(auth, function(user) {
+            if (user) {
+              loadNotifications(user.uid);
+              const mwl = document.getElementById('navMobileWishlist');
+              if (mwl) mwl.style.display = 'block';
+            }
+          });
+
+        } else {
+          // Subsequent snapshots: seller updated logo/banner/bio — refresh hero in place
+          renderHero(brand);
+        }
+
+      }, function(err) {
+        console.error('Brand snapshot error:', err);
+        if (!heroRendered) show('bpError');
+      });
+    }
+
+    function renderHero(b) {
+      const name    = b.brandName || 'Brand';
+      const initial = name.charAt(0).toUpperCase();
+      document.title = name + ' – FITR';
+      document.getElementById('bpName').textContent = name;
+
+      // Avatar: logo image → show it; no logo → show initial letter
+      const avatarEl = document.getElementById('bpAvatar');
+      avatarEl.innerHTML = '';
+      if (b.logoUrl) {
+        const img = document.createElement('img');
+        img.src = b.logoUrl; img.alt = name;
+        img.onerror = function() { avatarEl.innerHTML = ''; avatarEl.textContent = initial; };
+        avatarEl.appendChild(img);
+      } else {
+        avatarEl.textContent = initial;
+      }
+
+      // Banner: show if present, hide if removed
+      const bannerEl   = document.getElementById('bpBanner');
+      const bannerImg  = document.getElementById('bpBannerImg');
+      if (b.bannerUrl) {
+        bannerImg.src = b.bannerUrl;
+        bannerEl.style.display = 'block';
+      } else {
+        bannerEl.style.display = 'none';
+        bannerImg.src = '';
+      }
+
+      // The avatar uses margin-top:-40px to overlap the banner.
+      // Without a banner the hero starts right at the nav edge — add padding so
+      // the avatar sits visibly below the fixed nav instead of behind it.
+      const heroEl = document.querySelector('.bp-hero');
+      if (heroEl) heroEl.style.paddingTop = b.bannerUrl ? '0' : '72px';
+
+      // Bio
+      const bioEl = document.getElementById('bpBio');
+      if (b.bio) {
+        bioEl.textContent = b.bio;
+        bioEl.style.display = 'block';
+      } else {
+        bioEl.style.display = 'none';
+      }
+
+      // External links
+      const linksEl  = document.getElementById('bpLinks');
+      const website   = b.website ? (b.website.startsWith('http') ? b.website : 'https://'+b.website) : null;
+      const instagram = b.instagram ? ('https://instagram.com/'+b.instagram.replace('@','')) : null;
+      var linksHtml = '';
+      if (website)   linksHtml += '<a class="bp-link-btn" href="'+esc(website)+'" target="_blank" rel="noopener">🌐 Website</a>';
+      if (instagram) linksHtml += '<a class="bp-link-btn" href="'+esc(instagram)+'" target="_blank" rel="noopener">📷 Instagram</a>';
+      linksEl.innerHTML = linksHtml;
+    }
+
+    var bpAllProducts = [];
+
+    function productCardHtml(p) {
+      const price   = parseFloat(p.price || 0);
+      const compare = parseFloat(p.comparePrice || 0);
+      const hasDiscount = compare > price;
+      const pid = encodeURIComponent(p.productId || p.id);
+      const imgHtml = p.imageUrl
+        ? '<img src="'+esc(p.imageUrl)+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\'" />'
+        : esc(emojiFor(p.category));
+      return (
+        '<div class="bp-card" onclick="window.location.href=\'product.html?id='+pid+'\'">' +
+          '<div class="bp-card-img">' +
+            imgHtml +
+            (hasDiscount ? '<div class="bp-card-badge">SALE</div>' : '') +
+          '</div>' +
+          '<div class="bp-card-body">' +
+            '<div class="bp-card-name">' + esc(p.name||'') + '</div>' +
+            '<div class="bp-card-price-row">' +
+              '<span class="bp-card-price">$' + price.toFixed(2) + '</span>' +
+              (hasDiscount ? '<span class="bp-card-old">$'+compare.toFixed(2)+'</span>' : '') +
+            '</div>' +
+            '<div class="bp-card-actions">' +
+              '<button class="btn-bp-view" onclick="event.stopPropagation();window.location.href=\'product.html?id='+pid+'\'">View</button>' +
+              '<button class="btn-bp-cart" onclick="event.stopPropagation();addToCart(this)" ' +
+                'data-id="'+esc(p.productId||p.id)+'" ' +
+                'data-name="'+esc(p.name||'')+'" ' +
+                'data-brand="'+esc(p.brandName||'')+'" ' +
+                'data-brandid="'+esc(p.brandId||'')+'" ' +
+                'data-price="'+price.toFixed(2)+'" ' +
+                'data-img="'+esc(p.imageUrl||'')+'" ' +
+                'data-emoji="'+esc(emojiFor(p.category))+'">+ Cart</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderProductGrid(list) {
+      const grid = document.getElementById('bpGrid');
+      if (!list.length) {
+        grid.innerHTML =
+          '<div class="bp-empty" style="grid-column:1/-1;">' +
+            '<div class="bp-empty-icon">🛍</div>' +
+            '<div class="bp-empty-title">No products in this category yet</div>' +
+          '</div>';
+        return;
+      }
+      grid.innerHTML = list.map(productCardHtml).join('');
+    }
+
+    window.filterByCategory = function(btn, category) {
+      document.querySelectorAll('.bp-cat-tab').forEach(function(t) { t.classList.remove('active'); });
+      btn.classList.add('active');
+      var filtered = category
+        ? bpAllProducts.filter(function(p) { return (p.category||'Other') === category; })
+        : bpAllProducts;
+      renderProductGrid(filtered);
+    };
+
+    async function loadProducts() {
+      const grid = document.getElementById('bpGrid');
+      try {
+        // Query by brandId only (single-field index — no composite index needed).
+        // Filter status and sort client-side to avoid Firestore composite index requirement.
+        const q    = query(collection(db, 'products'), where('brandId','==',brandId));
+        const snap = await getDocs(q);
+        const products = [];
+        snap.forEach(function(d) {
+          const p = d.data();
+          if ((p.status || 'active') === 'active') products.push({ id: d.id, ...p });
+        });
+        // Sort newest first client-side
+        products.sort(function(a, b) {
+          return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+        });
+
+        bpAllProducts = products;
+        document.getElementById('statProducts').textContent = products.length;
+
+        // Build category map
+        var categoryMap = {};
+        products.forEach(function(p) {
+          var cat = p.category || 'Other';
+          if (!categoryMap[cat]) categoryMap[cat] = [];
+          categoryMap[cat].push(p);
+        });
+        var cats = Object.keys(categoryMap).sort();
+
+        // Hero category chips (what this brand sells)
+        var chipsEl = document.getElementById('bpCatChips');
+        if (chipsEl && cats.length) {
+          chipsEl.style.display = 'flex';
+          chipsEl.innerHTML = cats.map(function(cat) {
+            return '<span class="bp-cat-chip">' + esc(cat) + '</span>';
+          }).join('');
+        }
+
+        // Category filter tabs (only if brand sells in 2+ categories)
+        var tabsEl = document.getElementById('bpCategoryTabs');
+        if (cats.length > 1) {
+          tabsEl.style.display = 'flex';
+          tabsEl.innerHTML =
+            '<button class="bp-cat-tab active" onclick="filterByCategory(this,null)">All (' + products.length + ')</button>' +
+            cats.map(function(cat) {
+              return '<button class="bp-cat-tab" onclick="filterByCategory(this,\'' + cat.replace(/'/g,'\\\'') + '\')">' +
+                esc(cat) + ' (' + categoryMap[cat].length + ')</button>';
+            }).join('');
+        } else {
+          tabsEl.style.display = 'none';
+        }
+
+        if (!products.length) {
+          grid.innerHTML =
+            '<div class="bp-empty" style="grid-column:1/-1;">' +
+              '<div class="bp-empty-icon">🛍</div>' +
+              '<div class="bp-empty-title">No products listed yet</div>' +
+              '<div class="bp-empty-sub">This brand is setting up their store. Check back soon!</div>' +
+            '</div>';
+          return products;
+        }
+
+        renderProductGrid(products);
+
+        return products;
+      } catch(e) {
+        grid.innerHTML = '<div style="color:#888;font-size:14px;grid-column:1/-1;">Could not load products.</div>';
+        console.warn('Brand products error:', e.message);
+        return [];
+      }
+    }
+
+    async function loadAlsoLike(category, excludeBrandId) {
+      const wrap  = document.getElementById('alsoLikeWrap');
+      const shelf = document.getElementById('alsoLikeShelf');
+      try {
+        const q    = query(collection(db,'products'), where('category','==',category), where('status','==','active'), limit(16));
+        const snap = await getDocs(q);
+        const items = [];
+        snap.forEach(function(d) {
+          const p = d.data();
+          if ((p.brandId || '') !== excludeBrandId) items.push({ id: d.id, ...p });
+        });
+        if (!items.length) return;
+        wrap.style.display = 'block';
+        shelf.innerHTML = items.map(function(p) {
+          const pid = encodeURIComponent(p.productId || p.id);
+          const imgHtml = p.imageUrl
+            ? '<img src="'+esc(p.imageUrl)+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\'" />'
+            : esc(emojiFor(p.category));
+          return (
+            '<div class="bp-shelf-card" onclick="window.location.href=\'product.html?id='+pid+'\'">' +
+              '<div class="bp-shelf-card-img">' + imgHtml + '</div>' +
+              '<div class="bp-shelf-card-body">' +
+                '<div class="bp-shelf-card-brand">' + esc(p.brandName||'') + '</div>' +
+                '<div class="bp-shelf-card-name">'  + esc(p.name||'') + '</div>' +
+                '<div class="bp-shelf-card-price">$' + parseFloat(p.price||0).toFixed(2) + '</div>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+      } catch(e) { /* silent */ }
+    }
+
+    window.addToCart = function(btn) {
+      const d    = btn.dataset;
+      const cart = getCart();
+      if (cart.some(function(c) { return c.product && c.product.id === d.id; })) {
+        btn.textContent = '✓ Added'; btn.classList.add('added'); return;
+      }
+      cart.push({ product: { id: d.id, name: d.name, brand: d.brand, brandId: d.brandid, price: parseFloat(d.price), img: d.img, emoji: d.emoji }, qty: 1 });
+      saveCart(cart);
+      btn.textContent = '✓ Added'; btn.classList.add('added');
+    };
+
+    async function loadNotifications(uid) {
+      try {
+        let announcements = [];
+        try {
+          const annSnap = await getDocs(query(collection(db,'announcements'), orderBy('createdAt','desc'), limit(10)));
+          annSnap.forEach(function(d) { announcements.push({ id: d.id, ...d.data(), read: true, source: 'announcement' }); });
+        } catch(_) {}
+
+        function mergeAndRender(userSnap) {
+          const items = [];
+          userSnap.docs.forEach(function(d) { items.push({ id: d.id, ...d.data(), source: 'user' }); });
+          announcements.forEach(function(a) { items.push(a); });
+          items.sort(function(a,b) { return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+          const unread = items.filter(function(n) { return !n.read; }).length;
+          if (typeof window.setBellCount === 'function') window.setBellCount(unread);
+          if (typeof window.setBellItems === 'function') window.setBellItems(items);
+
+          const markAllBtn = document.getElementById('bellMarkAll');
+          if (markAllBtn && !markAllBtn._wired) {
+            markAllBtn._wired = true;
+            markAllBtn.addEventListener('click', function() {
+              const b = writeBatch(db);
+              userSnap.docs.forEach(function(d) {
+                if (!d.data().read) b.update(doc(db,'users',uid,'notifications',d.id), { read: true });
+              });
+              b.commit();
+            });
+          }
+        }
+
+        onSnapshot(query(collection(db,'users',uid,'notifications'), orderBy('createdAt','desc'), limit(20)), mergeAndRender);
+      } catch(e) { /* silent */ }
+    }
+  </script>
+</body>
+</html>

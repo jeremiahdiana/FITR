@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About – FITR</title>
+  <meta name="description" content="FITR is the fitness marketplace built for serious athletes. Learn our story and mission." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none';" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── ABOUT ANIMATIONS ── */
+    @keyframes typewriterCursor {
+      0%, 100% { border-color: #00C9A7; }
+      50%  { border-color: transparent; }
+    }
+    @keyframes countUp {
+      from { opacity:0; transform:translateY(15px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes orbitRing {
+      from { transform:rotate(0deg); }
+      to   { transform:rotate(360deg); }
+    }
+    @keyframes lineGrow {
+      from { width:0; }
+      to   { width:100%; }
+    }
+    @keyframes valuePop {
+      from { opacity:0; transform:scale(0.9) translateY(16px); }
+      to   { opacity:1; transform:scale(1) translateY(0); }
+    }
+
+    .about-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    /* MISSION */
+    .mission {
+      text-align: center;
+      padding: 60px 0 80px;
+      position: relative;
+    }
+
+    .mission-quote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 5vw, 48px);
+      letter-spacing: 2px;
+      color: #111;
+      line-height: 1.2;
+      max-width: 720px;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+    .mission-quote .typewriter-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.8em;
+      background: #00C9A7;
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: typewriterCursor 0.8s ease-in-out infinite;
+    }
+
+    .mission-quote span { color: #00C9A7; }
+
+    .mission-body {
+      font-size: 17px;
+      color: #666;
+      max-width: 580px;
+      margin: 0 auto;
+      line-height: 1.7;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease 0.6s, transform 0.6s ease 0.6s;
+    }
+    .mission-body.visible { opacity:1; transform:translateY(0); }
+
+    /* STORY */
+    .story-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 60px 0;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .story-section.visible { opacity:1; transform:translateY(0); }
+
+    @media (max-width: 700px) {
+      .story-section { grid-template-columns: 1fr; }
+    }
+
+    .story-visual {
+      background:linear-gradient(135deg,#e8faf7,#d0f5ec);
+      border: 1px solid #00C9A722;
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .story-visual::before {
+      content:'';
+      position:absolute; inset:-40%;
+      border-radius:50%;
+      border:1px solid #00C9A715;
+      animation:orbitRing 20s linear infinite;
+    }
+    .story-visual::after {
+      content:'';
+      position:absolute; inset:-30%;
+      border-radius:50%;
+      border:1px dashed #00C9A710;
+      animation:orbitRing 14s linear infinite reverse;
+    }
+    .story-visual:hover { border-color:#00C9A755; }
+
+    .story-visual-icon { font-size: 64px; margin-bottom: 8px; }
+
+    .story-visual-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 2px;
+      color: #00C9A7;
+    }
+
+    .story-visual-sub { font-size: 14px; color: #666; }
+
+    .story-text h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 1.5px;
+      color: #111;
+      margin-bottom: 16px;
+    }
+
+    .story-text p {
+      font-size: 15px;
+      color: #777;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .story-text p strong { color: #ccc; font-weight: 600; }
+
+    /* VALUES */
+    .values-section { padding: 60px 0; }
+
+    .values-section h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      letter-spacing: 2px;
+      color: #111;
+      margin-bottom: 32px;
+    }
+
+    .values-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .value-item {
+      background:#f0f2f5;
+      border:0.5px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 24px;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      opacity: 0;
+      transform: translateY(20px) scale(0.97);
+    }
+    .value-item.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      animation: valuePop 0.5s ease both;
+    }
+    .value-item:hover { border-color: #00C9A755; transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,201,167,0.07); }
+
+    .value-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      color: #00C9A722;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .value-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: #111;
+      margin-bottom: 8px;
+    }
+
+    .value-desc { font-size: 13px; color: #666; line-height: 1.6; }
+
+    /* STATS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      padding: 60px 0;
+    }
+
+    .stat-card {
+      background:#f0f2f5;
+      border:0.5px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 28px 20px;
+      text-align: center;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content:'';
+      position:absolute; bottom:0; left:0;
+      height:2px; width:0;
+      background:linear-gradient(90deg,#00C9A7,#2255FF);
+      transition:width 0.6s ease;
+    }
+    .stat-card.counted::before { width:100%; }
+    .stat-card:hover { border-color:#00C9A733; transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,201,167,0.08); }
+
+    .stat-card-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: #00C9A7;
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+
+    .stat-card-label { font-size: 13px; color: #555; margin-top: 6px; }
+
+    /* INVESTOR */
+    .investor-section {
+      background:#f7f8fa;
+      border:1px solid #e3e6e8;
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .investor-section h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 2px;
+      color: #111;
+      margin-bottom: 12px;
+    }
+
+    .investor-section p {
+      font-size: 15px;
+      color: #666;
+      max-width: 520px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    .investor-points {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .investor-point {
+      background:#f0f2f5;
+      border:0.5px solid #d5d9d9;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 13px;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .investor-point span { color: #00C9A7; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-img"></span>FIT<span>R</span>
+      </a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link active">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <form class="nav-search" action="shop.html" id="navSearchForm">
+        <input type="search" name="q" class="nav-search-input" placeholder="Search FITR…" maxlength="100" autocomplete="off" />
+        <button type="submit" class="nav-search-btn">&#128269;</button>
+      </form>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn-secondary" id="navSignInLink">Sign In</a>
+        <div id="navUser"></div>
+        <a href="contact.html" class="btn-primary">Partner with Us</a>
+        <div id="navCartWrap"></div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link">Shop</a>
+      <a href="about.html" class="nav-mobile-link active">About</a>
+      <a href="contact.html" class="nav-mobile-link">Contact</a>
+      <a href="contact.html" class="nav-mobile-link gold">Partner with Us</a>
+      <a href="auth.html" class="nav-mobile-link" id="navMobileSignInLink">Sign In</a>
+      <a href="account.html" class="nav-mobile-link" id="navMobileAccount" style="display:none;">My Account</a>
+      <a href="orders.html" class="nav-mobile-link" id="navMobileOrders" style="display:none;">My Orders</a>
+      <a href="wishlist.html" class="nav-mobile-link" id="navMobileWishlist" style="display:none;">Wishlist</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="page-header-glow"></div>
+    <div class="page-header-eyebrow">Our Story</div>
+    <h1>BUILT FOR <span>ATHLETES</span></h1>
+    <p class="page-header-sub">FITR exists because serious athletes deserve a marketplace that takes their goals as seriously as they do.</p>
+  </div>
+
+  <div class="about-body">
+
+    <!-- MISSION STATEMENT -->
+    <div class="mission">
+      <div class="mission-quote">
+        FITR is a fitness marketplace connecting athletes with the best supplements, equipment, and apparel on the market — all in one place, with <span>no compromises on quality.</span>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- STORY -->
+    <div class="story-section">
+      <div class="story-visual">
+        <div class="story-visual-icon">🏋️</div>
+        <div class="story-visual-text">The Problem</div>
+        <div class="story-visual-sub">Athletes shopping across 10+ different sites</div>
+      </div>
+      <div class="story-text">
+        <h2>WHY FITR EXISTS</h2>
+        <p>
+          Finding quality fitness products is fragmented. You're buying protein from one site, gear from another, and apparel from a third — each with their own checkout, shipping, and trust issues.
+        </p>
+        <p>
+          <strong>FITR fixes that.</strong> One marketplace, vetted brands, athlete-first design. Whether you're a competitive lifter or just starting out, FITR is where you shop.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-num">50+</div>
+        <div class="stat-card-label">Partner Brands</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">5K+</div>
+        <div class="stat-card-label">Products Listed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">1</div>
+        <div class="stat-card-label">Place to Shop</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">2</div>
+        <div class="stat-card-label">Platforms (iOS + Android)</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- VALUES -->
+    <div class="values-section">
+      <h2>WHAT WE STAND FOR</h2>
+      <div class="values-list">
+        <div class="value-item">
+          <div class="value-number">01</div>
+          <div class="value-title">Quality First</div>
+          <p class="value-desc">Every brand is reviewed before listing. No sketchy supplements, no cheap knockoff gear. Only the real stuff.</p>
+        </div>
+        <div class="value-item">
+          <div class="value-number">02</div>
+          <div class="value-title">Athlete-Driven</div>
+          <p class="value-desc">The platform is built around how athletes actually shop — fast, focused, and by category, not by brand algorithm.</p>
+        </div>
+        <div class="value-item">
+          <div class="value-number">03</div>
+          <div class="value-title">One Checkout</div>
+          <p class="value-desc">Stop juggling five tabs and five carts. FITR puts every brand under one roof so you shop faster and ship smarter.</p>
+        </div>
+        <div class="value-item">
+          <div class="value-number">04</div>
+          <div class="value-title">Community First</div>
+          <p class="value-desc">FITR rewards the people who build fitness culture — not just the brands that sell to them.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- INVESTOR / PARTNER PITCH -->
+    <div class="investor-section">
+      <h2>FOR INVESTORS & PARTNERS</h2>
+      <p>
+        FITR is building the go-to destination for fitness commerce. We're growing our brand network and open to strategic investment and partnership conversations.
+      </p>
+      <div class="investor-points">
+        <div class="investor-point"><span>✓</span> Performance-based revenue model</div>
+        <div class="investor-point"><span>✓</span> iOS + Android + Web</div>
+        <div class="investor-point"><span>✓</span> Curated, high-intent audience</div>
+        <div class="investor-point"><span>✓</span> Brand partnership opportunities</div>
+        <div class="investor-point"><span>✓</span> Creator referral program</div>
+        <div class="investor-point"><span>✓</span> Scalable marketplace model</div>
+      </div>
+      <a href="contact.html" class="btn-primary" style="font-size:15px; padding:14px 32px;">Reach Out →</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="contact.html" class="footer-link">Contact</a>
+        <a href="contact.html" class="footer-link">Partners</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR. All rights reserved. · joinfitr.com</div>
+    </div>
+  </footer>
+
+  <script src="nav-auth.js"></script>
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    });
+
+    // ── REVEAL SECTIONS ──
+    const revealEls = document.querySelectorAll('.story-section');
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => revealObs.observe(el));
+
+    // ── STAGGER VALUE ITEMS ──
+    const valueItems = document.querySelectorAll('.value-item');
+    const valueObs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 100);
+          valueObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    valueItems.forEach(el => valueObs.observe(el));
+
+    // ── ANIMATED STAT COUNTERS ──
+    function easeOutQuad(t) { return t * (2 - t); }
+    function countTo(el, target, suffix) {
+      el.closest('.stat-card').classList.add('counted');
+      let start = null;
+      const duration = 1400;
+      function step(ts) {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / duration, 1);
+        const val = Math.floor(easeOutQuad(p) * target);
+        el.textContent = val + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = target + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+
+    const statsObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.querySelectorAll('.stat-card-num').forEach(el => {
+          const raw = el.textContent;
+          if (raw.includes('+')) countTo(el, parseInt(raw), '+');
+          else if (raw.includes('%')) countTo(el, parseInt(raw), '%');
+          else if (!isNaN(parseInt(raw))) countTo(el, parseInt(raw), '');
+        });
+        statsObs.unobserve(entry.target);
+      });
+    }, { threshold: 0.4 });
+    const statsRow = document.querySelector('.stats-row');
+    if (statsRow) statsObs.observe(statsRow);
+  </script>
+</body>
+</html>

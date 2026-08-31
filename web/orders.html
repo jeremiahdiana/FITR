@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Orders – FITR</title>
+  <meta name="description" content="Track and view your FITR orders." />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    .orders-page {
+      min-height: 100vh;
+      padding: 100px 24px 80px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .orders-header { margin-bottom: 40px; }
+    .orders-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px; color: #111;
+      letter-spacing: 2px; margin-bottom: 4px;
+    }
+    .orders-header p { color: #555; font-size: 14px; }
+
+    /* Filter tabs */
+    .orders-tabs {
+      display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .orders-tab {
+      padding: 7px 18px; border-radius: 8px;
+      border:1px solid #d5d9d9; background: none;
+      color: #555; font-size: 13px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .orders-tab.active { border-color: #00C9A7; color: #00C9A7; background: #e8faf7; }
+
+    /* Order card */
+    .order-card {
+      background: #f7f8fa;
+      border:1px solid #e3e6e8;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .order-card:hover { border-color: #d5d9d9; }
+
+    .order-card-header {
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap;
+      gap: 12px; padding: 20px 24px;
+      border-bottom: 1px solid #e3e6e8;
+    }
+    .order-meta { display: flex; gap: 32px; flex-wrap: wrap; }
+    .order-meta-item { }
+    .order-meta-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #999; margin-bottom: 3px;
+    }
+    .order-meta-value { font-size: 14px; font-weight: 600; color: #111; }
+
+    .order-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .order-status.processing { background: #fff8e6; color: #c47f00; border: 1px solid #f5a62333; }
+    .order-status.shipped    { background: #e6f4ff; color: #0077cc; border: 1px solid #4db6ff33; }
+    .order-status.delivered  { background: #e8faf7; color: #00997f; border: 1px solid #00C9A733; }
+    .order-status.cancelled  { background: #1a0005; color: #ff3366; border: 1px solid #ff336633; }
+    .order-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .order-items { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+    .order-item { display: flex; align-items: center; gap: 14px; }
+    .order-item-img {
+      width: 52px; height: 52px; border-radius: 8px;
+      background:#ffffff; border:1px solid #e3e6e8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0; overflow: hidden;
+    }
+    .order-item-img img { width: 100%; height: 100%; object-fit: cover; }
+    .order-item-info { flex: 1; }
+    .order-item-name { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 2px; }
+    .order-item-sub { font-size: 12px; color: #555; }
+    .order-item-price { font-size: 14px; font-weight: 700; color: #111; }
+
+    .order-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; border-top: 1px solid #1a1a1a; flex-wrap: wrap; gap: 10px;
+    }
+    .order-total { font-size: 13px; color: #555; }
+    .order-total strong { color: #111; }
+    .order-actions { display: flex; gap: 8px; }
+    .order-action-btn {
+      padding: 7px 16px; border-radius: 7px;
+      border:1px solid #d5d9d9; background: none;
+      color: #666; font-size: 12px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: all 0.15s;
+    }
+    .order-action-btn:hover { border-color: #555; color: #111; }
+    .order-action-btn.primary {
+      background: #00C9A7; color: #000; border-color: #00C9A7;
+    }
+    .order-action-btn.primary:hover { background: #00DFB9; border-color: #00DFB9; }
+
+    /* Empty state */
+    .orders-empty {
+      text-align: center; padding: 80px 24px;
+    }
+    .orders-empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.2; }
+    .orders-empty h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px; color: #111;
+      letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .orders-empty p { color: #555; font-size: 14px; margin-bottom: 24px; }
+    .orders-empty-btn {
+      display: inline-block; background: #00C9A7; color: #000;
+      font-weight: 700; font-size: 14px; padding: 12px 28px;
+      border-radius: 8px; text-decoration: none; transition: background 0.2s;
+    }
+    .orders-empty-btn:hover { background: #00DFB9; }
+
+    .loading-state { text-align: center; padding: 60px 0; color: #333; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-img"></span>FIT<span>R</span>
+      </a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <form class="nav-search" action="shop.html" id="navSearchForm">
+        <input type="search" name="q" class="nav-search-input" placeholder="Search FITR…" maxlength="100" autocomplete="off" />
+        <button type="submit" class="nav-search-btn">&#128269;</button>
+      </form>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn-secondary" id="navSignInLink">Sign In</a>
+        <div id="navUser"></div>
+        <a href="shop.html" class="btn-primary">Shop Now</a>
+        <div id="navCartWrap"></div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link">Shop</a>
+      <a href="about.html" class="nav-mobile-link">About</a>
+      <a href="contact.html" class="nav-mobile-link">Contact</a>
+      <a href="auth.html" class="nav-mobile-link" id="navMobileSignInLink">Sign In</a>
+      <a href="account.html" class="nav-mobile-link" id="navMobileAccount" style="display:none;">My Account</a>
+      <a href="orders.html" class="nav-mobile-link active" id="navMobileOrders" style="display:none;">My Orders</a>
+      <a href="wishlist.html" class="nav-mobile-link" id="navMobileWishlist" style="display:none;">Wishlist</a>
+    </div>
+  </nav>
+
+  <div class="orders-page">
+    <div class="loading-state" id="loadingState">Loading your orders…</div>
+
+    <div style="display:none" id="ordersContent">
+      <div class="orders-header">
+        <h1>MY <span style="color:#00C9A7">ORDERS</span></h1>
+        <p id="ordersSubtitle">Your order history.</p>
+      </div>
+
+      <div class="orders-tabs">
+        <button class="orders-tab active" data-filter="all">All Orders</button>
+        <button class="orders-tab" data-filter="processing">Processing</button>
+        <button class="orders-tab" data-filter="shipped">Shipped</button>
+        <button class="orders-tab" data-filter="delivered">Delivered</button>
+        <button class="orders-tab" data-filter="cancelled">Cancelled</button>
+      </div>
+
+      <div id="ordersList"></div>
+      <div class="orders-empty" id="ordersEmpty" style="display:none;">
+        <div class="orders-empty-icon">📦</div>
+        <h2>No orders yet</h2>
+        <p>When you place an order it'll show up here.</p>
+        <a href="shop.html" class="orders-empty-btn">Start Shopping →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="contact.html" class="footer-link">Contact</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR. All rights reserved. · joinfitr.com</div>
+    </div>
+  </footer>
+
+  <script src="nav-auth.js"></script>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, collection, query, orderBy, getDocs, onSnapshot, limit, writeBatch, doc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain:        "fitr-22814.firebaseapp.com",
+      projectId:         "fitr-22814",
+      storageBucket:     "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId:             "1:900395772549:web:2d48b5877b8d247e7797ec"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    const STATUS_LABELS = {
+      processing: 'Processing',
+      shipped:    'Shipped',
+      delivered:  'Delivered',
+      cancelled:  'Cancelled'
+    };
+
+    var allOrders = [];
+    var activeFilter = 'all';
+
+    function formatDate(ts) {
+      if (!ts) return '—';
+      var d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function renderOrders(orders) {
+      var list = document.getElementById('ordersList');
+      var empty = document.getElementById('ordersEmpty');
+      list.innerHTML = '';
+
+      var filtered = activeFilter === 'all' ? orders : orders.filter(o => o.status === activeFilter);
+
+      if (filtered.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      filtered.forEach(function(order) {
+        var card = document.createElement('div');
+        card.className = 'order-card';
+
+        var itemsHtml = (order.items || []).map(function(item) {
+          return '<div class="order-item">' +
+            '<div class="order-item-img">' + (item.image ? '<img src="' + item.image + '" alt="' + item.name + '">' : '💪') + '</div>' +
+            '<div class="order-item-info">' +
+              '<div class="order-item-name">' + item.name + '</div>' +
+              '<div class="order-item-sub">' + (item.brand || 'FITR') + (item.qty > 1 ? ' · Qty ' + item.qty : '') + '</div>' +
+            '</div>' +
+            '<div class="order-item-price">$' + Number(item.price || 0).toFixed(2) + '</div>' +
+          '</div>';
+        }).join('');
+
+        var statusClass = order.status || 'processing';
+        card.innerHTML =
+          '<div class="order-card-header">' +
+            '<div class="order-meta">' +
+              '<div class="order-meta-item"><div class="order-meta-label">Order</div><div class="order-meta-value">#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</div></div>' +
+              '<div class="order-meta-item"><div class="order-meta-label">Placed</div><div class="order-meta-value">' + formatDate(order.createdAt) + '</div></div>' +
+              '<div class="order-meta-item"><div class="order-meta-label">Items</div><div class="order-meta-value">' + (order.items || []).length + '</div></div>' +
+            '</div>' +
+            '<div class="order-status ' + statusClass + '"><span class="order-status-dot"></span>' + (STATUS_LABELS[statusClass] || statusClass) + '</div>' +
+          '</div>' +
+          '<div class="order-items">' + itemsHtml + '</div>' +
+          '<div class="order-card-footer">' +
+            '<div class="order-total">Total: <strong>$' + Number(order.total || 0).toFixed(2) + '</strong></div>' +
+            '<div class="order-actions">' +
+              (order.trackingUrl ? '<a href="' + order.trackingUrl + '" class="order-action-btn primary" target="_blank">Track Order →</a>' : '') +
+              '<button class="order-action-btn">View Details</button>' +
+            '</div>' +
+          '</div>';
+        list.appendChild(card);
+      });
+    }
+
+    // Filter tabs
+    document.querySelectorAll('.orders-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.orders-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        activeFilter = this.dataset.filter;
+        renderOrders(allOrders);
+      });
+    });
+
+    function loadNotifications(uid) {
+      try {
+        var notifQ = query(collection(db, 'users', uid, 'notifications'), orderBy('createdAt', 'desc'), limit(20));
+        onSnapshot(notifQ, function(snap) {
+          var items = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
+          var unread = items.filter(function(n) { return !n.read; }).length;
+          if (typeof window.setBellCount === 'function') window.setBellCount(unread);
+          if (typeof window.setBellItems === 'function') window.setBellItems(items);
+          var markAllBtn = document.getElementById('bellMarkAll');
+          if (markAllBtn && !markAllBtn._wired) {
+            markAllBtn._wired = true;
+            markAllBtn.addEventListener('click', function() {
+              var b = writeBatch(db);
+              snap.docs.forEach(function(d) { if (!d.data().read) b.update(doc(db, 'users', uid, 'notifications', d.id), { read: true }); });
+              b.commit();
+            });
+          }
+        });
+      } catch(e) { /* silent */ }
+    }
+
+    onAuthStateChanged(auth, async function(user) {
+      if (!user) { window.location.href = 'auth.html'; return; }
+
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('ordersContent').style.display = 'block';
+      loadNotifications(user.uid);
+
+      var nameParts = (user.displayName || '').split(' ');
+      document.getElementById('ordersSubtitle').textContent = 'Welcome back, ' + (nameParts[0] || user.email) + '. Here are your orders.';
+
+      try {
+        var ordersRef = collection(db, 'users', user.uid, 'orders');
+        var q = query(ordersRef, orderBy('createdAt', 'desc'));
+        var snap = await getDocs(q);
+        allOrders = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
+        renderOrders(allOrders);
+      } catch(e) {
+        renderOrders([]);
+      }
+    });
+
+    document.getElementById('hamburger').addEventListener('click', function() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    });
+  </script>
+
+</body>
+</html>

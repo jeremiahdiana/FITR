@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why FITR — The Case for Marketplace Distribution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #00C9A7;
+      --bg:#ffffff;
+      --panel:#f7f8fa;
+      --border:#e3e6e8;
+      --white: #111111;
+      --muted: #555;
+      --dim: #888;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; color: #111; font-size: 11pt; }
+      .page { page-break-after: always; padding: 40px !important; max-width: 100% !important; }
+      .page:last-child { page-break-after: avoid; }
+      .stat-num { color: #00A88A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .accent { color: #00A88A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .stat-card, .insight-card, .compare-col { background: #f8f8f8 !important; border-color: #ddd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .header-bar { background:#ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .header-bar * { color: #fff !important; }
+      .brand-accent { color: #00A88A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+    @page { margin: 0.6in; size: letter; }
+
+    /* ── SAVE BUTTON ── */
+    .save-btn {
+      position: fixed; bottom: 32px; right: 32px; z-index: 200;
+      background: var(--brand); color: #080f18;
+      font-weight: 800; font-size: 14px;
+      padding: 14px 28px; border-radius: 10px;
+      cursor: pointer; border: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s; box-shadow: 0 4px 20px #00C9A740;
+    }
+    .save-btn:hover { background: #00DFB9; transform: translateY(-2px); }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      max-width: 860px; margin: 0 auto;
+      padding: 60px 40px;
+    }
+
+    /* ── HEADER BAR ── */
+    .header-bar {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 48px; flex-wrap: wrap; gap: 20px;
+    }
+    .header-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px; letter-spacing: 4px; color: var(--white);
+    }
+    .header-logo .brand-accent { color: var(--brand); }
+    .header-title-block { text-align: right; }
+    .header-doc-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--brand); margin-bottom: 4px;
+    }
+    .header-doc-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px; letter-spacing: 2px; color: var(--white);
+    }
+
+    /* ── INTRO ── */
+    .intro-block { margin-bottom: 48px; }
+    .intro-block h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 5vw, 56px);
+      letter-spacing: 2px; line-height: 1; margin-bottom: 16px;
+    }
+    .intro-block h1 .accent { color: var(--brand); }
+    .intro-block p {
+      font-size: 16px; color: var(--muted); line-height: 1.8;
+      max-width: 640px; border-left: 3px solid var(--brand);
+      padding-left: 20px;
+    }
+    .intro-block p strong { color: var(--white); }
+
+    /* ── SECTION LABEL ── */
+    .sec-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--brand);
+      margin-bottom: 20px; display: block;
+    }
+
+    /* ── BIG STATS GRID ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-bottom: 48px;
+    }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px 24px;
+      position: relative; overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: linear-gradient(90deg, var(--brand), transparent);
+    }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px; color: var(--brand);
+      letter-spacing: 1px; line-height: 1; margin-bottom: 6px;
+    }
+    .stat-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 10px;
+    }
+    .stat-source {
+      font-size: 10px; color: var(--dim);
+      font-style: italic;
+    }
+
+    /* ── WIDE STAT ── */
+    .stat-wide {
+      background:linear-gradient(135deg,#e8faf7,#e0f0ff);
+      border: 1px solid #00C9A733;
+      border-radius: 16px; padding: 32px 36px;
+      display: flex; align-items: center; gap: 32px;
+      margin-bottom: 48px; flex-wrap: wrap;
+    }
+    .stat-wide-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 72px; color: var(--brand);
+      letter-spacing: 2px; line-height: 1; flex-shrink: 0;
+    }
+    .stat-wide-text h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .stat-wide-text p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .stat-wide-text p strong { color: var(--white); }
+
+    /* ── INSIGHTS ── */
+    .insight-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 48px;
+    }
+    @media (max-width: 600px) { .insight-grid { grid-template-columns: 1fr; } }
+
+    .insight-card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px;
+    }
+    .insight-icon { font-size: 24px; margin-bottom: 12px; }
+    .insight-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .insight-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .insight-card p strong { color: var(--white); }
+    .insight-card .insight-stat {
+      display: inline-block; margin-top: 10px;
+      background:#e8faf7; border: 1px solid #00C9A733;
+      border-radius: 6px; padding: 4px 12px;
+      font-size: 12px; font-weight: 700; color: var(--brand);
+    }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-wrap { margin-bottom: 48px; }
+    .compare-table {
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 0; border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 640px) { .compare-table { grid-template-columns: 1fr 1fr; } }
+
+    .compare-header {
+      background:#f7f8fa; padding: 14px 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+    .compare-header:last-child { border-right: none; }
+    .compare-header.highlight { color: var(--brand); background:#e8faf7; }
+
+    .compare-col {
+      padding: 14px 16px; font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .compare-col:last-child { border-right: none; }
+    .compare-col.row-label { color: var(--white); font-weight: 600; background:#f0f2f5; }
+    .compare-col.highlight { color: var(--brand); font-weight: 700; background: #e8faf7; }
+    .compare-col .bad { color: #ff6b6b; }
+    .compare-col .good { color: var(--brand); }
+    .compare-col .mid { color: #f5a623; }
+
+    /* ── FITNESS MARKET ── */
+    .market-block {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 16px; padding: 36px; margin-bottom: 48px;
+    }
+    .market-block h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px; letter-spacing: 2px; margin-bottom: 20px;
+    }
+    .market-block h2 span { color: var(--brand); }
+    .market-rows { display: flex; flex-direction: column; gap: 14px; }
+    .market-row { display: flex; align-items: center; gap: 16px; }
+    .market-row-label { font-size: 13px; color: var(--muted); width: 200px; flex-shrink: 0; }
+    .market-bar-wrap { flex: 1; background:#f0f2f5; border-radius: 4px; height: 8px; }
+    .market-bar { height: 8px; border-radius: 4px; background: var(--brand); }
+    .market-row-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px; color: var(--brand); width: 80px; text-align: right;
+    }
+
+    /* ── FOOTER ── */
+    .doc-footer {
+      border-top: 1px solid var(--border); padding-top: 28px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .doc-footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px; letter-spacing: 3px;
+    }
+    .doc-footer-logo span { color: var(--brand); }
+    .doc-footer p { font-size: 11px; color: var(--dim); }
+    .doc-footer a { color: var(--brand); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <button class="save-btn no-print" onclick="window.print()">⬇ Save as PDF</button>
+
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="header-bar">
+      <div class="header-logo">FIT<span class="brand-accent">R</span></div>
+      <div class="header-title-block">
+        <div class="header-doc-label">Brand Partner Brief · 2026</div>
+        <div class="header-doc-title">WHY MARKETPLACE DISTRIBUTION WINS</div>
+      </div>
+    </div>
+
+    <!-- INTRO -->
+    <div class="intro-block">
+      <h1>CONSUMERS DON'T<br/>SHOP BRANDS.<br/>THEY SHOP <span class="accent">DESTINATIONS.</span></h1>
+      <p>
+        The data is clear: <strong>shoppers go to marketplaces first</strong> — not individual brand websites.
+        The brands winning today aren't just building great products. They're distributing through
+        platforms where their customers already are. This document makes the case for
+        <strong>why FITR is that platform for fitness.</strong>
+      </p>
+    </div>
+
+    <!-- SECTION 1: MARKETPLACE DOMINANCE -->
+    <span class="sec-label">01 — The Marketplace Effect</span>
+
+    <div class="stat-wide">
+      <div class="stat-wide-num">63%</div>
+      <div class="stat-wide-text">
+        <h3>of all product searches start on a marketplace — not Google.</h3>
+        <p>
+          When a consumer wants to buy something, they go to a marketplace first.
+          <strong>Your brand's website is not where discovery happens.</strong>
+          Marketplaces capture intent at the moment it matters most.
+        </p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">74%</div>
+        <div class="stat-desc">of US consumers start product searches directly on Amazon — bypassing search engines entirely.</div>
+        <div class="stat-source">Source: Skai Consumer Survey</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">38%</div>
+        <div class="stat-desc">of all US e-commerce revenue flows through Amazon. One platform. One third of the market.</div>
+        <div class="stat-source">Source: eMarketer 2025</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2.4×</div>
+        <div class="stat-desc">Marketplace shoppers spend 2.4x more per session than brand website visitors due to cross-category browsing.</div>
+        <div class="stat-source">Source: Salesforce Commerce Report</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">55%</div>
+        <div class="stat-desc">of online shoppers check a marketplace before completing a purchase — even if they started on a brand site.</div>
+        <div class="stat-source">Source: Digital Commerce 360</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">67%</div>
+        <div class="stat-desc">of consumers say they prefer buying from a marketplace over a brand's own website for convenience and trust.</div>
+        <div class="stat-source">Source: BigCommerce Omnichannel Report</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">3.1×</div>
+        <div class="stat-desc">Brands listed on marketplaces grow revenue 3.1x faster than those relying solely on D2C channels.</div>
+        <div class="stat-source">Source: Shopify Enterprise Report</div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: FITNESS MARKET -->
+    <span class="sec-label">02 — The Fitness Market Opportunity</span>
+
+    <div class="market-block">
+      <h2>THE FITNESS INDUSTRY IS <span>MASSIVE</span> — AND GROWING.</h2>
+      <div class="market-rows">
+        <div class="market-row">
+          <div class="market-row-label">Global fitness market by 2027</div>
+          <div class="market-bar-wrap"><div class="market-bar" style="width:100%"></div></div>
+          <div class="market-row-val">$5.7T</div>
+        </div>
+        <div class="market-row">
+          <div class="market-row-label">US supplement industry by 2030</div>
+          <div class="market-bar-wrap"><div class="market-bar" style="width:80%"></div></div>
+          <div class="market-row-val">$60B</div>
+        </div>
+        <div class="market-row">
+          <div class="market-row-label">Sports apparel market by 2028</div>
+          <div class="market-bar-wrap"><div class="market-bar" style="width:65%"></div></div>
+          <div class="market-row-val">$248B</div>
+        </div>
+        <div class="market-row">
+          <div class="market-row-label">Home fitness equipment by 2028</div>
+          <div class="market-bar-wrap"><div class="market-bar" style="width:45%"></div></div>
+          <div class="market-row-val">$17B</div>
+        </div>
+        <div class="market-row">
+          <div class="market-row-label">Recovery & wellness by 2026</div>
+          <div class="market-bar-wrap"><div class="market-bar" style="width:38%"></div></div>
+          <div class="market-row-val">$9.6B</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: INSIGHTS -->
+    <span class="sec-label">03 — Consumer Shopping Behavior</span>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-icon">🏋️</div>
+        <h3>Fitness consumers shop across 4+ sites</h3>
+        <p>The average fitness shopper visits <strong>4.2 different websites</strong> to purchase supplements, gear, and apparel separately. There is no single trusted destination — until now.</p>
+        <span class="insight-stat">FITR solves this</span>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon">📱</div>
+        <h3>73% of fitness purchases are mobile</h3>
+        <p>Fitness shoppers are <strong>mobile-first</strong>. Most brand websites aren't optimized for this. FITR has a dedicated iOS + Android app built for mobile checkout.</p>
+        <span class="insight-stat">FITR has a native app</span>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon">🔁</div>
+        <h3>Repeat purchase rate is 3× higher on marketplaces</h3>
+        <p>When customers buy supplements or gear through a marketplace, <strong>repeat purchase rates are 3× higher</strong> than D2C — because they return to the platform, not the brand site.</p>
+        <span class="insight-stat">Built-in retention</span>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon">💡</div>
+        <h3>Discovery drives 48% of fitness purchases</h3>
+        <p><strong>48% of fitness product purchases</strong> are unplanned — discovered while browsing. Marketplaces capture this impulse. Brand websites don't.</p>
+        <span class="insight-stat">More eyes = more sales</span>
+      </div>
+    </div>
+
+    <!-- SECTION 4: COMPARISON -->
+    <span class="sec-label">04 — FITR vs. Your Current Options</span>
+
+    <div class="compare-wrap">
+      <div class="compare-table">
+        <div class="compare-header"></div>
+        <div class="compare-header">Your Website</div>
+        <div class="compare-header">Amazon</div>
+        <div class="compare-header highlight">FITR</div>
+
+        <div class="compare-col row-label">Upfront cost</div>
+        <div class="compare-col"><span class="mid">Dev costs</span></div>
+        <div class="compare-col"><span class="bad">$40/mo + fees</span></div>
+        <div class="compare-col highlight"><span class="good">$0</span></div>
+
+        <div class="compare-col row-label">Commission</div>
+        <div class="compare-col"><span class="good">0%</span></div>
+        <div class="compare-col"><span class="bad">15–45%</span></div>
+        <div class="compare-col highlight"><span class="good">12% only on sales</span></div>
+
+        <div class="compare-col row-label">Built-in discovery</div>
+        <div class="compare-col"><span class="bad">None</span></div>
+        <div class="compare-col"><span class="mid">Competitive</span></div>
+        <div class="compare-col highlight"><span class="good">Fitness-specific</span></div>
+
+        <div class="compare-col row-label">Mobile app</div>
+        <div class="compare-col"><span class="bad">Must build yourself</span></div>
+        <div class="compare-col"><span class="good">Yes</span></div>
+        <div class="compare-col highlight"><span class="good">iOS + Android</span></div>
+
+        <div class="compare-col row-label">Brand identity</div>
+        <div class="compare-col"><span class="good">Full control</span></div>
+        <div class="compare-col"><span class="bad">Minimal</span></div>
+        <div class="compare-col highlight"><span class="good">Dedicated brand page</span></div>
+
+        <div class="compare-col row-label">Setup time</div>
+        <div class="compare-col"><span class="bad">Weeks/months</span></div>
+        <div class="compare-col"><span class="mid">Days</span></div>
+        <div class="compare-col highlight"><span class="good">Under 1 week</span></div>
+
+        <div class="compare-col row-label">Target audience</div>
+        <div class="compare-col"><span class="mid">Your traffic only</span></div>
+        <div class="compare-col"><span class="mid">Everyone</span></div>
+        <div class="compare-col highlight"><span class="good">Fitness buyers only</span></div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="doc-footer">
+      <div class="doc-footer-logo">FIT<span>R</span></div>
+      <p>Ready to partner? Apply at <a href="https://joinfitr.com/partners">joinfitr.com/partners</a> or email <a href="mailto:app@joinfitr.com">app@joinfitr.com</a></p>
+      <p>© 2026 FITR · Confidential brand partner document</p>
+    </div>
+
+  </div>
+
+</body>
+</html>

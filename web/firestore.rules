@@ -1,0 +1,123 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── HELPERS ────────────────────────────────────────────────
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function isBrandOwner(brandId) {
+      return signedIn() && request.auth.uid == brandId;
+    }
+    // Only the 'read' field may be changed (mark-as-read)
+    function onlyMarkingRead() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+    }
+    // Only pendingDeletion and scheduledDeletionAt may be changed (schedule/cancel deletion)
+    function onlyUpdatingDeletion() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['pendingDeletion', 'scheduledDeletionAt']);
+    }
+
+    // ─── PUBLIC PRODUCTS (top-level collection) ──────────────────
+    // Buyers browse from here; only Admin SDK writes
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ─── BRANDS ──────────────────────────────────────────────────
+    match /brands/{brandId} {
+      // Anyone can view brand profiles (brand page in app + website)
+      allow read: if true;
+      // Only the brand owner can update their own profile
+      allow create, update, delete: if isBrandOwner(brandId);
+
+      // Private brand data (e.g. stripeConnectAccountId) — owner only
+      match /private/{doc} {
+        allow read, write: if isBrandOwner(brandId);
+      }
+
+      // Brand product catalogue — public read, owner write
+      match /products/{productId} {
+        allow read: if true;
+        allow write: if isBrandOwner(brandId);
+      }
+
+      // Brand orders — seller read only; all writes are Admin SDK
+      match /orders/{orderId} {
+        allow read: if isBrandOwner(brandId);
+        allow write: if false;
+      }
+
+      // Brand notifications — seller read + mark-as-read only
+      match /notifications/{notifId} {
+        allow read:   if isBrandOwner(brandId);
+        allow update: if isBrandOwner(brandId) && onlyMarkingRead();
+        allow create, delete: if false;
+      }
+    }
+
+    // ─── USERS ───────────────────────────────────────────────────
+    match /users/{uid} {
+      // Users can read/write their own profile document
+      allow read:   if isOwner(uid);
+      allow create: if isOwner(uid);
+      // Full update for own data; OR update only the deletion scheduling fields
+      allow update: if isOwner(uid) || (signedIn() && request.auth.uid == uid && onlyUpdatingDeletion());
+      allow delete: if isOwner(uid);
+
+      // Cart — full CRUD on own cart
+      match /cart/{itemId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // Orders — client creates one copy at checkout for order history display;
+      // authoritative copy lives in brands/{brandId}/orders (Admin SDK only)
+      match /orders/{orderId} {
+        allow read:   if isOwner(uid);
+        allow create: if isOwner(uid);
+        allow update, delete: if false;
+      }
+
+      // Wishlist — full CRUD on own wishlist
+      match /wishlist/{itemId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // Saved for later — full CRUD
+      match /savedForLater/{itemId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // Notifications — read + mark-as-read; all creates are Admin SDK
+      match /notifications/{notifId} {
+        allow read:   if isOwner(uid);
+        allow update: if isOwner(uid) && onlyMarkingRead();
+        allow create, delete: if false;
+      }
+    }
+
+    // ─── ADMIN-ONLY COLLECTIONS ───────────────────────────────────
+    // All written/read exclusively by server-side Admin SDK (bypasses rules).
+    // Deny all client access.
+    match /pending_orders/{docId} {
+      allow read, write: if false;
+    }
+    match /processed_payments/{docId} {
+      allow read, write: if false;
+    }
+    match /guest_orders/{docId} {
+      allow read, write: if false;
+    }
+
+    // ─── DENY EVERYTHING ELSE ─────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "FITR",
+    "slug": "fitr-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.joinfitr.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSUserNotificationUsageDescription": "FITR sends you order updates and shipping notifications.",
+        "NSCameraUsageDescription": "FITR uses your camera to let you upload profile and product photos.",
+        "NSPhotoLibraryUsageDescription": "FITR accesses your photo library to let you upload profile and product photos.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.joinfitr.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.joinfitr"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#00C9A7"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "89fc6aff-a97e-4939-941a-945d588a6f08"
+      }
+    },
+    "owner": "jerehmjr"
+  }
+}

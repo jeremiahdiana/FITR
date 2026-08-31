@@ -1,0 +1,96 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isValidCartItem() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['product', 'qty'])
+        && data.qty is int
+        && data.qty >= 1
+        && data.qty <= 99
+        && data.product is map
+        && data.product.keys().hasAll(['id', 'price', 'name', 'brand'])
+        && data.product.price is number
+        && data.product.price > 0
+        && data.product.price < 10000;
+    }
+
+    function isValidOrder() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['status', 'total', 'items', 'createdAt'])
+        && data.status == 'processing'
+        && data.total is number
+        && data.total > 0
+        && data.items is list
+        && data.items.size() > 0;
+    }
+
+    function isValidUserDoc() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['name', 'email', 'isPro', 'createdAt'])
+        && data.name is string
+        && data.name.size() >= 1
+        && data.name.size() <= 100
+        && data.email is string
+        && data.isPro is bool
+        // Users cannot set themselves as Pro — only server-side can do that
+        && (data.isPro == false || resource.data.isPro == true);
+    }
+
+    // ── Users collection ──
+    match /users/{uid} {
+      // Only the owner can read their own profile
+      allow read: if isOwner(uid);
+
+      // Only owner can create their own doc, with valid fields, isPro must be false on create
+      allow create: if isOwner(uid)
+        && isValidUserDoc()
+        && request.resource.data.isPro == false;
+
+      // Owner can update, but cannot self-promote to Pro
+      allow update: if isOwner(uid)
+        && isValidUserDoc()
+        && request.resource.data.isPro == resource.data.isPro;
+
+      // No deletions of user accounts via client
+      allow delete: if false;
+
+      // ── Cart subcollection ──
+      match /cart/{productId} {
+        // Only the cart owner can read/write their cart
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isValidCartItem();
+        allow delete: if isOwner(uid);
+      }
+
+      // ── Orders subcollection ──
+      match /orders/{orderId} {
+        allow read: if isOwner(uid);
+        // Users can create their own orders (after Stripe confirms payment)
+        // No updates or deletes — order history is immutable
+        allow create: if isOwner(uid) && isValidOrder();
+        allow update, delete: if false;
+      }
+    }
+
+    // ── Products collection — public read, no client writes ──
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK only
+    }
+
+    // ── Deny everything else ──
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wishlist – FITR</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.joinfitr.com; frame-ancestors 'none'; upgrade-insecure-requests;" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    .wl-wrap { max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
+    .wl-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:12px; }
+    .wl-title { font-family:'Bebas Neue',sans-serif; font-size:38px; letter-spacing:1px; color:#111; }
+    .wl-title span { color:#00C9A7; }
+    .wl-count { font-size:14px; color:#888; margin-top:4px; }
+
+    .wl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; }
+
+    .wl-card {
+      background:#fff; border:1px solid #e8eaec; border-radius:16px;
+      overflow:hidden; transition:all .2s; display:flex; flex-direction:column;
+    }
+    .wl-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.08); border-color:#00C9A740; }
+
+    .wl-card-img {
+      width:100%; aspect-ratio:1/1; background:#f7f8fa;
+      display:flex; align-items:center; justify-content:center;
+      font-size:60px; overflow:hidden; cursor:pointer; position:relative;
+    }
+    .wl-card-img img { width:100%; height:100%; object-fit:cover; }
+
+    .wl-card-remove {
+      position:absolute; top:10px; right:10px;
+      background:#fff; border:none; border-radius:50%; width:32px; height:32px;
+      font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+      box-shadow:0 2px 8px rgba(0,0,0,.15); color:#e63946; transition:all .15s; line-height:1;
+    }
+    .wl-card-remove:hover { background:#fff5f5; transform:scale(1.1); }
+
+    .wl-card-body { padding:14px; flex:1; display:flex; flex-direction:column; gap:6px; }
+    .wl-card-brand { font-size:10px; font-weight:700; color:#00A87D; text-transform:uppercase; letter-spacing:1px; }
+    .wl-card-name  { font-size:14px; font-weight:600; color:#111; line-height:1.35; flex:1; }
+    .wl-card-price { font-size:17px; font-weight:800; color:#111; }
+
+    .wl-card-actions { display:flex; gap:8px; padding:0 14px 14px; }
+    .btn-wl-view {
+      flex:1; padding:10px; border-radius:10px; border:none;
+      background:linear-gradient(135deg,#00C9A7,#00DFB9);
+      font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; color:#080f18;
+      cursor:pointer; transition:opacity .2s;
+    }
+    .btn-wl-view:hover { opacity:.88; }
+    .btn-wl-add {
+      flex:1; padding:10px; border-radius:10px;
+      border:2px solid #111; background:#fff;
+      font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:#111;
+      cursor:pointer; transition:all .2s;
+    }
+    .btn-wl-add:hover, .btn-wl-add.added { background:#111; color:#fff; }
+
+    .wl-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:300px; gap:14px; color:#888; font-size:14px; }
+    .wl-spinner  { width:36px; height:36px; border:2px solid #e3e6e8; border-top-color:#00C9A7; border-radius:50%; animation:wlspin .7s linear infinite; }
+    @keyframes wlspin { to { transform:rotate(360deg); } }
+
+    .wl-empty { text-align:center; padding:80px 24px; }
+    .wl-empty-icon  { font-size:56px; margin-bottom:16px; }
+    .wl-empty-title { font-size:22px; font-weight:800; color:#111; margin-bottom:8px; }
+    .wl-empty-sub   { color:#888; font-size:14px; line-height:1.65; margin-bottom:28px; }
+    .btn-shop-now {
+      display:inline-block; padding:14px 32px; border-radius:12px;
+      background:#111; color:#fff; text-decoration:none;
+      font-family:'DM Sans',sans-serif; font-weight:700; font-size:15px; transition:background .2s;
+    }
+    .btn-shop-now:hover { background:#333; }
+
+    .wl-guest { text-align:center; padding:80px 24px; }
+    .wl-guest-icon  { font-size:56px; margin-bottom:16px; }
+    .wl-guest-title { font-size:22px; font-weight:800; color:#111; margin-bottom:8px; }
+    .wl-guest-sub   { color:#888; font-size:14px; margin-bottom:28px; }
+    .btn-sign-in {
+      display:inline-block; padding:14px 32px; border-radius:12px;
+      background:#00C9A7; color:#080f18; text-decoration:none;
+      font-family:'DM Sans',sans-serif; font-weight:800; font-size:15px;
+    }
+
+    .nav-bell-wrap { position:relative; }
+    .nav-bell-btn { background:none; border:none; cursor:pointer; color:#e8edf2; padding:8px; border-radius:8px; position:relative; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    .nav-bell-btn:hover { background:rgba(255,255,255,.08); }
+    .bell-badge { position:absolute; top:2px; right:2px; min-width:17px; height:17px; background:#00C9A7; border-radius:9px; font-size:10px; font-weight:800; color:#080f18; display:flex; align-items:center; justify-content:center; padding:0 4px; pointer-events:none; }
+    .bell-dropdown { display:none; position:absolute; top:calc(100% + 8px); right:0; width:320px; background:#111827; border:1px solid #1e2d40; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,.4); z-index:999; overflow:hidden; }
+    .bell-dropdown.open { display:block; }
+    .bell-dd-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #1e2d40; font-size:13px; font-weight:600; color:#e8edf2; }
+    .bell-mark-all { background:none; border:none; cursor:pointer; font-size:11px; color:#00C9A7; font-family:'DM Sans',sans-serif; }
+    .bell-dd-list { max-height:300px; overflow-y:auto; }
+    .bell-empty { padding:20px 16px; text-align:center; font-size:13px; color:#6b7280; }
+    .bell-item { display:block; padding:12px 16px; border-bottom:1px solid #1e2d40; text-decoration:none; transition:background .15s; }
+    .bell-item:hover { background:#1a2233; }
+    .bell-item.unread { border-left:3px solid #00C9A7; }
+    .bell-item-title { font-size:13px; font-weight:600; color:#e8edf2; margin-bottom:2px; }
+    .bell-item-body  { font-size:12px; color:#6b7280; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-img"></span>FIT<span>R</span></a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn-secondary" id="navSignInLink">Sign In</a>
+        <div id="navUser"></div>
+        <div id="navBellWrap" style="display:none;align-items:center;"></div>
+        <a href="shop.html" class="btn-primary" id="navCartBtn" style="position:relative;">
+          &#128722; Cart <span id="navCartCount" style="font-size:12px;"></span>
+        </a>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link">Shop</a>
+      <a href="about.html" class="nav-mobile-link">About</a>
+      <a href="contact.html" class="nav-mobile-link">Contact</a>
+      <a href="auth.html" class="nav-mobile-link" id="navMobileSignInLink">Sign In</a>
+      <a href="account.html" class="nav-mobile-link" id="navMobileAccount" style="display:none;">My Account</a>
+      <a href="orders.html" class="nav-mobile-link" id="navMobileOrders" style="display:none;">My Orders</a>
+      <a href="wishlist.html" class="nav-mobile-link active" id="navMobileWishlist" style="display:none;">Wishlist</a>
+    </div>
+  </nav>
+
+  <div class="wl-wrap">
+
+    <div id="wlLoading" class="wl-loading">
+      <div class="wl-spinner"></div>
+      Loading wishlist…
+    </div>
+
+    <div id="wlGuest" style="display:none;" class="wl-guest">
+      <div class="wl-guest-icon">♡</div>
+      <div class="wl-guest-title">Sign in to view your wishlist</div>
+      <div class="wl-guest-sub">Save products you love and come back anytime.</div>
+      <a href="auth.html" class="btn-sign-in">Sign In</a>
+    </div>
+
+    <div id="wlContent" style="display:none;">
+      <div class="wl-header">
+        <div>
+          <div class="wl-title">My <span>Wishlist</span></div>
+          <div class="wl-count" id="wlCount">0 items</div>
+        </div>
+        <a href="shop.html" style="color:#00A87D;font-size:14px;font-weight:600;text-decoration:none;">← Continue Shopping</a>
+      </div>
+      <div id="wlEmpty" style="display:none;" class="wl-empty">
+        <div class="wl-empty-icon">♡</div>
+        <div class="wl-empty-title">Your wishlist is empty</div>
+        <div class="wl-empty-sub">Browse products and tap ♡ Save to Wishlist to save them here.</div>
+        <a href="shop.html" class="btn-shop-now">Browse Products</a>
+      </div>
+      <div class="wl-grid" id="wlGrid"></div>
+    </div>
+
+  </div>
+
+  <footer class="footer" style="margin-top:40px;">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms.html" class="footer-link">Terms of Service</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR, Inc. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    });
+    function getCart() { try { return JSON.parse(localStorage.getItem('fitr_cart')||'[]'); } catch(e) { return []; } }
+    (function() {
+      var c = getCart(); var el = document.getElementById('navCartCount');
+      if (el && c.length) el.textContent = '('+c.length+')';
+    })();
+  </script>
+
+  <script src="nav-auth.js"></script>
+
+  <script type="module">
+    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, collection, getDocs, deleteDoc, doc,
+      query, orderBy, limit, onSnapshot, writeBatch,
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const cfg = {
+      apiKey:            "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain:        "fitr-22814.firebaseapp.com",
+      projectId:         "fitr-22814",
+      storageBucket:     "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId:             "1:900395772549:web:2d48b5877b8d247e7797ec",
+    };
+    const firebaseApp = getApps().length ? getApps()[0] : initializeApp(cfg);
+    const auth = getAuth(firebaseApp);
+    const db   = getFirestore(firebaseApp);
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function emojiFor(cat) {
+      const s=(cat||'').toLowerCase();
+      if(s.includes('protein'))   return '🥛';
+      if(s.includes('pre'))       return '⚡';
+      if(s.includes('creatine'))  return '💪';
+      if(s.includes('vitamin'))   return '🌿';
+      if(s.includes('hydration')) return '💧';
+      if(s.includes('equipment')) return '🏋️';
+      if(s.includes('apparel'))   return '👕';
+      if(s.includes('recovery'))  return '🧊';
+      return '📦';
+    }
+
+    let currentUid = null;
+
+    onAuthStateChanged(auth, function(user) {
+      if (!user) {
+        document.getElementById('wlLoading').style.display = 'none';
+        document.getElementById('wlGuest').style.display   = 'block';
+        return;
+      }
+      currentUid = user.uid;
+      const mwl = document.getElementById('navMobileWishlist');
+      if (mwl) mwl.style.display = 'block';
+      loadWishlist(user.uid);
+      loadNotifications(user.uid);
+    });
+
+    async function loadWishlist(uid) {
+      try {
+        const q    = query(collection(db, 'users', uid, 'wishlist'), orderBy('addedAt', 'desc'));
+        const snap = await getDocs(q);
+        const items = snap.docs.map(function(d) { return { docId: d.id, ...d.data() }; });
+
+        document.getElementById('wlLoading').style.display = 'none';
+        document.getElementById('wlContent').style.display = 'block';
+        document.getElementById('wlCount').textContent     = items.length + ' item' + (items.length !== 1 ? 's' : '');
+
+        if (!items.length) {
+          document.getElementById('wlEmpty').style.display = 'block';
+          return;
+        }
+        renderGrid(items, uid);
+      } catch(e) {
+        document.getElementById('wlLoading').innerHTML = '<div style="color:#888;font-size:14px;">Could not load wishlist.</div>';
+        console.warn('Wishlist error:', e.message);
+      }
+    }
+
+    function renderGrid(items, uid) {
+      document.getElementById('wlGrid').innerHTML = items.map(function(item) {
+        const pid = encodeURIComponent(item.productId || item.docId);
+        const imgHtml = item.img
+          ? '<img src="' + esc(item.img) + '" alt="' + esc(item.name) + '" onerror="this.style.display=\'none\'" />'
+          : esc(emojiFor(item.category));
+        return (
+          '<div class="wl-card" id="wlcard-' + esc(item.docId) + '">' +
+            '<div class="wl-card-img" onclick="window.location.href=\'product.html?id=' + pid + '\'">' +
+              imgHtml +
+              '<button class="wl-card-remove" onclick="event.stopPropagation();removeItem(\'' + esc(item.docId) + '\')" title="Remove">♥</button>' +
+            '</div>' +
+            '<div class="wl-card-body">' +
+              '<div class="wl-card-brand">' + esc(item.brand || '') + '</div>' +
+              '<div class="wl-card-name">'  + esc(item.name  || '') + '</div>' +
+              '<div class="wl-card-price">$' + parseFloat(item.price || 0).toFixed(2) + '</div>' +
+            '</div>' +
+            '<div class="wl-card-actions">' +
+              '<button class="btn-wl-view" onclick="window.location.href=\'product.html?id=' + pid + '\'">View Product</button>' +
+              '<button class="btn-wl-add" ' +
+                'data-id="'      + esc(item.productId || item.docId) + '" ' +
+                'data-name="'    + esc(item.name    || '') + '" ' +
+                'data-brand="'   + esc(item.brand   || '') + '" ' +
+                'data-brandid="' + esc(item.brandId || '') + '" ' +
+                'data-price="'   + parseFloat(item.price || 0).toFixed(2) + '" ' +
+                'data-img="'     + esc(item.img     || '') + '" ' +
+                'onclick="addToCart(this)">+ Cart</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    window.removeItem = async function(docId) {
+      if (!currentUid) return;
+      try {
+        await deleteDoc(doc(db, 'users', currentUid, 'wishlist', docId));
+        const card = document.getElementById('wlcard-' + docId);
+        if (card) card.remove();
+        const remaining = document.querySelectorAll('.wl-card').length;
+        document.getElementById('wlCount').textContent = remaining + ' item' + (remaining !== 1 ? 's' : '');
+        if (!remaining) {
+          document.getElementById('wlEmpty').style.display = 'block';
+        }
+      } catch(e) {
+        console.warn('Remove wishlist error:', e.message);
+      }
+    };
+
+    window.addToCart = function(btn) {
+      const d    = btn.dataset;
+      const cart = (function() { try { return JSON.parse(localStorage.getItem('fitr_cart')||'[]'); } catch(e) { return []; } })();
+      if (cart.some(function(c) { return c.product && c.product.id === d.id; })) {
+        btn.textContent = '✓ In Cart'; btn.classList.add('added'); return;
+      }
+      cart.push({ product: { id: d.id, name: d.name, brand: d.brand, brandId: d.brandid, price: parseFloat(d.price), img: d.img }, qty: 1 });
+      localStorage.setItem('fitr_cart', JSON.stringify(cart));
+      btn.textContent = '✓ Added'; btn.classList.add('added');
+      const el = document.getElementById('navCartCount');
+      if (el) el.textContent = '(' + cart.length + ')';
+    };
+
+    async function loadNotifications(uid) {
+      try {
+        let announcements = [];
+        try {
+          const annSnap = await getDocs(query(collection(db,'announcements'), orderBy('createdAt','desc'), limit(10)));
+          annSnap.forEach(function(d) { announcements.push({ id: d.id, ...d.data(), read: true, source: 'announcement' }); });
+        } catch(_) {}
+
+        function mergeAndRender(userSnap) {
+          const items = [];
+          userSnap.docs.forEach(function(d) { items.push({ id: d.id, ...d.data(), source: 'user' }); });
+          announcements.forEach(function(a) { items.push(a); });
+          items.sort(function(a,b) { return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+          const unread = items.filter(function(n) { return !n.read; }).length;
+          if (typeof window.setBellCount === 'function') window.setBellCount(unread);
+          if (typeof window.setBellItems === 'function') window.setBellItems(items);
+
+          const markAllBtn = document.getElementById('bellMarkAll');
+          if (markAllBtn && !markAllBtn._wired) {
+            markAllBtn._wired = true;
+            markAllBtn.addEventListener('click', function() {
+              const b = writeBatch(db);
+              userSnap.docs.forEach(function(d) {
+                if (!d.data().read) b.update(doc(db,'users',uid,'notifications',d.id), { read: true });
+              });
+              b.commit();
+            });
+          }
+        }
+
+        onSnapshot(query(collection(db,'users',uid,'notifications'), orderBy('createdAt','desc'), limit(20)), mergeAndRender);
+      } catch(e) { /* silent */ }
+    }
+  </script>
+</body>
+</html>

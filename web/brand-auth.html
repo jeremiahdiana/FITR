@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Account – FITR</title>
+  <meta name="description" content="Create or sign in to your FITR brand account and start selling your products." />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    .auth-page {
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 100px 24px 60px;
+    }
+    .auth-glow {
+      position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 500px;
+      background: radial-gradient(ellipse, #00C9A70d 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .auth-card {
+      width: 100%; max-width: 440px;
+      background: #f7f8fa; border: 1px solid #e3e6e8;
+      border-radius: 24px; padding: 44px 40px 40px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+      animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
+      position: relative;
+    }
+    .auth-card::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, #00C9A755, transparent);
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .brand-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #e8faf7; border: 1px solid #00C9A733;
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: #00C9A7; margin-bottom: 20px;
+    }
+    .auth-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .auth-logo-img { width: 28px; height: 28px; background: url('fitr-icon.png') no-repeat center/contain; mix-blend-mode: screen; }
+    .auth-logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 3px; color: #00C9A7; line-height: 1; }
+    .auth-logo-text span { color: #111; }
+
+    .auth-heading { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 2px; color: #111; line-height: 1.05; margin-bottom: 6px; }
+    .auth-heading span { color: #00C9A7; }
+    .auth-sub { font-size: 13px; color: #555; margin-bottom: 24px; line-height: 1.5; }
+    .auth-sub a { color: #00C9A7; text-decoration: none; }
+    .auth-sub a:hover { text-decoration: underline; }
+
+    .price-tag {
+      display: flex; align-items: baseline; gap: 4px; margin-bottom: 24px;
+      padding: 14px 18px; background: #fff; border: 1px solid #e3e6e8; border-radius: 12px;
+    }
+    .price-amount { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #111; letter-spacing: 1px; }
+    .price-period { font-size: 13px; color: #888; }
+    .price-detail { font-size: 12px; color: #555; margin-left: auto; align-self: center; }
+
+    .btn-google {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
+      background: #fff; color: #1a1a1a; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; padding: 13px 20px;
+      border-radius: 12px; border: 1px solid #e3e6e8; cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-google:hover { background: #f0f0f0; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+    .auth-divider { display: flex; align-items: center; gap: 14px; margin: 20px 0; }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #e3e6e8; }
+    .auth-divider span { font-size: 12px; color: #888; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+
+    .auth-form { display: flex; flex-direction: column; gap: 14px; }
+    .auth-field { display: flex; flex-direction: column; gap: 6px; }
+    .auth-label { font-size: 12px; font-weight: 600; color: #888; letter-spacing: 0.5px; text-transform: uppercase; }
+    .auth-input {
+      width: 100%; background: #f0f2f5; border: 1px solid #d5d9d9;
+      border-radius: 12px; padding: 13px 16px; font-size: 14px; color: #111;
+      font-family: 'DM Sans', sans-serif; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .auth-input:focus { border-color: #00C9A755; box-shadow: 0 0 0 3px #00C9A710; }
+    .auth-input::placeholder { color: #aaa; }
+    .auth-input-wrap { position: relative; }
+    .auth-input-wrap .auth-input { padding-right: 44px; }
+    .auth-pw-toggle {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #aaa; padding: 4px;
+      display: flex; align-items: center; transition: color 0.2s;
+    }
+    .auth-pw-toggle:hover { color: #00C9A7; }
+
+    .auth-name-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn-auth-submit {
+      width: 100%; background: #00C9A7; color: #080f18;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
+      padding: 15px 20px; border-radius: 12px; border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.15s; margin-top: 4px;
+      position: relative; overflow: hidden;
+    }
+    .btn-auth-submit:hover { background: #00DFB9; transform: translateY(-1px); }
+    .btn-auth-submit:disabled { background: #e8edf2; color: #aaa; cursor: not-allowed; transform: none; }
+    .btn-auth-submit.loading { color: transparent; pointer-events: none; }
+    .btn-auth-submit.loading::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 18px; height: 18px; margin: -9px 0 0 -9px;
+      border: 2px solid #080f18; border-top-color: transparent;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .auth-toggle { text-align: center; margin-top: 18px; font-size: 13px; color: #444; }
+    .auth-toggle button {
+      background: none; border: none; color: #00C9A7; font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;
+    }
+    .auth-toggle button:hover { color: #00DFB9; }
+
+    .auth-msg { padding: 12px 16px; border-radius: 10px; font-size: 13px; line-height: 1.5; display: none; margin-bottom: 14px; }
+    .auth-msg.error { background: #fff5f5; border: 1px solid #fecaca; color: #dc2626; display: block; }
+    .auth-msg.success { background: #e8faf7; border: 1px solid #00C9A733; color: #00875a; display: block; }
+    .auth-msg.info { background: #fff7ed; border: 1px solid #fed7aa; color: #92400e; display: block; }
+
+    .auth-panel { animation: panelIn 0.3s ease both; }
+    @keyframes panelIn { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+
+    .consent-row { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+    .consent-row input[type="checkbox"] { margin-top: 3px; width: 16px; height: 16px; accent-color: #00C9A7; flex-shrink: 0; }
+    .consent-row span { font-size: 12px; color: #666; line-height: 1.6; }
+    .consent-row a { color: #00C9A7; text-decoration: none; }
+    .consent-row a:hover { text-decoration: underline; }
+
+    .stripe-note {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 12px; color: #888; margin-top: 14px;
+    }
+    .stripe-note svg { flex-shrink: 0; }
+
+    .shopper-link { text-align: center; margin-top: 16px; font-size: 12px; color: #aaa; }
+    .shopper-link a { color: #888; text-decoration: underline; }
+    .shopper-link a:hover { color: #00C9A7; }
+
+    /* ── Resume payment panel ── */
+    .resume-panel { text-align: center; padding: 8px 0; }
+    .resume-panel p { font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.6; }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 36px 24px 32px; }
+      .auth-name-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-glow"></div>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-img"></span>FIT<span>R</span></a>
+      <div class="nav-links">
+        <a href="partners" class="nav-link">For Brands</a>
+        <a href="brand-deck" class="nav-link">Brand Deck</a>
+        <a href="brand-terms" class="nav-link">Seller Terms</a>
+      </div>
+      <div class="nav-actions">
+        <a href="shop.html" class="btn-secondary">Shop</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="auth-page">
+    <div class="auth-card" id="authCard">
+
+      <div class="brand-badge">Brand Account</div>
+
+      <div class="auth-logo">
+        <div class="auth-logo-img"></div>
+        <div class="auth-logo-text">FIT<span>R</span></div>
+      </div>
+
+      <div class="auth-msg" id="authMsg"></div>
+
+      <!-- ── SIGN IN PANEL ── -->
+      <div id="panelSignIn" class="auth-panel">
+        <h1 class="auth-heading">BRAND<br><span>SIGN IN.</span></h1>
+        <p class="auth-sub">New brand? <a href="#" id="toSignUp">Create a brand account →</a></p>
+
+        <button class="btn-google" id="btnGoogleSignIn">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <form class="auth-form" id="formSignIn" novalidate>
+          <div class="auth-field">
+            <label class="auth-label" for="siEmail">Email</label>
+            <input class="auth-input" type="email" id="siEmail" placeholder="you@yourbrand.com" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="siPassword">Password</label>
+            <div class="auth-input-wrap">
+              <input class="auth-input" type="password" id="siPassword" placeholder="••••••••" autocomplete="current-password" required />
+              <button type="button" class="auth-pw-toggle" data-target="siPassword" aria-label="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-auth-submit" id="btnSignIn">Sign In</button>
+        </form>
+      </div>
+
+      <!-- ── SIGN UP PANEL ── -->
+      <div id="panelSignUp" class="auth-panel" style="display:none;">
+        <h1 class="auth-heading">CREATE<br><span>BRAND ACCOUNT.</span></h1>
+        <p class="auth-sub">Already have an account? <a href="#" id="toSignIn">Sign in →</a></p>
+
+        <div class="price-tag">
+          <span class="price-amount">$19</span>
+          <span class="price-period">/month</span>
+          <span class="price-detail">+ 12% on sales · Cancel anytime</span>
+        </div>
+
+        <button class="btn-google" id="btnGoogleSignUp">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <form class="auth-form" id="formSignUp" novalidate>
+          <div class="auth-name-row">
+            <div class="auth-field">
+              <label class="auth-label" for="suFirst">First Name</label>
+              <input class="auth-input" type="text" id="suFirst" placeholder="Alex" autocomplete="given-name" required />
+            </div>
+            <div class="auth-field">
+              <label class="auth-label" for="suLast">Last Name</label>
+              <input class="auth-input" type="text" id="suLast" placeholder="Smith" autocomplete="family-name" required />
+            </div>
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="suBrand">Brand Name</label>
+            <input class="auth-input" type="text" id="suBrand" placeholder="Your Brand Co." maxlength="80" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="suEmail">Business Email</label>
+            <input class="auth-input" type="email" id="suEmail" placeholder="you@yourbrand.com" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="suPassword">Password</label>
+            <div class="auth-input-wrap">
+              <input class="auth-input" type="password" id="suPassword" placeholder="Min. 8 characters" autocomplete="new-password" required minlength="8" />
+              <button type="button" class="auth-pw-toggle" data-target="suPassword" aria-label="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <label class="consent-row">
+            <input type="checkbox" id="consentSeller" required />
+            <span>I have read and agree to the <a href="brand-terms" target="_blank">FITR Brand Seller Agreement</a> and <a href="privacy" target="_blank">Privacy Policy</a>. I understand the $19/month subscription and 12% commission structure.</span>
+          </label>
+
+          <button type="submit" class="btn-auth-submit" id="btnSignUp">Continue to Payment →</button>
+        </form>
+
+        <div class="stripe-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Secure payment powered by Stripe
+        </div>
+      </div>
+
+      <!-- ── RESUME PAYMENT PANEL (logged in, no subscription) ── -->
+      <div id="panelResume" class="auth-panel" style="display:none;">
+        <h1 class="auth-heading">COMPLETE<br><span>PAYMENT.</span></h1>
+        <div class="resume-panel">
+          <p>Your account was created but payment wasn't completed. Click below to finish setting up your brand account.</p>
+          <div class="price-tag" style="justify-content:center;margin-bottom:20px;">
+            <span class="price-amount">$19</span>
+            <span class="price-period">/month</span>
+            <span class="price-detail">+ 12% on sales</span>
+          </div>
+          <button class="btn-auth-submit" id="btnResumePayment">Complete Payment — $19/mo →</button>
+          <div class="stripe-note" style="margin-top:12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Secure payment powered by Stripe
+          </div>
+          <p style="font-size:12px;color:#aaa;margin-top:16px;">Not you? <a href="#" id="signOutResume" style="color:#555;">Sign out</a></p>
+        </div>
+      </div>
+
+      <div class="auth-toggle" id="toggleBottom">
+        New brand? <button id="toSignUp2">Create an account →</button>
+      </div>
+
+      <div class="shopper-link">
+        Shopping for yourself? <a href="auth.html">Shopper account →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      signInWithPopup, GoogleAuthProvider, updateProfile, onAuthStateChanged, signOut
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, doc, setDoc, getDoc, serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain: "fitr-22814.firebaseapp.com",
+      projectId: "fitr-22814",
+      storageBucket: "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId: "1:900395772549:web:2d48b5877b8d247e7797ec",
+    };
+
+    const app      = initializeApp(firebaseConfig);
+    const auth     = getAuth(app);
+    const db       = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('canceled') === 'true') {
+      showMsg('Payment was canceled. You can complete it below.', 'info');
+    }
+
+    // ── AUTH STATE: if already logged in, check subscription ──
+    onAuthStateChanged(auth, async function(user) {
+      if (!user) return; // not logged in — stay on signin panel
+
+      // User is logged in — check if they have an active subscription
+      var brandData = {};
+      try {
+        var snap = await getDoc(doc(db, 'brands', user.uid));
+        brandData = snap.exists() ? snap.data() : {};
+      } catch(e) { /* rules may not be set yet */ }
+
+      var status = brandData.subscriptionStatus;
+      if (status === 'active' || status === 'trialing') {
+        // Active subscription — go straight to dashboard
+        window.location.href = 'brand-dashboard';
+      } else {
+        // Logged in but no active subscription — show resume panel
+        showPanel('Resume');
+        document.getElementById('toggleBottom').style.display = 'none';
+      }
+    });
+
+    // ── HELPERS ──
+    function showMsg(text, type) {
+      var el = document.getElementById('authMsg');
+      el.textContent = text;
+      el.className = 'auth-msg ' + type;
+    }
+    function clearMsg() {
+      var el = document.getElementById('authMsg');
+      el.className = 'auth-msg'; el.textContent = '';
+    }
+    function setLoading(btn, on) { btn.classList.toggle('loading', on); }
+    function friendlyError(code) {
+      var map = {
+        'auth/user-not-found':      'Incorrect email or password.',
+        'auth/wrong-password':      'Incorrect email or password.',
+        'auth/email-already-in-use':'An account with this email already exists. Try signing in.',
+        'auth/weak-password':       'Password must be at least 8 characters.',
+        'auth/invalid-email':       'Please enter a valid email address.',
+        'auth/popup-closed-by-user':'Sign-in cancelled.',
+        'auth/too-many-requests':   'Too many attempts. Please wait a few minutes.',
+        'auth/network-request-failed': 'Network error. Check your connection.',
+        'auth/invalid-credential':  'Incorrect email or password.',
+      };
+      return map[code] || 'Something went wrong. Please try again.';
+    }
+
+    function showPanel(name) {
+      clearMsg();
+      ['panelSignIn','panelSignUp','panelResume'].forEach(function(id) {
+        document.getElementById(id).style.display = (id === 'panel' + name) ? 'block' : 'none';
+      });
+      document.getElementById('toggleBottom').style.display = (name === 'SignIn') ? 'block' : 'none';
+    }
+
+    document.getElementById('toSignUp').addEventListener('click', function(e) { e.preventDefault(); showPanel('SignUp'); });
+    document.getElementById('toSignUp2').addEventListener('click', function() { showPanel('SignUp'); });
+    document.getElementById('toSignIn').addEventListener('click', function(e) { e.preventDefault(); showPanel('SignIn'); });
+
+    // ── SAVE BRAND DOC ──
+    async function saveBrandDoc(user, brandName) {
+      var ref  = doc(db, 'brands', user.uid);
+      var snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          contactName: user.displayName || '',
+          email: user.email || '',
+          brandName: brandName || '',
+          subscriptionStatus: 'none',
+          agreedToSellerTerms: true,
+          agreedAt: serverTimestamp(),
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      }
+    }
+
+    // ── REDIRECT TO STRIPE CHECKOUT ──
+    async function goToCheckout(user, brandName) {
+      showMsg('Redirecting to secure payment…', 'success');
+      try {
+        var res = await fetch('/api/create-brand-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            brandName: brandName || user.displayName || '',
+          }),
+        });
+        var data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          showMsg('Could not start checkout. Please try again or contact app@joinfitr.com', 'error');
+        }
+      } catch(e) {
+        showMsg('Network error. Please try again.', 'error');
+      }
+    }
+
+    // ── GOOGLE SIGN UP (goes straight to Stripe) ──
+    document.getElementById('btnGoogleSignUp').addEventListener('click', async function() {
+      clearMsg();
+      var btn = this;
+      setLoading(btn, true);
+      try {
+        var cred = await signInWithPopup(auth, provider);
+        await saveBrandDoc(cred.user, '');
+        await goToCheckout(cred.user, '');
+      } catch(err) {
+        showMsg(friendlyError(err.code), 'error');
+        setLoading(btn, false);
+      }
+    });
+
+    // ── GOOGLE SIGN IN (checks subscription, goes to dashboard or resume) ──
+    document.getElementById('btnGoogleSignIn').addEventListener('click', async function() {
+      clearMsg();
+      try {
+        await signInWithPopup(auth, provider);
+        // onAuthStateChanged handles redirect
+      } catch(err) {
+        showMsg(friendlyError(err.code), 'error');
+      }
+    });
+
+    // ── EMAIL SIGN IN ──
+    document.getElementById('formSignIn').addEventListener('submit', async function(e) {
+      e.preventDefault(); clearMsg();
+      var email    = document.getElementById('siEmail').value.trim();
+      var password = document.getElementById('siPassword').value;
+      if (!email || !password) { showMsg('Please fill in all fields.', 'error'); return; }
+      var btn = document.getElementById('btnSignIn');
+      setLoading(btn, true);
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // onAuthStateChanged handles redirect
+      } catch(err) {
+        showMsg(friendlyError(err.code), 'error');
+        setLoading(btn, false);
+      }
+    });
+
+    // ── EMAIL SIGN UP → creates account → goes straight to Stripe ──
+    document.getElementById('formSignUp').addEventListener('submit', async function(e) {
+      e.preventDefault(); clearMsg();
+      var first   = document.getElementById('suFirst').value.trim().slice(0,60).replace(/[<>&"']/g,'');
+      var last    = document.getElementById('suLast').value.trim().slice(0,60).replace(/[<>&"']/g,'');
+      var brand   = document.getElementById('suBrand').value.trim().slice(0,80).replace(/[<>&"']/g,'');
+      var email   = document.getElementById('suEmail').value.trim().toLowerCase().slice(0,254);
+      var pw      = document.getElementById('suPassword').value;
+      var consent = document.getElementById('consentSeller').checked;
+
+      if (!first || !last || !brand || !email || !pw) { showMsg('Please fill in all fields.', 'error'); return; }
+      if (!consent) { showMsg('You must agree to the Brand Seller Agreement to continue.', 'error'); return; }
+      if (pw.length < 8) { showMsg('Password must be at least 8 characters.', 'error'); return; }
+      if (!/[A-Z]/.test(pw)) { showMsg('Password must contain at least one uppercase letter.', 'error'); return; }
+      if (!/[0-9]/.test(pw)) { showMsg('Password must contain at least one number.', 'error'); return; }
+
+      var btn = document.getElementById('btnSignUp');
+      setLoading(btn, true);
+      try {
+        var cred = await createUserWithEmailAndPassword(auth, email, pw);
+        await updateProfile(cred.user, { displayName: first + ' ' + last });
+        await saveBrandDoc(cred.user, brand);
+        // Go straight to Stripe — don't wait for onAuthStateChanged
+        await goToCheckout(cred.user, brand);
+      } catch(err) {
+        showMsg(friendlyError(err.code), 'error');
+        setLoading(btn, false);
+      }
+    });
+
+    // ── RESUME PAYMENT ──
+    document.getElementById('btnResumePayment').addEventListener('click', async function() {
+      var user = auth.currentUser;
+      if (!user) { showPanel('SignIn'); return; }
+      var btn = this;
+      setLoading(btn, true);
+      try {
+        var snap = await getDoc(doc(db, 'brands', user.uid));
+        var brandName = snap.exists() ? (snap.data().brandName || '') : '';
+        await goToCheckout(user, brandName);
+      } catch(e) {
+        showMsg('Could not start checkout. Try again or contact app@joinfitr.com', 'error');
+        setLoading(btn, false);
+      }
+    });
+
+    document.getElementById('signOutResume').addEventListener('click', async function(e) {
+      e.preventDefault();
+      await signOut(auth);
+      showPanel('SignIn');
+    });
+
+    // ── SHOW/HIDE PASSWORD ──
+    document.querySelectorAll('.auth-pw-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var input = document.getElementById(btn.dataset.target);
+        input.type = input.type === 'password' ? 'text' : 'password';
+        btn.style.color = input.type === 'text' ? '#00C9A7' : '';
+      });
+    });
+  </script>
+
+</body>
+</html>

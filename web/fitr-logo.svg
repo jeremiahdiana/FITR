@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" fill="none">
+  <defs>
+    <linearGradient id="gMain" x1="40" y1="0" x2="40" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00FFD0"/>
+      <stop offset="55%" stop-color="#00C9A7"/>
+      <stop offset="100%" stop-color="#2255FF"/>
+    </linearGradient>
+    <linearGradient id="gDark" x1="40" y1="0" x2="40" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#009977"/>
+      <stop offset="100%" stop-color="#0033BB"/>
+    </linearGradient>
+    <linearGradient id="gMid" x1="40" y1="0" x2="40" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00DDAA"/>
+      <stop offset="100%" stop-color="#0055EE"/>
+    </linearGradient>
+  </defs>
+  <!-- Vertical bar - main face -->
+  <polygon points="2,9 20,5 20,100 2,96" fill="url(#gMain)"/>
+  <!-- Vertical bar - right 3D depth -->
+  <polygon points="20,5 30,0 30,94 20,100" fill="url(#gDark)" opacity="0.75"/>
+  <!-- Top bar - top face -->
+  <polygon points="20,5 80,0 78,13 20,18" fill="url(#gMid)"/>
+  <!-- Top bar - bottom depth -->
+  <polygon points="20,18 78,13 76,23 20,28" fill="url(#gDark)" opacity="0.65"/>
+  <!-- Middle bar - top face -->
+  <polygon points="20,45 64,40 62,52 20,57" fill="url(#gMid)" opacity="0.9"/>
+  <!-- Middle bar - bottom depth -->
+  <polygon points="20,57 62,52 60,62 20,67" fill="url(#gDark)" opacity="0.6"/>
+</svg>

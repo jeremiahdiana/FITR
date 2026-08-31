@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partner With FITR — Investors, Press & Collaborations</title>
+  <meta name="description" content="FITR is open to investment, press, creator partnerships, and strategic collaborations. Get in touch." />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    body { background: #ffffff; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 1100px; margin: 0 auto;
+      padding: 130px 40px 80px;
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: center;
+    }
+    @media (max-width: 860px) { .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 48px; } }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #e8faf7; border: 1px solid #00C9A733;
+      border-radius: 20px; padding: 6px 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: #00C9A7; margin-bottom: 24px;
+    }
+    .pulse { width: 6px; height: 6px; border-radius: 50%; background: #00C9A7; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+    .hero-left h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 6vw, 76px);
+      line-height: 0.95; letter-spacing: 2px; color: #111; margin-bottom: 20px;
+    }
+    .hero-left h1 span { color: #00C9A7; }
+    .hero-left p { font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 32px; max-width: 460px; }
+
+    .opportunity-list { display: flex; flex-direction: column; gap: 12px; }
+    .opp-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px; background: #f7f8fa; border: 1px solid #e3e6e8; border-radius: 14px;
+    }
+    .opp-icon { font-size: 22px; flex-shrink: 0; }
+    .opp-label { font-size: 14px; font-weight: 700; color: #111; }
+    .opp-desc { font-size: 12px; color: #888; margin-top: 1px; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: #f7f8fa; border: 1px solid #e3e6e8;
+      border-radius: 24px; padding: 40px;
+      position: sticky; top: 90px;
+    }
+    .form-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px; letter-spacing: 2px; color: #111; margin-bottom: 4px;
+    }
+    .form-card-sub { font-size: 13px; color: #888; margin-bottom: 28px; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 7px; display: block; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; background: #fff; border: 1px solid #e3e6e8;
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 14px; color: #111; font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: #00C9A755; box-shadow: 0 0 0 3px #00C9A710;
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: #bbb; }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-textarea { resize: vertical; min-height: 110px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
+
+    .submit-btn {
+      width: 100%; background: #111; color: #fff;
+      border: none; border-radius: 12px; padding: 16px;
+      font-size: 15px; font-weight: 800; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 4px;
+      position: relative;
+    }
+    .submit-btn:hover { background: #222; transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .submit-btn.loading { color: transparent; pointer-events: none; }
+    .submit-btn.loading::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 18px; height: 18px; margin: -9px 0 0 -9px;
+      border: 2px solid #fff; border-top-color: transparent;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .form-error { font-size: 13px; color: #dc2626; margin-bottom: 10px; display: none; }
+    .form-note { font-size: 11px; color: #aaa; text-align: center; margin-top: 12px; line-height: 1.6; }
+    .form-note a { color: #888; }
+
+    .form-success { display: none; text-align: center; padding: 24px 0; }
+    .form-success.show { display: block; }
+    .success-icon { font-size: 52px; margin-bottom: 14px; }
+    .success-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: #111; margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: #666; line-height: 1.7; }
+    .success-sub strong { color: #111; }
+
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      border-top: 1px solid #e3e6e8; border-bottom: 1px solid #e3e6e8;
+      padding: 40px; display: flex; gap: 48px; justify-content: center; flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: #111; letter-spacing: 1px; line-height: 1; }
+    .stat-num span { color: #00C9A7; }
+    .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+
+    /* ── WHY FITR ── */
+    .why-section { max-width: 1100px; margin: 0 auto; padding: 80px 40px; }
+    .why-section h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 4vw, 52px); letter-spacing: 2px; margin-bottom: 8px; color: #111; }
+    .why-section h2 span { color: #00C9A7; }
+    .why-sub { font-size: 16px; color: #666; margin-bottom: 48px; }
+    .why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    @media (max-width: 700px) { .why-grid { grid-template-columns: 1fr; } }
+    .why-card {
+      background: #f7f8fa; border: 1px solid #e3e6e8; border-radius: 18px; padding: 28px 24px;
+      position: relative;
+    }
+    .why-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #00C9A7, transparent); border-radius: 18px 18px 0 0;
+    }
+    .why-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: #00C9A715; letter-spacing: 2px; margin-bottom: 12px; }
+    .why-icon { font-size: 24px; margin-bottom: 10px; }
+    .why-card h3 { font-size: 15px; font-weight: 800; color: #111; margin-bottom: 8px; }
+    .why-card p { font-size: 13px; color: #666; line-height: 1.6; }
+
+    /* ── QUOTE ── */
+    .quote-section { padding: 80px 40px; max-width: 760px; margin: 0 auto; text-align: center; }
+    .quote-section blockquote { font-size: clamp(17px, 2.5vw, 24px); color: #111; font-weight: 600; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+    .quote-section blockquote span { color: #00C9A7; font-style: normal; }
+    .quote-attr { font-size: 13px; color: #888; }
+
+    /* ── BOTTOM CTA ── */
+    .bottom-cta { text-align: center; padding: 80px 40px; background: linear-gradient(180deg, transparent, #00C9A708); }
+    .bottom-cta h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 5vw, 64px); letter-spacing: 3px; margin-bottom: 14px; line-height: 1; color: #111; }
+    .bottom-cta h2 span { color: #00C9A7; }
+    .bottom-cta p { font-size: 15px; color: #666; margin-bottom: 28px; }
+    .bottom-cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-dark { background: #111; color: #fff; font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 15px; padding: 16px 36px; border-radius: 12px; text-decoration: none; display: inline-block; transition: all 0.2s; }
+    .btn-dark:hover { background: #222; transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: #111; border: 2px solid #e3e6e8; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px; padding: 14px 36px; border-radius: 12px; text-decoration: none; display: inline-block; transition: all 0.2s; }
+    .btn-outline:hover { border-color: #00C9A7; color: #00C9A7; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-img"></span>FIT<span>R</span></a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="brand-deck" class="nav-link">Brand Deck</a>
+      </div>
+      <form class="nav-search" action="shop.html" id="navSearchForm">
+        <input type="search" name="q" class="nav-search-input" placeholder="Search FITR…" maxlength="100" autocomplete="off" />
+        <button type="submit" class="nav-search-btn">&#128269;</button>
+      </form>
+      <div class="nav-actions">
+        <a href="brand-auth" class="btn-primary">Sell on FITR</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="eyebrow"><span class="pulse"></span> Open to partnerships</div>
+      <h1>LET'S BUILD<br/><span>FITR</span><br/>TOGETHER.</h1>
+      <p>FITR is the fitness marketplace for serious athletes. We're open to investors, press, creator partnerships, and strategic collaborations. If you see the vision — reach out.</p>
+
+      <div class="opportunity-list">
+        <div class="opp-item">
+          <div class="opp-icon">📈</div>
+          <div>
+            <div class="opp-label">Investors</div>
+            <div class="opp-desc">Seed & angel rounds — building the fitness commerce layer</div>
+          </div>
+        </div>
+        <div class="opp-item">
+          <div class="opp-icon">📰</div>
+          <div>
+            <div class="opp-label">Press & Media</div>
+            <div class="opp-desc">Interviews, features, and media inquiries</div>
+          </div>
+        </div>
+        <div class="opp-item">
+          <div class="opp-icon">🎙️</div>
+          <div>
+            <div class="opp-label">Creator Partnerships</div>
+            <div class="opp-desc">Athletes, influencers, and fitness creators with audiences</div>
+          </div>
+        </div>
+        <div class="opp-item">
+          <div class="opp-icon">🤝</div>
+          <div>
+            <div class="opp-label">Strategic Collaborations</div>
+            <div class="opp-desc">Gyms, coaches, events, and fitness platforms</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-card">
+      <div id="formWrap">
+        <div class="form-card-title">GET IN TOUCH</div>
+        <div class="form-card-sub">We respond to every serious inquiry within 48 hours.</div>
+
+        <form id="partnerForm" novalidate>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">First Name *</label>
+              <input type="text" class="form-input" id="pFname" placeholder="Alex" maxlength="60" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name *</label>
+              <input type="text" class="form-input" id="pLname" placeholder="Smith" maxlength="60" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" class="form-input" id="pEmail" placeholder="you@example.com" maxlength="100" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Type of Inquiry *</label>
+            <select class="form-select" id="pType" required>
+              <option value="">Select…</option>
+              <option value="Investor">Investor</option>
+              <option value="Press / Media">Press / Media</option>
+              <option value="Creator Partnership">Creator Partnership</option>
+              <option value="Strategic Collaboration">Strategic Collaboration</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tell us about yourself & your interest *</label>
+            <textarea class="form-textarea" id="pMessage" placeholder="Who you are, what you're building or representing, and why you're interested in FITR…" maxlength="1000"></textarea>
+          </div>
+
+          <div class="form-error" id="formError"></div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">Send Message →</button>
+          <p class="form-note">
+            By submitting you agree to our <a href="terms">Terms</a> and <a href="privacy">Privacy Policy</a>.
+            We'll never share your info.
+          </p>
+        </form>
+      </div>
+
+      <div class="form-success" id="formSuccess">
+        <div class="success-icon">✅</div>
+        <div class="success-title">MESSAGE SENT!</div>
+        <p class="success-sub">
+          Thanks, <strong id="successName"></strong>!<br/>
+          We'll be in touch at <strong id="successEmail"></strong> within 48 hours.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STATS STRIP ── */
+  <div class="stats-strip">
+    <div class="stat-item">
+      <div class="stat-num"><span>$</span>100B+</div>
+      <div class="stat-label">Global fitness market size</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Platforms — web + mobile app</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span>12</span>%</div>
+      <div class="stat-label">Commission model — brands keep 88%</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Dedicated fitness marketplace</div>
+    </div>
+  </div>
+
+  <!-- ── WHY FITR ── -->
+  <div class="why-section">
+    <h2>WHY <span>FITR</span> WINS.</h2>
+    <p class="why-sub">The fitness commerce market is fragmented. FITR consolidates it.</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <div class="why-icon">🎯</div>
+        <h3>High-Intent Audience</h3>
+        <p>FITR shoppers are actively looking to buy fitness products — not casually browsing. Conversion rates outperform general marketplaces.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <div class="why-icon">📦</div>
+        <h3>Asset-Light Model</h3>
+        <p>FITR owns no inventory. Brands handle fulfillment. We provide the marketplace infrastructure and take a commission only on sales.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <div class="why-icon">📱</div>
+        <h3>Web + Mobile</h3>
+        <p>Shoppers buy on joinfitr.com and the FITR app on iOS and Android. Multi-channel reach from day one.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUOTE ── -->
+  <div class="quote-section">
+    <blockquote>
+      "Fitness consumers don't want to shop 5 different websites.
+      They want <span>one trusted place</span> to find everything.
+      That's what we're building."
+    </blockquote>
+    <div class="quote-attr">— Jeremiah Maximo, Founder of FITR</div>
+  </div>
+
+  <!-- ── BOTTOM CTA ── -->
+  <div class="bottom-cta">
+    <h2>READY TO TALK<br/>ABOUT <span>FITR?</span></h2>
+    <p>Fill out the form above or reach out directly.</p>
+    <div class="bottom-cta-btns">
+      <a href="mailto:app@joinfitr.com" class="btn-dark">Email Us Directly →</a>
+      <a href="brand-auth" class="btn-outline">Sell on FITR — $19/mo</a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="brand-auth" class="footer-link">Sell on FITR</a>
+        <a href="brand-deck" class="footer-link">Brand Deck</a>
+        <a href="mailto:app@joinfitr.com" class="footer-link">app@joinfitr.com</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    function sanitize(str) {
+      var d = document.createElement('div');
+      d.appendChild(document.createTextNode(String(str || '')));
+      return d.innerHTML;
+    }
+
+    document.getElementById('partnerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var btn    = document.getElementById('submitBtn');
+      var errEl  = document.getElementById('formError');
+      errEl.style.display = 'none';
+
+      var fname   = document.getElementById('pFname').value.trim().slice(0,60).replace(/[<>]/g,'');
+      var lname   = document.getElementById('pLname').value.trim().slice(0,60).replace(/[<>]/g,'');
+      var email   = document.getElementById('pEmail').value.trim().toLowerCase().slice(0,100);
+      var type    = document.getElementById('pType').value;
+      var message = document.getElementById('pMessage').value.trim().slice(0,1000).replace(/[<>]/g,'');
+
+      if (!fname || !lname || !email || !type || !message) {
+        errEl.textContent = 'Please fill in all required fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      try {
+        var res = await fetch('/api/brevo-contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstname: fname,
+            lastname:  lname,
+            email:     email,
+            contactType: type,
+            details:   'Inquiry Type: ' + type + '\n\n' + message,
+          }),
+        });
+
+        if (!res.ok) throw new Error('Failed');
+
+        document.getElementById('successName').textContent  = fname;
+        document.getElementById('successEmail').textContent = email;
+        document.getElementById('formWrap').style.display   = 'none';
+        document.getElementById('formSuccess').classList.add('show');
+
+      } catch(err) {
+        errEl.textContent = 'Something went wrong. Email us directly at app@joinfitr.com';
+        errEl.style.display = 'block';
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    });
+
+    document.querySelectorAll('.form-input, .form-textarea').forEach(function(el) {
+      el.addEventListener('input', function() { this.value = this.value.replace(/[<>]/g, ''); });
+    });
+  </script>
+
+  <script src="nav-auth.js"></script>
+</body>
+</html>

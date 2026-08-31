@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Policy – FITR</title>
+  <meta name="description" content="FITR Cookie Policy — how we use cookies and local storage on joinfitr.com." />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    .legal-page { max-width: 780px; margin: 0 auto; padding: 120px 24px 80px; }
+    .legal-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #00C9A7; margin-bottom: 16px; }
+    .legal-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px,5vw,56px); letter-spacing: 2px; color: #111; margin-bottom: 8px; line-height: 1; }
+    .legal-title span { color: #00C9A7; }
+    .legal-date { font-size: 13px; color: #888; margin-bottom: 48px; }
+    h2 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1.5px; color: #111; margin: 44px 0 14px; padding-top: 10px; border-top: 1px solid #e3e6e8; }
+    p { font-size: 15px; color: #444; line-height: 1.8; margin-bottom: 14px; }
+    ul, ol { padding-left: 22px; margin-bottom: 14px; }
+    li { font-size: 15px; color: #444; line-height: 1.8; margin-bottom: 6px; }
+    strong { color: #111; }
+    a { color: #00C9A7; }
+    .highlight { background: #e8faf7; border: 1px solid #00C9A733; border-radius: 12px; padding: 18px 22px; margin: 20px 0; }
+    .highlight p { margin: 0; color: #111; }
+    .contact-box { background: #f7f8fa; border: 1px solid #e3e6e8; border-radius: 12px; padding: 20px 24px; margin-top: 40px; }
+    .contact-box p { margin: 4px 0; color: #555; font-size: 14px; }
+    .contact-box a { color: #00C9A7; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    th { background: #f7f8fa; color: #111; font-weight: 700; text-align: left; padding: 10px 14px; border: 1px solid #e3e6e8; }
+    td { padding: 10px 14px; border: 1px solid #e3e6e8; color: #444; vertical-align: top; }
+    tr:nth-child(even) td { background: #fafbfc; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-img"></span>FIT<span>R</span></a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="terms" class="nav-link">Terms</a>
+        <a href="privacy" class="nav-link">Privacy</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="legal-page">
+    <div class="legal-eyebrow">Legal</div>
+    <h1 class="legal-title">COOKIE<br><span>POLICY.</span></h1>
+    <p class="legal-date">Effective: April 11, 2026 &nbsp;·&nbsp; Last updated: April 11, 2026</p>
+
+    <div class="highlight">
+      <p><strong>Short version:</strong> FITR uses only essential cookies and local storage — for keeping you signed in, remembering your cart, and making payments work. We do not run ad-tracking, behavioral profiling, or sell your data to advertisers.</p>
+    </div>
+
+    <p>This Cookie Policy explains how FITR, Inc. ("FITR," "we," "our," or "us") uses cookies and similar storage technologies on <strong>joinfitr.com</strong>, <strong>sell.joinfitr.com</strong>, and the FITR mobile application (collectively, the "Services").</p>
+
+    <h2>1. What Are Cookies</h2>
+    <p>Cookies are small text files stored in your browser when you visit a website. We also use <strong>localStorage</strong> and <strong>sessionStorage</strong> — browser-based key/value stores that work similarly but are not sent with every HTTP request. On the FITR mobile app we use <strong>AsyncStorage</strong>, the React Native equivalent.</p>
+
+    <h2>2. What We Use and Why</h2>
+    <p>We use only <strong>strictly necessary</strong> storage. We do not place advertising cookies, cross-site tracking pixels, or behavioral profiling technologies.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name / Key</th>
+          <th>Type</th>
+          <th>Purpose</th>
+          <th>Expires</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>firebase:authUser:…</code></td>
+          <td>localStorage / IndexedDB</td>
+          <td>Keeps you signed in to your FITR account across browser sessions. Set by Firebase Authentication.</td>
+          <td>Until sign-out or token expiry</td>
+        </tr>
+        <tr>
+          <td><code>__stripe_mid</code>, <code>__stripe_sid</code></td>
+          <td>Cookie</td>
+          <td>Used by Stripe to detect fraud and process payments securely. Only present when the payment form is active. Set by Stripe, Inc.</td>
+          <td>1 year / session</td>
+        </tr>
+        <tr>
+          <td><code>fitr_zip</code></td>
+          <td>localStorage / AsyncStorage</td>
+          <td>Stores the zip code you set for local availability display. Never sent to our servers.</td>
+          <td>Until you clear it</td>
+        </tr>
+        <tr>
+          <td><code>fitr_recently_viewed</code></td>
+          <td>AsyncStorage (mobile only)</td>
+          <td>Stores up to 10 recently viewed products so your "Keep Shopping For" feed stays relevant. Stored on-device only, never sent to our servers.</td>
+          <td>Until you clear app data</td>
+        </tr>
+        <tr>
+          <td>Cart &amp; wishlist data</td>
+          <td>Firestore (server, signed-in users only)</td>
+          <td>Your cart and wishlist items are stored in your account so they persist across devices. Not a cookie — requires sign-in.</td>
+          <td>Until you check out or remove items</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Third-Party Cookies</h2>
+    <p>Two third-party services may set cookies when you use FITR:</p>
+    <ul>
+      <li><strong>Google Firebase</strong> — authentication tokens stored in IndexedDB/localStorage. Governed by <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>.</li>
+      <li><strong>Stripe, Inc.</strong> — fraud-prevention and payment-session cookies set during checkout. Governed by <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Stripe's Privacy Policy</a>. These cookies are functional and cannot be disabled without breaking the payment flow.</li>
+    </ul>
+    <p>We do not use Google Analytics, Facebook Pixel, TikTok Pixel, or any other advertising or behavioral tracking technology.</p>
+
+    <h2>4. The Mobile App</h2>
+    <p>The FITR mobile app does not use browser cookies. It uses <strong>AsyncStorage</strong> (on-device) for preferences like your zip code and recently viewed products, and <strong>Firebase Authentication tokens</strong> (stored securely by the Firebase SDK) to keep you signed in. Your push notification token (if you grant permission) is stored in your account to deliver order alerts — you can revoke permission at any time in your device's notification settings.</p>
+
+    <h2>5. How to Control Cookies</h2>
+    <p>Because we use only essential storage, there is no cookie banner to dismiss — everything in use is required for the site to function. However, you can:</p>
+    <ul>
+      <li><strong>Clear browser storage:</strong> Browser settings → Privacy → Clear browsing data → Cookies and site data. This will sign you out.</li>
+      <li><strong>Block third-party cookies:</strong> Supported in all major browsers. Note that blocking Stripe's cookies may prevent checkout from completing.</li>
+      <li><strong>Clear mobile app data:</strong> Device Settings → Apps → FITR → Clear Data, or uninstall and reinstall the app.</li>
+      <li><strong>Revoke push notifications:</strong> Device Settings → Notifications → FITR → toggle off.</li>
+    </ul>
+
+    <h2>6. Do Not Track</h2>
+    <p>We respect the <strong>Do Not Track (DNT)</strong> browser signal. Because we do not engage in cross-site behavioral tracking, our Services behave the same regardless of your DNT setting.</p>
+
+    <h2>7. Changes to This Policy</h2>
+    <p>If we introduce new cookies or storage technologies we will update this page and notify users via email or prominent in-app notice at least 14 days before those changes take effect.</p>
+
+    <h2>8. Contact Us</h2>
+    <div class="contact-box">
+      <p><strong>FITR, Inc.</strong></p>
+      <p>Email: <a href="mailto:app@joinfitr.com">app@joinfitr.com</a></p>
+      <p>We respond to all inquiries within 2 business days.</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="terms" class="footer-link">Terms</a>
+        <a href="privacy" class="footer-link">Privacy</a>
+        <a href="cookie-policy" class="footer-link">Cookies</a>
+        <a href="mailto:app@joinfitr.com" class="footer-link">Contact</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR. All rights reserved.</div>
+    </div>
+  </footer>
+</body>
+</html>

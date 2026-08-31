@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account – FITR</title>
+  <meta name="description" content="Manage your FITR account settings, billing, and profile." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-ancestors 'none'; upgrade-insecure-requests;" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    .account-page {
+      min-height: 100vh;
+      padding: 100px 24px 80px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .account-header { margin-bottom: 40px; }
+    .account-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px; color: #111;
+      letter-spacing: 2px; margin-bottom: 4px;
+    }
+    .account-header p { color: #555; font-size: 14px; }
+
+    .account-section {
+      background: #f7f8fa;
+      border:1px solid #e3e6e8;
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .account-section-title {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #00C9A7; margin-bottom: 20px;
+    }
+    .acct-field { margin-bottom: 16px; }
+    .acct-label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: #555; letter-spacing: 0.5px;
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+    .acct-input {
+      width: 100%; background:#ffffff; border: 1px solid #222;
+      border-radius: 8px; padding: 11px 14px;
+      font-size: 14px; color: #111;
+      font-family: 'DM Sans', sans-serif; outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .acct-input:focus { border-color: #00C9A755; box-shadow: 0 0 0 3px #00C9A710; }
+    .acct-input:disabled { color: #aaa; cursor: not-allowed; }
+    .acct-input::placeholder { color: #aaa; }
+    select.acct-input { cursor: pointer; }
+    select.acct-input option { background:#ffffff; }
+    .acct-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .acct-row { grid-template-columns: 1fr; } }
+
+    .acct-btn {
+      background: #00C9A7; color: #000; border: none;
+      border-radius: 8px; padding: 11px 24px;
+      font-size: 13px; font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; margin-top: 4px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .acct-btn:hover { background: #00DFB9; transform: translateY(-1px); }
+    .acct-btn.danger {
+      background: none; border: 1px solid #3a0010; color: #e05;
+    }
+    .acct-btn.danger:hover { background: #1a0005; border-color: #e05; color: #ff3366; transform: none; }
+
+    .acct-msg {
+      font-size: 13px; padding: 10px 14px;
+      border-radius: 7px; margin-top: 12px; display: none;
+    }
+    .acct-msg.success { background: #e8faf7; color: #00997f; border: 1px solid #00C9A733; display: block; }
+    .acct-msg.error { background: #1a0005; color: #ff3366; border: 1px solid #ff336633; display: block; }
+
+    /* ── PAYMENT METHODS ── */
+    .pm-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .pm-card {
+      display: flex; align-items: center; gap: 14px;
+      background:#ffffff; border:1px solid #e3e6e8;
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .pm-icon {
+      width: 40px; height: 28px; border-radius: 4px;
+      background: #f0f2f5; border:1px solid #d5d9d9;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .pm-details { flex: 1; }
+    .pm-name { font-size: 14px; font-weight: 600; color: #111; }
+    .pm-sub { font-size: 12px; color: #555; margin-top: 2px; }
+    .pm-actions { display: flex; gap: 8px; }
+    .pm-btn {
+      font-size: 11px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      padding: 5px 10px; border-radius: 5px; cursor: pointer;
+      border:1px solid #d5d9d9; background: none; color: #666;
+      transition: all 0.15s;
+    }
+    .pm-btn:hover { border-color: #555; color: #111; }
+    .pm-btn.remove:hover { border-color: #e05; color: #e05; background: #1a0005; }
+
+    .signout-wrap {
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .signout-wrap p { color: #555; font-size: 13px; }
+
+    .loading-state {
+      text-align: center; padding: 60px 0;
+      color: #333; font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-img"></span>FIT<span>R</span>
+      </a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <form class="nav-search" action="shop.html" id="navSearchForm">
+        <input type="search" name="q" class="nav-search-input" placeholder="Search FITR…" maxlength="100" autocomplete="off" />
+        <button type="submit" class="nav-search-btn">&#128269;</button>
+      </form>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn-secondary" id="navSignInLink">Sign In</a>
+        <div id="navUser"></div>
+        <a href="shop.html" class="btn-primary">Shop Now</a>
+        <div id="navCartWrap"></div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link">Shop</a>
+      <a href="about.html" class="nav-mobile-link">About</a>
+      <a href="contact.html" class="nav-mobile-link">Contact</a>
+      <a href="auth.html" class="nav-mobile-link" id="navMobileSignInLink">Sign In</a>
+      <a href="account.html" class="nav-mobile-link active" id="navMobileAccount" style="display:none;">My Account</a>
+      <a href="orders.html" class="nav-mobile-link" id="navMobileOrders" style="display:none;">My Orders</a>
+      <a href="wishlist.html" class="nav-mobile-link" id="navMobileWishlist" style="display:none;">Wishlist</a>
+    </div>
+  </nav>
+
+  <div class="account-page" id="accountPage">
+    <div class="loading-state" id="loadingState">Loading your account…</div>
+
+    <div style="display:none" id="accountContent">
+
+      <div class="account-header">
+        <h1>MY <span style="color:#00C9A7">ACCOUNT</span></h1>
+        <p id="accountSubtitle">Manage your profile and settings.</p>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="account-section">
+        <div class="account-section-title">Profile</div>
+        <div class="acct-row">
+          <div class="acct-field">
+            <label class="acct-label">First Name</label>
+            <input class="acct-input" type="text" id="profileFirst" placeholder="Jordan" maxlength="60" />
+          </div>
+          <div class="acct-field">
+            <label class="acct-label">Last Name</label>
+            <input class="acct-input" type="text" id="profileLast" placeholder="Smith" maxlength="60" />
+          </div>
+        </div>
+        <div class="acct-field">
+          <label class="acct-label">Email</label>
+          <input class="acct-input" type="email" id="profileEmail" disabled />
+        </div>
+        <button class="acct-btn" id="saveProfileBtn">Save Profile</button>
+        <div class="acct-msg" id="profileMsg"></div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="account-section">
+        <div class="account-section-title">Security</div>
+        <div class="acct-field">
+          <label class="acct-label">Current Password</label>
+          <input class="acct-input" type="password" id="currentPw" placeholder="••••••••" />
+        </div>
+        <div class="acct-row">
+          <div class="acct-field">
+            <label class="acct-label">New Password</label>
+            <input class="acct-input" type="password" id="newPw" placeholder="••••••••" />
+          </div>
+          <div class="acct-field">
+            <label class="acct-label">Confirm New Password</label>
+            <input class="acct-input" type="password" id="confirmPw" placeholder="••••••••" />
+          </div>
+        </div>
+        <button class="acct-btn" id="changePwBtn">Update Password</button>
+        <div class="acct-msg" id="pwMsg"></div>
+      </div>
+
+      <!-- CONTACT DETAILS -->
+      <div class="account-section">
+        <div class="account-section-title">Contact Details</div>
+        <div class="acct-row">
+          <div class="acct-field">
+            <label class="acct-label">Phone</label>
+            <input class="acct-input" type="tel" id="contactPhone" placeholder="+1 (555) 000-0000" maxlength="30" />
+          </div>
+          <div class="acct-field">
+            <label class="acct-label">Date of Birth</label>
+            <input class="acct-input" type="date" id="contactDob" />
+          </div>
+        </div>
+        <button class="acct-btn" id="saveContactBtn">Save Contact Details</button>
+        <div class="acct-msg" id="contactMsg"></div>
+      </div>
+
+      <!-- BILLING ADDRESS -->
+      <div class="account-section">
+        <div class="account-section-title">Billing Address</div>
+        <div class="acct-field">
+          <label class="acct-label">Street Address</label>
+          <input class="acct-input" type="text" id="billingStreet" placeholder="123 Main St" maxlength="120" />
+        </div>
+        <div class="acct-row">
+          <div class="acct-field">
+            <label class="acct-label">City</label>
+            <input class="acct-input" type="text" id="billingCity" placeholder="Los Angeles" maxlength="80" />
+          </div>
+          <div class="acct-field">
+            <label class="acct-label">State</label>
+            <input class="acct-input" type="text" id="billingState" placeholder="CA" maxlength="40" />
+          </div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-field">
+            <label class="acct-label">ZIP Code</label>
+            <input class="acct-input" type="text" id="billingZip" placeholder="90001" maxlength="20" />
+          </div>
+          <div class="acct-field">
+            <label class="acct-label">Country</label>
+            <input class="acct-input" type="text" id="billingCountry" placeholder="United States" maxlength="60" />
+          </div>
+        </div>
+        <button class="acct-btn" id="saveBillingBtn">Save Billing Address</button>
+        <div class="acct-msg" id="billingMsg"></div>
+      </div>
+
+      <!-- PAYMENT METHODS -->
+      <div class="account-section">
+        <div class="account-section-title">Payment Methods</div>
+        <p style="font-size:12px;color:#444;margin-bottom:16px;">Cards are saved securely by Stripe when you check out. They sync automatically between web and the FITR app.</p>
+        <div class="pm-list" id="pmList">
+          <p style="color:#333;font-size:13px;">Loading…</p>
+        </div>
+        <div class="acct-msg" id="pmMsg"></div>
+      </div>
+
+      <!-- SIGN OUT -->
+      <div class="account-section">
+        <div class="account-section-title">Session</div>
+        <div class="signout-wrap">
+          <p>You're currently signed in. Sign out to switch accounts.</p>
+          <button class="acct-btn danger" id="signOutBtn">Sign Out</button>
+        </div>
+      </div>
+
+      <!-- DELETE ACCOUNT (GDPR Art. 17 / CCPA right to erasure) -->
+      <div class="account-section" style="border-color:#1a0008;">
+        <div class="account-section-title" style="color:#e05;">Danger Zone</div>
+        <p style="color:#555;font-size:14px;margin-bottom:16px;line-height:1.7;">
+          Permanently delete your account and all associated data (profile, orders, cart). This cannot be undone.
+          Under GDPR Article 17 and CCPA, you have the right to request erasure of your personal data.
+        </p>
+        <button class="acct-btn danger" id="deleteAccountBtn">Delete My Account</button>
+        <div class="acct-msg" id="deleteMsg"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="contact.html" class="footer-link">Contact</a>
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms.html" class="footer-link">Terms of Service</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR, Inc. All rights reserved. · joinfitr.com · <a href="mailto:support@joinfitr.com" style="color:#555;">support@joinfitr.com</a></div>
+    </div>
+  </footer>
+
+  <script src="nav-auth.js"></script>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth, onAuthStateChanged, updateProfile,
+      updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, doc, getDoc, setDoc,
+      deleteDoc, collection, getDocs, onSnapshot, query, orderBy, limit, writeBatch
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain:        "fitr-22814.firebaseapp.com",
+      projectId:         "fitr-22814",
+      storageBucket:     "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId:             "1:900395772549:web:2d48b5877b8d247e7797ec"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    const g  = id => document.getElementById(id);
+    const gv = id => (g(id).value || '').replace(/[<>]/g, '').trim();
+
+    function showMsg(id, text, type) {
+      var el = g(id);
+      el.textContent = text;
+      el.className = 'acct-msg ' + type;
+    }
+
+    async function loadPaymentMethods(user) {
+      var list = g('pmList');
+      try {
+        var idToken = await user.getIdToken();
+        var res = await fetch('/api/payment-methods', {
+          headers: { Authorization: 'Bearer ' + idToken },
+        });
+        var data = await res.json();
+        list.innerHTML = '';
+        if (!res.ok) throw new Error(data.error || 'Could not load');
+        var methods = data.paymentMethods || [];
+        if (methods.length === 0) {
+          list.innerHTML = '<p style="color:#333;font-size:13px;">No saved cards yet. Complete a checkout to save a card.</p>';
+          return;
+        }
+        methods.forEach(function(pm) {
+          var brand = pm.brand.charAt(0).toUpperCase() + pm.brand.slice(1);
+          var exp   = String(pm.expMonth).padStart(2,'0') + '/' + pm.expYear;
+          var div = document.createElement('div');
+          div.className = 'pm-card';
+          div.innerHTML =
+            '<div class="pm-icon">💳</div>' +
+            '<div class="pm-details">' +
+              '<div class="pm-name">' + brand + ' ending in ' + pm.last4 + '</div>' +
+              '<div class="pm-sub">Expires ' + exp + '</div>' +
+            '</div>' +
+            '<div class="pm-actions">' +
+              '<button class="pm-btn remove" data-pmid="' + pm.id + '">Remove</button>' +
+            '</div>';
+          list.appendChild(div);
+        });
+        list.querySelectorAll('.pm-btn.remove').forEach(function(btn) {
+          btn.addEventListener('click', async function() {
+            var pmId = this.dataset.pmid;
+            if (!window.confirm('Remove this card?')) return;
+            try {
+              var tok = await user.getIdToken();
+              var r = await fetch('/api/payment-methods', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+                body: JSON.stringify({ pmId: pmId }),
+              });
+              if (r.ok) {
+                loadPaymentMethods(user);
+              } else {
+                showMsg('pmMsg', 'Could not remove card.', 'error');
+              }
+            } catch(e) { showMsg('pmMsg', 'Could not remove card.', 'error'); }
+          });
+        });
+      } catch(e) {
+        list.innerHTML = '<p style="color:#888;font-size:13px;">Could not load payment methods.</p>';
+      }
+    }
+
+    var currentUser = null;
+
+    function loadNotifications(uid) {
+      try {
+        var notifQ = query(collection(db, 'users', uid, 'notifications'), orderBy('createdAt', 'desc'), limit(20));
+        onSnapshot(notifQ, function(snap) {
+          var items = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
+          var unread = items.filter(function(n) { return !n.read; }).length;
+          if (typeof window.setBellCount === 'function') window.setBellCount(unread);
+          if (typeof window.setBellItems === 'function') window.setBellItems(items);
+          var markAllBtn = document.getElementById('bellMarkAll');
+          if (markAllBtn && !markAllBtn._wired) {
+            markAllBtn._wired = true;
+            markAllBtn.addEventListener('click', function() {
+              var b = writeBatch(db);
+              snap.docs.forEach(function(d) { if (!d.data().read) b.update(doc(db, 'users', uid, 'notifications', d.id), { read: true }); });
+              b.commit();
+            });
+          }
+        });
+      } catch(e) { /* silent */ }
+    }
+
+    onAuthStateChanged(auth, async function(user) {
+      if (!user) { window.location.href = 'auth.html'; return; }
+      currentUser = user;
+      loadNotifications(user.uid);
+
+      // Show content
+      g('loadingState').style.display = 'none';
+      g('accountContent').style.display = 'block';
+
+      // Populate profile
+      var nameParts = (user.displayName || '').split(' ');
+      g('profileFirst').value = nameParts[0] || '';
+      g('profileLast').value  = nameParts.slice(1).join(' ') || '';
+      g('profileEmail').value = user.email || '';
+      g('accountSubtitle').textContent = 'Welcome back, ' + (nameParts[0] || user.email) + '.';
+
+      // Load Firestore data
+      var userRef = doc(db, 'users', user.uid);
+      var snap = await getDoc(userRef);
+      var data = snap.exists() ? snap.data() : {};
+
+      if (data.phone)           g('contactPhone').value   = data.phone;
+      if (data.dob)             g('contactDob').value     = data.dob;
+      if (data.billing) {
+        g('billingStreet').value  = data.billing.street  || '';
+        g('billingCity').value    = data.billing.city    || '';
+        g('billingState').value   = data.billing.state   || '';
+        g('billingZip').value     = data.billing.zip     || '';
+        g('billingCountry').value = data.billing.country || '';
+      }
+      loadPaymentMethods(user);
+
+      // ── SAVE PROFILE ──
+      g('saveProfileBtn').addEventListener('click', async function() {
+        var first = gv('profileFirst'), last = gv('profileLast');
+        if (!first) { showMsg('profileMsg', 'First name is required.', 'error'); return; }
+        try {
+          await updateProfile(user, { displayName: (first + ' ' + last).trim() });
+          var stored = JSON.parse(localStorage.getItem('fitr_user') || '{}');
+          stored.displayName = (first + ' ' + last).trim();
+          localStorage.setItem('fitr_user', JSON.stringify(stored));
+          await setDoc(userRef, { firstName: first, lastName: last }, { merge: true });
+          showMsg('profileMsg', 'Profile updated!', 'success');
+        } catch(e) { showMsg('profileMsg', 'Error updating profile.', 'error'); }
+      });
+
+      // ── CHANGE PASSWORD ──
+      g('changePwBtn').addEventListener('click', async function() {
+        var current = g('currentPw').value, newPw = g('newPw').value, confirm = g('confirmPw').value;
+        if (!current || !newPw) { showMsg('pwMsg', 'Fill in all password fields.', 'error'); return; }
+        if (newPw !== confirm)  { showMsg('pwMsg', 'New passwords do not match.', 'error'); return; }
+        if (newPw.length < 8)  { showMsg('pwMsg', 'Password must be at least 8 characters.', 'error'); return; }
+        try {
+          var cred = EmailAuthProvider.credential(user.email, current);
+          await reauthenticateWithCredential(user, cred);
+          await updatePassword(user, newPw);
+          g('currentPw').value = ''; g('newPw').value = ''; g('confirmPw').value = '';
+          showMsg('pwMsg', 'Password updated!', 'success');
+        } catch(e) {
+          showMsg('pwMsg', e.code === 'auth/wrong-password' ? 'Current password is incorrect.' : 'Error updating password.', 'error');
+        }
+      });
+
+      // ── SAVE CONTACT ──
+      g('saveContactBtn').addEventListener('click', async function() {
+        try {
+          await setDoc(userRef, { phone: gv('contactPhone'), dob: g('contactDob').value }, { merge: true });
+          showMsg('contactMsg', 'Contact details saved!', 'success');
+        } catch(e) { showMsg('contactMsg', 'Error saving. Try again.', 'error'); }
+      });
+
+      // ── SAVE BILLING ──
+      g('saveBillingBtn').addEventListener('click', async function() {
+        try {
+          await setDoc(userRef, { billing: {
+            street:  gv('billingStreet'), city: gv('billingCity'),
+            state:   gv('billingState'),  zip:  gv('billingZip'),
+            country: gv('billingCountry')
+          }}, { merge: true });
+          showMsg('billingMsg', 'Billing address saved!', 'success');
+        } catch(e) { showMsg('billingMsg', 'Error saving. Try again.', 'error'); }
+      });
+
+      // ── SIGN OUT ──
+      g('signOutBtn').addEventListener('click', function() {
+        auth.signOut().then(function() {
+          localStorage.removeItem('fitr_user');
+          localStorage.removeItem('fitr_cart');
+          sessionStorage.removeItem('fitrCart');
+          window.location.href = 'auth.html';
+        });
+      });
+
+      // ── DELETE ACCOUNT (GDPR Art. 17 / CCPA right to erasure) ──
+      g('deleteAccountBtn').addEventListener('click', function() {
+        var confirmed = window.confirm(
+          'Are you sure you want to permanently delete your account?\n\n' +
+          'This will delete your profile, cart, and all data associated with your account. ' +
+          'This action CANNOT be undone.'
+        );
+        if (!confirmed) return;
+
+        var user = auth.currentUser;
+        if (!user) return;
+        var uid = user.uid;
+        var msgEl = g('deleteMsg');
+        g('deleteAccountBtn').disabled = true;
+        msgEl.style.color = '#888';
+        msgEl.textContent = 'Deleting your account…';
+
+        // Delete cart subcollection, then user doc, then Firebase Auth account
+        getDocs(collection(db, 'users', uid, 'cart'))
+          .then(function(snap) {
+            return Promise.all(snap.docs.map(function(d) { return deleteDoc(d.ref); }));
+          })
+          .then(function() { return deleteDoc(doc(db, 'users', uid)); })
+          .then(function() { return deleteUser(user); })
+          .then(function() {
+            localStorage.removeItem('fitr_user');
+            localStorage.removeItem('fitr_cart');
+            sessionStorage.removeItem('fitrCart');
+            window.location.href = 'index.html';
+          })
+          .catch(function(err) {
+            // Firebase requires recent login for deleteUser — prompt re-authentication
+            if (err.code === 'auth/requires-recent-login') {
+              msgEl.style.color = '#e05';
+              msgEl.textContent = 'For security, please sign out and sign back in, then try again.';
+            } else {
+              msgEl.style.color = '#e05';
+              msgEl.textContent = 'Could not delete account. Please contact support@joinfitr.com.';
+            }
+            g('deleteAccountBtn').disabled = false;
+          });
+      });
+    });
+
+    g('hamburger').addEventListener('click', function() {
+      g('mobileMenu').classList.toggle('open');
+    });
+  </script>
+
+</body>
+</html>

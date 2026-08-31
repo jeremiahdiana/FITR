@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact – FITR</title>
+  <meta name="description" content="Partner with FITR, invest, or get in touch. We want to hear from brands, athletes, and investors." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.brevo.com; frame-ancestors 'none';" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── CONTACT ANIMATIONS ── */
+    @keyframes formSectionIn {
+      from { opacity:0; transform:translateX(12px); }
+      to   { opacity:1; transform:translateX(0); }
+    }
+    @keyframes optionPulse {
+      0%, 100% { box-shadow:none; }
+      50%  { box-shadow:0 0 0 3px #00C9A720; }
+    }
+
+    .form-section.active { animation:formSectionIn 0.3s ease; }
+    .contact-option.active { animation:optionPulse 2s ease-in-out infinite; }
+
+    /* Enhanced focus glow on inputs */
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color:#00C9A788 !important;
+      box-shadow:0 0 0 3px #00C9A710 !important;
+    }
+
+    /* Page header animated glow line */
+    .page-header-glow::after {
+      content:'';
+      position:absolute;
+      bottom:0; left:50%;
+      transform:translateX(-50%);
+      width:200px; height:1px;
+      background:linear-gradient(90deg,transparent,#00C9A766,transparent);
+    }
+
+    .contact-layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    /* LEFT SIDEBAR */
+    .contact-sidebar { position: sticky; top: 100px; }
+
+    .contact-sidebar h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      letter-spacing: 2px;
+      color: #111;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .contact-sidebar h2 span { color: #00C9A7; }
+
+    .contact-sidebar p {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .contact-options { display: flex; flex-direction: column; gap: 12px; }
+
+    .contact-option {
+      background:#f0f2f5;
+      border:0.5px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      text-decoration: none;
+    }
+
+    .contact-option:hover { border-color: #00C9A744; }
+    .contact-option.active { border-color: #00C9A7; }
+
+    .contact-option-icon {
+      width: 40px;
+      height: 40px;
+      background: #e8faf7;
+      border: 1px solid #00C9A733;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .contact-option-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 2px;
+    }
+
+    .contact-option-sub { font-size: 12px; color: #555; }
+
+    /* FORM CARD */
+    .form-card {
+      background:#f7f8fa;
+      border:1px solid #e3e6e8;
+      border-radius: 24px;
+      padding: 40px;
+    }
+
+    .form-tabs {
+      display: flex;
+      gap: 0;
+      background:#f0f2f5;
+      border:0.5px solid #d5d9d9;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+
+    .form-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      cursor: pointer;
+      border-radius: 9px;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .form-tab.active {
+      background: #00C9A7;
+      color: #080f18;
+    }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+    .form-submit {
+      width: 100%;
+      background: #00C9A7;
+      color: #080f18;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .form-submit:hover { background: #00DFB9; transform: translateY(-1px); }
+
+    .form-submit:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; }
+
+    .form-note {
+      font-size: 11px;
+      color: #444;
+      text-align: center;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    /* SUCCESS STATE */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .success-state.show { display: block; }
+
+    .success-icon { font-size: 56px; margin-bottom: 16px; }
+
+    .success-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 2px;
+      color: #00C9A7;
+      margin-bottom: 10px;
+    }
+
+    .success-sub { font-size: 15px; color: #666; line-height: 1.6; }
+
+    /* ── MOBILE LAYOUT (must come last to override desktop rules above) ── */
+    @media (max-width: 800px) {
+      /* Single-column grid; sidebar is removed from flow via position:fixed */
+      .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding-top: 56px; /* compensate for fixed selector strip below nav */
+      }
+
+      /* Fixed selector strip — always visible below nav */
+      .contact-sidebar {
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        z-index: 500;
+        background: rgba(8, 15, 24, 0.98);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 0.5px solid #1e2a38;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+        padding: 8px 16px 10px;
+        margin: 0;
+        /* Remove desktop sticky so fixed takes full effect */
+        align-self: unset;
+      }
+
+      .contact-sidebar h2,
+      .contact-sidebar > p { display: none; }
+
+      /* Horizontal scrollable pill row */
+      .contact-options {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 0;
+        -webkit-overflow-scrolling: touch;
+      }
+      .contact-options::-webkit-scrollbar { display: none; }
+
+      /* Compact pill cards */
+      .contact-option {
+        padding: 8px 14px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        min-width: 0;
+        flex-direction: row;
+        gap: 8px;
+      }
+      .contact-option-sub { display: none; }
+      .contact-option-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 13px;
+        border-radius: 7px;
+      }
+      .contact-option-title { font-size: 12px; white-space: nowrap; }
+
+      /* Form card: add top padding = nav(64) + strip(~56) so no field
+         is ever hidden under the fixed elements when the card is at top */
+      .form-card {
+        padding-top: 72px;
+        scroll-margin-top: 136px;
+      }
+
+      /* Inputs scroll into view clear of both fixed bars */
+      .form-input, .form-select, .form-textarea {
+        scroll-margin-top: 136px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-img"></span>FIT<span>R</span>
+      </a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link active">Contact</a>
+      </div>
+      <form class="nav-search" action="shop.html" id="navSearchForm">
+        <input type="search" name="q" class="nav-search-input" placeholder="Search FITR…" maxlength="100" autocomplete="off" />
+        <button type="submit" class="nav-search-btn">&#128269;</button>
+      </form>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn-secondary" id="navSignInLink">Sign In</a>
+        <div id="navUser"></div>
+        <a href="shop.html" class="btn-primary">Shop Now</a>
+        <div id="navCartWrap"></div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link">Shop</a>
+      <a href="about.html" class="nav-mobile-link">About</a>
+      <a href="contact.html" class="nav-mobile-link active">Contact</a>
+      <a href="auth.html" class="nav-mobile-link" id="navMobileSignInLink">Sign In</a>
+      <a href="account.html" class="nav-mobile-link" id="navMobileAccount" style="display:none;">My Account</a>
+      <a href="orders.html" class="nav-mobile-link" id="navMobileOrders" style="display:none;">My Orders</a>
+      <a href="wishlist.html" class="nav-mobile-link" id="navMobileWishlist" style="display:none;">Wishlist</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="page-header-glow"></div>
+    <div class="page-header-eyebrow">Get in Touch</div>
+    <h1>LET'S <span>CONNECT</span></h1>
+    <p class="page-header-sub">Whether you're a brand, investor, athlete, or just curious — we want to hear from you.</p>
+  </div>
+
+  <div class="contact-layout">
+
+    <!-- SIDEBAR -->
+    <div class="contact-sidebar">
+      <h2>WHO ARE<br/>YOU <span>HERE AS?</span></h2>
+      <p>Pick the option that best describes you and we'll make sure the right person gets back to you fast.</p>
+      <div class="contact-options">
+        <div class="contact-option active" data-target="brand">
+          <div class="contact-option-icon">🏆</div>
+          <div>
+            <div class="contact-option-title">Brand / Company</div>
+            <div class="contact-option-sub">List your products on FITR</div>
+          </div>
+        </div>
+        <div class="contact-option" data-target="investor">
+          <div class="contact-option-icon">💼</div>
+          <div>
+            <div class="contact-option-title">Investor</div>
+            <div class="contact-option-sub">Explore partnership & investment</div>
+          </div>
+        </div>
+        <div class="contact-option" data-target="athlete">
+          <div class="contact-option-icon">💪</div>
+          <div>
+            <div class="contact-option-title">Athlete / Creator</div>
+            <div class="contact-option-sub">Join the affiliate program</div>
+          </div>
+        </div>
+        <div class="contact-option" data-target="general">
+          <div class="contact-option-icon">✉️</div>
+          <div>
+            <div class="contact-option-title">General Inquiry</div>
+            <div class="contact-option-sub">Anything else</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+
+      <!-- TABS -->
+      <div class="form-tabs">
+        <div class="form-tab active" data-tab="brand">Brand</div>
+        <div class="form-tab" data-tab="investor">Investor</div>
+        <div class="form-tab" data-tab="athlete">Athlete</div>
+        <div class="form-tab" data-tab="general">General</div>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div class="success-state" id="successState">
+        <div class="success-icon">🔥</div>
+        <div class="success-title">MESSAGE SENT!</div>
+        <p class="success-sub">We'll get back to you within 24 hours.<br/>Welcome to the FITR family.</p>
+      </div>
+
+      <div id="formContent">
+
+        <!-- BRAND FORM -->
+        <div class="form-section active" id="form-brand">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name *</label>
+              <input id="brand-firstname" type="text" class="form-input" placeholder="Jordan" maxlength="60" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name *</label>
+              <input id="brand-lastname" type="text" class="form-input" placeholder="Smith" maxlength="60" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Brand / Company Name *</label>
+            <input id="brand-company" type="text" class="form-input" placeholder="Ghost Lifestyle" maxlength="100" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Work Email *</label>
+            <input id="brand-email" type="email" class="form-input" placeholder="you@brand.com" maxlength="100" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Product Category</label>
+            <select class="form-select">
+              <option value="" disabled selected>Select a category</option>
+              <option>Supplements</option>
+              <option>Gym Equipment</option>
+              <option>Apparel</option>
+              <option>Recovery</option>
+              <option>Nutrition / Food</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tell us about your brand</label>
+            <textarea id="brand-message" class="form-textarea" placeholder="What do you sell? How many products? Any current retail partnerships?"></textarea>
+          </div>
+          <button class="form-submit" onclick="submitForm()">Send Partnership Request →</button>
+          <p class="form-note">By submitting you agree to FITR's terms. We'll respond within 1 business day.</p>
+        </div>
+
+        <!-- INVESTOR FORM -->
+        <div class="form-section" id="form-investor">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name *</label>
+              <input id="investor-firstname" type="text" class="form-input" placeholder="Alex" maxlength="60" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name *</label>
+              <input id="investor-lastname" type="text" class="form-input" placeholder="Rivera" maxlength="60" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input id="investor-email" type="email" class="form-input" placeholder="alex@fund.com" maxlength="100" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Organization / Fund</label>
+            <input id="investor-org" type="text" class="form-input" placeholder="Apex Ventures" maxlength="100" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type of Interest</label>
+            <select class="form-select">
+              <option value="" disabled selected>Select type</option>
+              <option>Angel Investment</option>
+              <option>VC / Institutional</option>
+              <option>Strategic Partnership</option>
+              <option>Acquisition Interest</option>
+              <option>Just Learning More</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea id="investor-message" class="form-textarea" placeholder="Tell us about your background and interest in FITR…"></textarea>
+          </div>
+          <button class="form-submit" onclick="submitForm()">Request a Meeting →</button>
+          <p class="form-note">All investor inquiries are handled confidentially.</p>
+        </div>
+
+        <!-- ATHLETE FORM -->
+        <div class="form-section" id="form-athlete">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name *</label>
+              <input id="athlete-firstname" type="text" class="form-input" placeholder="Marcus" maxlength="60" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name *</label>
+              <input id="athlete-lastname" type="text" class="form-input" placeholder="Lee" maxlength="60" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input id="athlete-email" type="email" class="form-input" placeholder="you@email.com" maxlength="100" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Instagram / TikTok Handle</label>
+            <input id="athlete-handle" type="text" class="form-input" placeholder="@yourhandle" maxlength="100" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Audience Size</label>
+            <select class="form-select">
+              <option value="" disabled selected>Select range</option>
+              <option>Under 5k</option>
+              <option>5k – 25k</option>
+              <option>25k – 100k</option>
+              <option>100k – 500k</option>
+              <option>500k+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Why do you want to partner with FITR?</label>
+            <textarea id="athlete-message" class="form-textarea" placeholder="Tell us about your fitness niche and content…"></textarea>
+          </div>
+          <button class="form-submit" onclick="submitForm()">Apply to Affiliate Program →</button>
+          <p class="form-note">Tell us about yourself and we'll be in touch about partnership opportunities.</p>
+        </div>
+
+        <!-- GENERAL FORM -->
+        <div class="form-section" id="form-general">
+          <div class="form-group">
+            <label class="form-label">Name *</label>
+            <input id="general-name" type="text" class="form-input" placeholder="Your name" maxlength="100" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input id="general-email" type="email" class="form-input" placeholder="you@email.com" maxlength="100" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input id="general-subject" type="text" class="form-input" placeholder="What's this about?" maxlength="120" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message *</label>
+            <textarea id="general-message" class="form-textarea" style="min-height:160px;" placeholder="Tell us what's on your mind…"></textarea>
+          </div>
+          <button class="form-submit" onclick="submitForm()">Send Message →</button>
+          <p class="form-note">We typically respond within 24 hours.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="contact.html" class="footer-link">Contact</a>
+        <a href="contact.html" class="footer-link">Partners</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR. All rights reserved. · joinfitr.com</div>
+    </div>
+  </footer>
+
+  <script src="nav-auth.js"></script>
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.form-tab');
+    const sections = document.querySelectorAll('.form-section');
+    const options = document.querySelectorAll('.contact-option');
+
+    function switchTab(tab) {
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      options.forEach(o => o.classList.remove('active'));
+
+      const target = typeof tab === 'string' ? tab : tab.dataset.tab;
+      document.querySelector(`[data-tab="${target}"]`).classList.add('active');
+      document.getElementById('form-' + target).classList.add('active');
+      document.querySelector(`[data-target="${target}"]`).classList.add('active');
+    }
+
+    tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
+    options.forEach(opt => opt.addEventListener('click', () => switchTab(opt.dataset.target)));
+
+    // Form submission — saves to Brevo + emails app@joinfitr.com
+    function submitForm() {
+      const activeTab = document.querySelector('.form-tab.active').dataset.tab;
+      const g = id => ((document.getElementById(id) || {}).value || '').replace(/[<>]/g, '').trim();
+
+      let firstname = '', lastname = '', email = '', contactType = '', details = '';
+
+      if (activeTab === 'brand') {
+        firstname   = g('brand-firstname');
+        lastname    = g('brand-lastname');
+        email       = g('brand-email');
+        contactType = 'Brand Partnership';
+        details     = `<b>Company:</b> ${g('brand-company')}<br><b>Message:</b><br>${g('brand-message').replace(/\n/g,'<br>')}`;
+      } else if (activeTab === 'investor') {
+        firstname   = g('investor-firstname');
+        lastname    = g('investor-lastname');
+        email       = g('investor-email');
+        contactType = 'Investor';
+        details     = `<b>Organization:</b> ${g('investor-org')}<br><b>Message:</b><br>${g('investor-message').replace(/\n/g,'<br>')}`;
+      } else if (activeTab === 'athlete') {
+        firstname   = g('athlete-firstname');
+        lastname    = g('athlete-lastname');
+        email       = g('athlete-email');
+        contactType = 'Athlete / Affiliate';
+        details     = `<b>Handle:</b> ${g('athlete-handle')}<br><b>Message:</b><br>${g('athlete-message').replace(/\n/g,'<br>')}`;
+      } else if (activeTab === 'general') {
+        firstname   = g('general-name');
+        email       = g('general-email');
+        contactType = 'General';
+        details     = `<b>Subject:</b> ${g('general-subject')}<br><b>Message:</b><br>${g('general-message').replace(/\n/g,'<br>')}`;
+      }
+
+      if (!email) return;
+
+      fetch('/api/brevo-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstname, lastname, email, contactType, details })
+      });
+
+      document.getElementById('formContent').style.display = 'none';
+      document.getElementById('successState').classList.add('show');
+    }
+
+    // SECURITY: Sanitize inputs on submission
+    document.querySelectorAll('.form-input, .form-textarea').forEach(input => {
+      input.addEventListener('input', function() {
+        this.value = this.value.replace(/[<>]/g, '');
+      });
+    });
+
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    });
+  </script>
+
+</body>
+</html>

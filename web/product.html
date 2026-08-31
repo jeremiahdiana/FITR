@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product – FITR</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.joinfitr.com https://firebasestorage.googleapis.com; frame-ancestors 'none'; upgrade-insecure-requests;" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── LOADING ── */
+    .pd-loading {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:60vh; gap:14px; color:#888; font-size:15px;
+    }
+    .pd-spinner {
+      width:36px; height:36px; border:2px solid #e3e6e8; border-top-color:#00C9A7;
+      border-radius:50%; animation:pdspin .7s linear infinite;
+    }
+    @keyframes pdspin { to { transform:rotate(360deg); } }
+
+    /* ── PAGE WRAPPER ── */
+    .pd-wrap { max-width:1200px; margin:0 auto; padding:24px 24px 80px; }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:#888; margin-bottom:28px; flex-wrap:wrap; }
+    .breadcrumb a { color:#888; text-decoration:none; } .breadcrumb a:hover { color:#111; }
+    .breadcrumb-sep { color:#ccc; }
+
+    /* ── HERO LAYOUT ── */
+    .pd-hero { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
+    @media(max-width:820px) { .pd-hero { grid-template-columns:1fr; gap:24px; } }
+
+    /* ── GALLERY ── */
+    .pd-gallery { position:sticky; top:88px; }
+    .pd-main-img {
+      width:100%; aspect-ratio:1/1; border-radius:20px; border:1px solid #e3e6e8;
+      background:#f7f8fa; overflow:hidden; display:flex; align-items:center; justify-content:center;
+      cursor:zoom-in; position:relative;
+    }
+    .pd-main-img img {
+      width:100%; height:100%; object-fit:cover;
+      transition:transform .5s ease;
+    }
+    .pd-main-img:hover img { transform:scale(1.08); }
+    .pd-main-img .pd-emoji { font-size:100px; user-select:none; }
+    .pd-thumbs { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+    .pd-thumb {
+      width:72px; height:72px; border-radius:10px; border:2px solid transparent;
+      background:#f7f8fa; overflow:hidden; cursor:pointer; transition:border-color .2s;
+      display:flex; align-items:center; justify-content:center; font-size:28px;
+    }
+    .pd-thumb img { width:100%; height:100%; object-fit:cover; }
+    .pd-thumb.active { border-color:#00C9A7; }
+
+    /* ── PURCHASE PANEL ── */
+    .pd-panel {}
+    .sold-by-tag {
+      display:inline-flex; align-items:center; gap:6px;
+      background:#f0fdfb; border:1px solid #00C9A730; border-radius:8px;
+      padding:4px 12px; font-size:12px; color:#00A87D; font-weight:600;
+      margin-bottom:12px; text-decoration:none;
+      transition:background .15s;
+    }
+    .sold-by-tag:hover { background:#e0fbf5; }
+    .pd-title {
+      font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:.5px;
+      color:#111; line-height:1.1; margin-bottom:10px;
+    }
+    .pd-rating-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+    .pd-stars { color:#f59e0b; font-size:16px; letter-spacing:1px; }
+    .pd-rating-num { font-size:13px; color:#555; font-weight:600; }
+    .pd-review-link { font-size:13px; color:#00A87D; text-decoration:none; }
+    .pd-review-link:hover { text-decoration:underline; }
+
+    .pd-price-block { margin-bottom:16px; }
+    .pd-price-compare { font-size:14px; color:#aaa; text-decoration:line-through; }
+    .pd-price-main { font-size:34px; font-weight:800; color:#111; line-height:1; }
+    .pd-price-savings { font-size:13px; color:#00A87D; font-weight:600; margin-top:4px; }
+
+    .pd-divider { border:none; border-top:1px solid #e8eaec; margin:18px 0; }
+
+    /* DELIVERY BLOCK */
+    .pd-delivery {
+      background:#f7f8fa; border-radius:14px; padding:14px 16px;
+      margin-bottom:16px; display:flex; flex-direction:column; gap:10px;
+    }
+    .pd-delivery-row { display:flex; align-items:flex-start; gap:10px; }
+    .pd-delivery-icon { font-size:18px; margin-top:1px; }
+    .pd-delivery-label { font-size:12px; color:#888; margin-bottom:2px; }
+    .pd-delivery-val { font-size:14px; font-weight:600; color:#111; }
+    .pd-zip-row { display:flex; align-items:center; gap:8px; }
+    .pd-zip-input {
+      border:1px solid #d5d9d9; border-radius:8px; padding:7px 12px;
+      font-size:13px; width:120px; outline:none; font-family:'DM Sans',sans-serif;
+      transition:border-color .2s;
+    }
+    .pd-zip-input:focus { border-color:#00C9A7; }
+    .pd-zip-btn {
+      background:#111; color:#fff; border:none; border-radius:8px;
+      padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer;
+      font-family:'DM Sans',sans-serif; transition:background .2s;
+    }
+    .pd-zip-btn:hover { background:#333; }
+    .pd-delivery-est { font-size:13px; color:#00A87D; font-weight:600; display:none; }
+
+    /* STOCK */
+    .pd-stock-ok  { font-size:14px; font-weight:600; color:#22c55e; margin-bottom:14px; }
+    .pd-stock-low { font-size:14px; font-weight:600; color:#f59e0b; margin-bottom:14px; }
+    .pd-stock-out { font-size:14px; font-weight:600; color:#ef4444; margin-bottom:14px; }
+
+    /* QTY + CTA */
+    .pd-qty-row { display:flex; align-items:center; gap:0; border:1px solid #d5d9d9; border-radius:12px; overflow:hidden; width:fit-content; margin-bottom:14px; }
+    .pd-qty-btn { background:#f7f8fa; border:none; cursor:pointer; width:44px; height:46px; font-size:22px; font-weight:600; color:#333; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+    .pd-qty-btn:hover { background:#e8eaec; }
+    .pd-qty-val { width:52px; text-align:center; font-size:15px; font-weight:600; color:#111; }
+
+    .btn-buy-now {
+      width:100%; padding:15px; border-radius:12px; border:none;
+      background:linear-gradient(135deg,#00C9A7,#00DFB9);
+      font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700; color:#080f18;
+      cursor:pointer; transition:all .2s; margin-bottom:10px;
+      box-shadow:0 4px 18px #00C9A730;
+    }
+    .btn-buy-now:hover { transform:translateY(-1px); box-shadow:0 8px 28px #00C9A750; }
+
+    .btn-add-cart {
+      width:100%; padding:15px; border-radius:12px;
+      border:2px solid #111; background:#fff;
+      font-family:'DM Sans',sans-serif; font-size:16px; font-weight:600; color:#111;
+      cursor:pointer; transition:all .2s; margin-bottom:14px;
+    }
+    .btn-add-cart:hover { background:#111; color:#fff; }
+    .btn-add-cart.added { background:#111; color:#fff; border-color:#111; }
+
+    .btn-wishlist {
+      width:100%; padding:13px; border-radius:12px;
+      border:2px solid #e3e6e8; background:#fff;
+      font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+      color:#555; cursor:pointer; transition:all .2s; margin-bottom:14px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-wishlist:hover { border-color:#e63946; color:#e63946; }
+    .btn-wishlist.wishlisted { background:#fff5f5; border-color:#e63946; color:#e63946; }
+
+    .pd-reassure { display:flex; flex-direction:column; gap:6px; }
+    .pd-reassure-item { display:flex; align-items:center; gap:8px; font-size:13px; color:#555; }
+    .pd-reassure-item span { color:#00A87D; font-size:15px; }
+
+    /* ── ABOUT THIS ITEM ── */
+    .pd-section { max-width:1200px; margin:0 auto; padding:0 24px; margin-top:48px; }
+    .pd-section-title {
+      font-family:'Bebas Neue',sans-serif; font-size:26px; color:#111; letter-spacing:.5px;
+      margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #e3e6e8;
+      display:flex; align-items:center; gap:10px;
+    }
+    .pd-section-title .accent { color:#00C9A7; }
+
+    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+    @media(max-width:700px) { .about-grid { grid-template-columns:1fr; } }
+
+    .item-bullets { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px; }
+    .item-bullets li {
+      display:flex; align-items:flex-start; gap:12px;
+      font-size:14px; line-height:1.65; color:#333;
+    }
+    .item-bullets li::before {
+      content:''; display:block; width:7px; height:7px; background:#00C9A7;
+      border-radius:50%; flex-shrink:0; margin-top:7px;
+    }
+
+    .details-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .details-table tr { border-bottom:1px solid #f0f2f5; }
+    .details-table td { padding:10px 12px; }
+    .details-table td:first-child { color:#888; font-weight:600; width:40%; background:#fafafa; }
+    .details-table td:last-child { color:#333; }
+
+    /* ── BRAND SECTION ── */
+    .brand-section-wrap {
+      background:linear-gradient(135deg,#f0fdfb,#fff); border:1px solid #00C9A720;
+      border-radius:20px; padding:28px; margin-top:48px; max-width:1200px; margin-left:auto; margin-right:auto;
+      margin-top:48px; padding-left:24px; padding-right:24px;
+    }
+    .brand-inner { display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; }
+    .brand-avatar {
+      width:72px; height:72px; border-radius:50%;
+      background:linear-gradient(135deg,#00C9A7,#00DFB9);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Bebas Neue',sans-serif; font-size:32px; color:#080f18;
+      flex-shrink:0;
+    }
+    .brand-info { flex:1; min-width:200px; }
+    .brand-name-big { font-family:'Bebas Neue',sans-serif; font-size:24px; color:#111; letter-spacing:1px; margin-bottom:4px; }
+    .brand-tagline { font-size:13px; color:#00A87D; font-weight:600; margin-bottom:8px; }
+    .brand-bio { font-size:14px; color:#555; line-height:1.65; margin-bottom:12px; }
+    .brand-links { display:flex; gap:10px; flex-wrap:wrap; }
+    .brand-link-btn {
+      display:inline-flex; align-items:center; gap:6px; padding:7px 14px;
+      border:1px solid #d5d9d9; border-radius:8px; font-size:12px; font-weight:600;
+      color:#333; text-decoration:none; transition:all .2s; background:#fff;
+    }
+    .brand-link-btn:hover { border-color:#00C9A7; color:#00A87D; background:#f0fdfb; }
+    .brand-stats { display:flex; gap:24px; flex-wrap:wrap; align-items:center; margin-left:auto; }
+    .brand-stat { text-align:center; }
+    .brand-stat-num { font-family:'Bebas Neue',sans-serif; font-size:28px; color:#111; line-height:1; }
+    .brand-stat-label { font-size:11px; color:#888; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+    /* ── PRODUCT SHELF (More from Brand / You May Also Like) ── */
+    .shelf-wrap { max-width:1200px; margin:0 auto; padding:0 24px; margin-top:48px; }
+    .shelf-title { font-family:'Bebas Neue',sans-serif; font-size:26px; color:#111; letter-spacing:.5px; margin-bottom:16px; }
+    .shelf-title .accent { color:#00C9A7; }
+    .shelf-scroll { display:flex; gap:16px; overflow-x:auto; padding-bottom:12px; scrollbar-width:thin; }
+    .shelf-scroll::-webkit-scrollbar { height:4px; }
+    .shelf-scroll::-webkit-scrollbar-thumb { background:#d5d9d9; border-radius:2px; }
+
+    .shelf-card {
+      flex-shrink:0; width:200px; background:#fff; border:1px solid #e8eaec;
+      border-radius:16px; overflow:hidden; transition:all .2s; cursor:pointer;
+    }
+    .shelf-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.08); border-color:#00C9A740; }
+    .shelf-card-img {
+      width:100%; aspect-ratio:1/1; background:#f7f8fa;
+      display:flex; align-items:center; justify-content:center; font-size:44px;
+      overflow:hidden;
+    }
+    .shelf-card-img img { width:100%; height:100%; object-fit:cover; }
+    .shelf-card-body { padding:12px; }
+    .shelf-card-brand { font-size:10px; font-weight:700; color:#00A87D; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+    .shelf-card-name { font-size:13px; font-weight:600; color:#111; line-height:1.3; margin-bottom:6px; height:34px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .shelf-card-price { font-size:15px; font-weight:700; color:#111; margin-bottom:8px; }
+    .shelf-card-add {
+      width:100%; padding:8px; border-radius:8px; border:1px solid #111;
+      background:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
+      color:#111; cursor:pointer; transition:all .15s;
+    }
+    .shelf-card-add:hover { background:#111; color:#fff; }
+    .shelf-card-add.added { background:#111; color:#fff; }
+
+    /* ── REVIEWS SECTION ── */
+    .reviews-wrap { max-width:1200px; margin:0 auto; padding:0 24px; margin-top:56px; }
+    .reviews-masthead {
+      display:grid; grid-template-columns:200px 1fr; gap:32px; align-items:start;
+      margin-bottom:32px; padding:24px; background:#f7f8fa; border-radius:16px;
+    }
+    @media(max-width:600px) { .reviews-masthead { grid-template-columns:1fr; } }
+    .reviews-big-num { font-size:64px; font-weight:800; color:#111; line-height:1; }
+    .reviews-big-stars { font-size:24px; color:#f59e0b; letter-spacing:2px; margin:4px 0; }
+    .reviews-big-count { font-size:13px; color:#888; }
+    .rating-bars { display:flex; flex-direction:column; gap:8px; }
+    .rbar-row { display:flex; align-items:center; gap:10px; font-size:13px; }
+    .rbar-label { width:30px; color:#555; font-weight:600; }
+    .rbar-track { flex:1; height:8px; background:#e3e6e8; border-radius:4px; overflow:hidden; }
+    .rbar-fill  { height:100%; background:#f59e0b; border-radius:4px; transition:width .8s ease; }
+    .rbar-pct { width:32px; text-align:right; color:#888; font-size:12px; }
+
+    .review-card {
+      background:#fff; border:1px solid #e8eaec; border-radius:16px;
+      padding:20px 24px; margin-bottom:14px;
+    }
+    .review-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+    .review-author { font-weight:600; font-size:14px; color:#111; display:flex; align-items:center; gap:8px; }
+    .review-avatar { width:30px; height:30px; border-radius:50%; background:#00C9A720; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#00A87D; flex-shrink:0; }
+    .review-date { font-size:12px; color:#bbb; }
+    .review-stars { font-size:15px; color:#f59e0b; letter-spacing:1px; margin:4px 0 8px; }
+    .review-text { font-size:14px; color:#444; line-height:1.65; }
+    .verified-badge { display:inline-block; background:#f0fdfb; border:1px solid #00C9A730; border-radius:6px; padding:2px 8px; font-size:11px; color:#00A87D; font-weight:600; margin-top:8px; }
+
+    /* REVIEW FORM */
+    .review-form-card { background:#f7f8fa; border:1px solid #e3e6e8; border-radius:16px; padding:28px; margin-top:24px; }
+    .review-form-title { font-size:18px; font-weight:700; color:#111; margin-bottom:18px; }
+    .star-picker { display:flex; gap:4px; margin-bottom:16px; }
+    .star-btn { font-size:30px; cursor:pointer; background:none; border:none; padding:0; color:#ddd; transition:color .1s, transform .1s; }
+    .star-btn.active { color:#f59e0b; }
+    .star-btn:hover { transform:scale(1.2); }
+    .review-name-input, .review-textarea {
+      width:100%; padding:12px 14px; border:1px solid #d5d9d9; border-radius:10px;
+      font-family:'DM Sans',sans-serif; font-size:14px; color:#111; outline:none;
+      transition:border-color .2s; background:#fff; margin-bottom:12px;
+    }
+    .review-name-input:focus, .review-textarea:focus { border-color:#00C9A7; }
+    .review-textarea { min-height:100px; resize:vertical; }
+    .btn-submit-review {
+      padding:12px 28px; border-radius:10px; background:#111; color:#fff; border:none;
+      font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer;
+      transition:background .2s;
+    }
+    .btn-submit-review:hover { background:#333; }
+    .btn-submit-review:disabled { background:#ccc; cursor:default; }
+    .review-msg { font-size:13px; margin-top:10px; }
+    .review-msg.ok  { color:#00A87D; }
+    .review-msg.err { color:#ef4444; }
+    .review-login-prompt { background:#f7f8fa; border:1px solid #e3e6e8; border-radius:14px; padding:20px; text-align:center; margin-top:20px; font-size:14px; color:#555; }
+    .review-login-prompt a { color:#00A87D; text-decoration:none; font-weight:600; }
+
+    /* ── GALLERY CAROUSEL ── */
+    .pd-gallery-wrap { position:relative; }
+    .pd-carousel-btn {
+      position:absolute; top:50%; transform:translateY(-50%);
+      width:40px; height:40px; border-radius:50%; border:none;
+      background:rgba(255,255,255,.92); box-shadow:0 2px 12px rgba(0,0,0,.12);
+      font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+      z-index:2; transition:all .15s; color:#333;
+    }
+    .pd-carousel-btn:hover { background:#fff; box-shadow:0 4px 18px rgba(0,0,0,.18); }
+    .pd-carousel-btn.prev { left:-16px; }
+    .pd-carousel-btn.next { right:-16px; }
+    .pd-carousel-btn:disabled { opacity:.3; cursor:default; }
+
+    /* ── VARIATIONS ── */
+    .pd-var-section { margin-bottom:20px; }
+    .pd-var-label { font-size:13px; font-weight:700; color:#111; margin-bottom:8px; }
+    .pd-var-label .selected-val { font-weight:400; color:#555; }
+    .pd-var-options { display:flex; gap:8px; flex-wrap:wrap; }
+    .pd-var-btn {
+      padding:8px 16px; border-radius:8px; border:1.5px solid #d5d9d9;
+      background:#fff; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+      color:#333; cursor:pointer; transition:all .15s;
+    }
+    .pd-var-btn:hover { border-color:#111; color:#111; }
+    .pd-var-btn.selected { background:#111; border-color:#111; color:#fff; }
+    .pd-var-btn.has-img { display:flex; align-items:center; gap:6px; }
+    .pd-var-btn-img { width:24px; height:24px; border-radius:4px; object-fit:cover; }
+
+    /* ── SIZING GUIDE ── */
+    .pd-size-guide-toggle {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:13px; font-weight:600; color:#00A87D;
+      background:none; border:none; cursor:pointer; padding:0; margin-bottom:16px;
+      font-family:'DM Sans',sans-serif;
+    }
+    .pd-size-guide-toggle:hover { text-decoration:underline; }
+    .pd-size-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:12px; border:1px solid #e3e6e8; border-radius:10px; overflow:hidden; }
+    .pd-size-table th { background:#f7f8fa; padding:10px 14px; text-align:left; font-weight:700; color:#111; border-bottom:1px solid #e3e6e8; }
+    .pd-size-table td { padding:10px 14px; border-bottom:1px solid #f0f2f5; color:#333; }
+    .pd-size-table tr:last-child td { border-bottom:none; }
+    .pd-size-guide-wrap { display:none; margin-bottom:16px; }
+    .pd-size-guide-wrap.open { display:block; }
+
+    /* ── BELL STYLES (copied from shop) ── */
+    .nav-bell-wrap { position:relative; }
+    .nav-bell-btn { background:none; border:none; cursor:pointer; color:#e8edf2; padding:8px; border-radius:8px; position:relative; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    .nav-bell-btn:hover { background:rgba(255,255,255,.08); }
+    .bell-badge { position:absolute; top:2px; right:2px; min-width:17px; height:17px; background:#00C9A7; border-radius:9px; font-size:10px; font-weight:800; color:#080f18; display:flex; align-items:center; justify-content:center; padding:0 4px; pointer-events:none; }
+    .bell-dropdown { display:none; position:absolute; top:calc(100% + 8px); right:0; width:320px; background:#111827; border:1px solid #1e2d40; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,.4); z-index:999; overflow:hidden; }
+    .bell-dropdown.open { display:block; }
+    .bell-dd-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #1e2d40; font-size:13px; font-weight:600; color:#e8edf2; }
+    .bell-mark-all { background:none; border:none; cursor:pointer; font-size:11px; color:#00C9A7; font-family:'DM Sans',sans-serif; }
+    .bell-mark-all:hover { text-decoration:underline; }
+    .bell-dd-list { max-height:300px; overflow-y:auto; }
+    .bell-empty { padding:20px 16px; text-align:center; font-size:13px; color:#6b7280; }
+    .bell-item { display:block; padding:12px 16px; border-bottom:1px solid #1e2d40; text-decoration:none; transition:background .15s; }
+    .bell-item:hover { background:#1a2233; }
+    .bell-item.unread { border-left:3px solid #00C9A7; }
+    .bell-item-title { font-size:13px; font-weight:600; color:#e8edf2; margin-bottom:2px; }
+    .bell-item-body  { font-size:12px; color:#6b7280; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-img"></span>FIT<span>R</span></a>
+      <div class="nav-links">
+        <a href="shop.html" class="nav-link active">Shop</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <form class="nav-search" action="shop.html">
+        <input type="search" name="q" class="nav-search-input" placeholder="Search FITR…" maxlength="100" autocomplete="off" />
+        <button type="submit" class="nav-search-btn">&#128269;</button>
+      </form>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn-secondary" id="navSignInLink">Sign In</a>
+        <div id="navUser"></div>
+        <div id="navBellWrap" style="display:none;align-items:center;"></div>
+        <a href="shop.html" class="btn-primary" id="navCartBtn" style="position:relative;">
+          &#128722; Cart <span id="navCartCount" style="font-size:12px;"></span>
+        </a>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="nav-mobile" id="mobileMenu">
+      <a href="shop.html" class="nav-mobile-link active">Shop</a>
+      <a href="about.html" class="nav-mobile-link">About</a>
+      <a href="contact.html" class="nav-mobile-link">Contact</a>
+      <a href="auth.html" class="nav-mobile-link" id="navMobileSignInLink">Sign In</a>
+      <a href="account.html" class="nav-mobile-link" id="navMobileAccount" style="display:none;">My Account</a>
+      <a href="orders.html" class="nav-mobile-link" id="navMobileOrders" style="display:none;">My Orders</a>
+      <a href="wishlist.html" class="nav-mobile-link" id="navMobileWishlist" style="display:none;">Wishlist</a>
+    </div>
+  </nav>
+
+  <!-- LOADING -->
+  <div id="pdLoading" style="margin-top:48px;"><div class="pd-loading"><div class="pd-spinner"></div>Loading product…</div></div>
+
+  <!-- ERROR -->
+  <div id="pdError" style="display:none;text-align:center;padding:80px 24px;margin-top:48px;">
+    <div style="font-size:48px;margin-bottom:16px;">😕</div>
+    <div style="font-size:18px;font-weight:600;color:#111;margin-bottom:8px;">Product not found</div>
+    <a href="shop.html" style="color:#00A87D;text-decoration:none;font-weight:600;">← Back to Shop</a>
+  </div>
+
+  <!-- ════════════════ PRODUCT CONTENT ════════════════ -->
+  <div id="pdContent" style="display:none;margin-top:48px;">
+
+    <!-- HERO -->
+    <div class="pd-wrap">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a><span class="breadcrumb-sep">›</span>
+        <a href="shop.html">Shop</a><span class="breadcrumb-sep">›</span>
+        <span id="bcCategory"></span><span class="breadcrumb-sep" id="bcSep" style="display:none;">›</span>
+        <span id="bcName">Product</span>
+      </div>
+
+      <div class="pd-hero">
+
+        <!-- GALLERY -->
+        <div class="pd-gallery pd-gallery-wrap">
+          <button class="pd-carousel-btn prev" id="carouselPrev" onclick="carouselMove(-1)" style="display:none;">‹</button>
+          <div class="pd-main-img" id="pdMainImg">
+            <div class="pd-emoji" id="pdEmoji">📦</div>
+          </div>
+          <button class="pd-carousel-btn next" id="carouselNext" onclick="carouselMove(1)" style="display:none;">›</button>
+          <div class="pd-thumbs" id="pdThumbs"></div>
+        </div>
+
+        <!-- PURCHASE PANEL -->
+        <div class="pd-panel">
+          <a href="#brand-section" class="sold-by-tag">🏷️ Sold by <span id="pdBrandName">Brand</span></a>
+
+          <h1 class="pd-title" id="pdTitle">Loading…</h1>
+
+          <div class="pd-rating-row">
+            <span class="pd-stars" id="pdStars">★★★★★</span>
+            <span class="pd-rating-num" id="pdRatingNum">5.0</span>
+            <a class="pd-review-link" href="#reviews" id="pdReviewLink">(0 reviews)</a>
+          </div>
+
+          <div class="pd-price-block">
+            <div class="pd-price-compare" id="pdCompare" style="display:none;"></div>
+            <div class="pd-price-main" id="pdPrice">$0.00</div>
+            <div class="pd-price-savings" id="pdSavings" style="display:none;"></div>
+          </div>
+
+          <!-- VARIATIONS -->
+          <div id="pdVariations"></div>
+
+          <!-- SIZING GUIDE -->
+          <div id="pdSizeGuideSection" style="display:none;">
+            <button class="pd-size-guide-toggle" onclick="toggleSizeGuide()">📏 Size Guide ▾</button>
+            <div class="pd-size-guide-wrap" id="pdSizeGuideWrap"></div>
+          </div>
+
+          <hr class="pd-divider" />
+
+          <!-- DELIVERY ESTIMATE -->
+          <div class="pd-delivery">
+            <div class="pd-delivery-row">
+              <div class="pd-delivery-icon">🚚</div>
+              <div style="flex:1;">
+                <div class="pd-delivery-label">Estimated delivery</div>
+                <div class="pd-delivery-val" id="pdDeliveryDefault">3–7 business days</div>
+              </div>
+            </div>
+            <div class="pd-zip-row">
+              <input class="pd-zip-input" id="pdZipInput" placeholder="Enter ZIP code" maxlength="5" type="text" inputmode="numeric" pattern="[0-9]*" />
+              <button class="pd-zip-btn" id="pdZipBtn">Update</button>
+            </div>
+            <div class="pd-delivery-est" id="pdDeliveryEst"></div>
+          </div>
+
+          <!-- STOCK STATUS -->
+          <div id="pdStockStatus" class="pd-stock-ok">✓ In Stock</div>
+
+          <!-- QTY -->
+          <div class="pd-qty-row">
+            <button class="pd-qty-btn" id="qtyMinus">−</button>
+            <span class="pd-qty-val" id="qtyVal">1</span>
+            <button class="pd-qty-btn" id="qtyPlus">+</button>
+          </div>
+
+          <button class="btn-buy-now" id="buyNowBtn">⚡ Buy Now</button>
+          <button class="btn-add-cart" id="addCartBtn">+ Add to Cart</button>
+          <button class="btn-wishlist" id="wishlistBtn">♡ Save to Wishlist</button>
+
+          <!-- REASSURANCES -->
+          <div class="pd-reassure">
+            <div class="pd-reassure-item"><span>🔒</span> Secure checkout via Stripe</div>
+            <div class="pd-reassure-item"><span>📦</span> Free returns within 30 days</div>
+            <div class="pd-reassure-item"><span>⭐</span> FITR Quality Guarantee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABOUT THIS ITEM ── -->
+    <div class="pd-section" id="aboutSection">
+      <div class="pd-section-title">About <span class="accent">This Item</span></div>
+      <div class="about-grid">
+        <ul class="item-bullets" id="itemBullets">
+          <li>Loading product details…</li>
+        </ul>
+        <table class="details-table" id="detailsTable">
+          <tbody id="detailsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── BRAND SECTION ── -->
+    <div style="max-width:1200px;margin:48px auto 0;padding:0 24px;" id="brand-section">
+      <div class="pd-section-title" style="border:none;margin-bottom:0;padding-bottom:0;">About the <span class="accent">Brand</span></div>
+    </div>
+    <div style="max-width:1200px;margin:16px auto 0;padding:0 24px;">
+      <div class="brand-inner" id="brandSectionInner">
+        <div class="pd-loading" style="min-height:80px;"><div class="pd-spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- ── MORE FROM BRAND ── -->
+    <div class="shelf-wrap" id="moreBrandWrap">
+      <div class="shelf-title">More from <span class="accent" id="moreBrandLabel">This Brand</span></div>
+      <div class="shelf-scroll" id="moreBrandShelf"></div>
+    </div>
+
+    <!-- ── YOU MAY ALSO LIKE ── -->
+    <div class="shelf-wrap" id="alsoLikeWrap">
+      <div class="shelf-title">You May <span class="accent">Also Like</span></div>
+      <div class="shelf-scroll" id="alsoLikeShelf"></div>
+    </div>
+
+    <!-- ── REVIEWS ── -->
+    <div class="reviews-wrap" id="reviews">
+      <div class="pd-section-title">Customer <span class="accent">Reviews</span></div>
+      <div class="reviews-masthead" id="reviewsMasthead" style="display:none;">
+        <div>
+          <div class="reviews-big-num" id="revBigNum">5.0</div>
+          <div class="reviews-big-stars" id="revBigStars">★★★★★</div>
+          <div class="reviews-big-count" id="revBigCount">0 reviews</div>
+        </div>
+        <div class="rating-bars" id="ratingBars"></div>
+      </div>
+      <div id="reviewsList"></div>
+
+      <!-- FORM / LOGIN PROMPT -->
+      <div id="reviewFormCard" class="review-form-card" style="display:none;">
+        <div class="review-form-title">Write a Review</div>
+        <div class="star-picker" id="starPicker">
+          <button class="star-btn" data-val="1">★</button>
+          <button class="star-btn" data-val="2">★</button>
+          <button class="star-btn" data-val="3">★</button>
+          <button class="star-btn" data-val="4">★</button>
+          <button class="star-btn" data-val="5">★</button>
+        </div>
+        <textarea class="review-textarea" id="reviewText" placeholder="Share your experience with this product — quality, shipping, results…" maxlength="1000"></textarea>
+        <button class="btn-submit-review" id="submitReviewBtn" disabled>Submit Review</button>
+        <div class="review-msg" id="reviewMsg"></div>
+      </div>
+      <div id="reviewLoginPrompt" class="review-login-prompt" style="display:none;">
+        <a href="auth.html">Sign in</a> to leave a review for this product.
+      </div>
+    </div>
+
+  </div><!-- /pdContent -->
+
+  <footer class="footer" style="margin-top:80px;">
+    <div class="footer-inner">
+      <div class="footer-logo">FIT<span>R</span></div>
+      <div class="footer-links">
+        <a href="shop.html" class="footer-link">Shop</a>
+        <a href="about.html" class="footer-link">About</a>
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms.html" class="footer-link">Terms of Service</a>
+      </div>
+      <div class="footer-copy">© 2026 FITR, Inc. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <!-- ════ INLINE SCRIPTS ════ -->
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    });
+
+    // ── CART HELPERS ──
+    function getCart() {
+      try { return JSON.parse(localStorage.getItem('fitr_cart') || '[]'); } catch(e) { return []; }
+    }
+    function saveCart(c) {
+      localStorage.setItem('fitr_cart', JSON.stringify(c));
+      var cnt = c.length;
+      var el = document.getElementById('navCartCount');
+      if (el) el.textContent = cnt > 0 ? '(' + cnt + ')' : '';
+    }
+    function updateCartBadge() {
+      var c = getCart();
+      var el = document.getElementById('navCartCount');
+      if (el) el.textContent = c.length > 0 ? '(' + c.length + ')' : '';
+    }
+    updateCartBadge();
+
+    // ── QTY ──
+    var qty = 1;
+    document.getElementById('qtyMinus').addEventListener('click', function() {
+      if (qty > 1) { qty--; document.getElementById('qtyVal').textContent = qty; }
+    });
+    document.getElementById('qtyPlus').addEventListener('click', function() {
+      if (qty < 99) { qty++; document.getElementById('qtyVal').textContent = qty; }
+    });
+
+    // ── DELIVERY ESTIMATE ──
+    function addBusinessDays(date, days) {
+      var d = new Date(date);
+      var added = 0;
+      while (added < days) {
+        d.setDate(d.getDate() + 1);
+        var dow = d.getDay();
+        if (dow !== 0 && dow !== 6) added++;
+      }
+      return d;
+    }
+    function fmtDate(d) {
+      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+    function estimateDelivery(zip) {
+      var z = parseInt(zip.charAt(0), 10);
+      var min, max;
+      if (z <= 1)      { min = 2; max = 3; }  // Northeast
+      else if (z === 2){ min = 2; max = 4; }  // Mid-Atlantic
+      else if (z === 3){ min = 3; max = 4; }  // Southeast
+      else if (z <= 5) { min = 3; max = 5; }  // Midwest/South
+      else if (z <= 6) { min = 3; max = 5; }  // Central
+      else             { min = 4; max = 7; }  // West/Pacific
+      var today = new Date();
+      var earliest = addBusinessDays(today, min);
+      var latest   = addBusinessDays(today, max);
+      return fmtDate(earliest) + ' – ' + fmtDate(latest);
+    }
+
+    document.getElementById('pdZipBtn').addEventListener('click', function() {
+      var zip = document.getElementById('pdZipInput').value.trim();
+      if (!/^\d{5}$/.test(zip)) {
+        alert('Please enter a valid 5-digit ZIP code.');
+        return;
+      }
+      var est = estimateDelivery(zip);
+      var estEl = document.getElementById('pdDeliveryEst');
+      estEl.textContent = '📅 Arrives by ' + est;
+      estEl.style.display = 'block';
+      document.getElementById('pdDeliveryDefault').style.display = 'none';
+    });
+    document.getElementById('pdZipInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('pdZipBtn').click();
+    });
+
+    // ── MINI CARD ADD TO CART ──
+    window.shelfAddToCart = function(id, name, brand, brandId, price, img, emoji, btn) {
+      var cart = getCart();
+      if (cart.some(function(c) { return c.product && c.product.id === id; })) {
+        btn.textContent = '✓ Added'; btn.classList.add('added'); return;
+      }
+      cart.push({ product: { id: id, name: name, brand: brand, brandId: brandId, price: price, img: img, emoji: emoji }, qty: 1 });
+      saveCart(cart);
+      btn.textContent = '✓ Added'; btn.classList.add('added');
+    };
+  </script>
+
+  <script src="nav-auth.js"></script>
+
+  <!-- ════ FIREBASE MODULE ════ -->
+  <script type="module">
+    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs,
+      addDoc, query, orderBy, limit, where, serverTimestamp, onSnapshot, writeBatch
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const cfg = {
+      apiKey: "AIzaSyDrBWAflUZBxLJuHqcKO2S1FkP7gs2_oME",
+      authDomain: "fitr-22814.firebaseapp.com",
+      projectId: "fitr-22814",
+      storageBucket: "fitr-22814.firebasestorage.app",
+      messagingSenderId: "900395772549",
+      appId: "1:900395772549:web:2d48b5877b8d247e7797ec",
+    };
+    const app  = getApps().length ? getApps()[0] : initializeApp(cfg);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    const productId = new URLSearchParams(window.location.search).get('id');
+
+    if (!productId) {
+      show('pdError');
+    } else {
+      init();
+    }
+
+    let currentProduct = null;
+    let currentUser    = null;
+    let selectedRating = 0;
+    let allReviewDocs  = [];
+    let isWishlisted   = false;
+    let galleryImages = [];
+    let carouselIdx   = 0;
+    let selectedVariations = {}; // {variationName: optionValue}
+
+    function show(id) {
+      ['pdLoading','pdError','pdContent'].forEach(function(s) {
+        document.getElementById(s).style.display = s === id ? (id === 'pdContent' ? 'block' : 'flex') : 'none';
+      });
+      if (id === 'pdContent') { document.getElementById('pdContent').style.display = 'block'; window.scrollTo(0, 0); }
+    }
+
+    // ── HELPERS ──
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function starsStr(n) { n = Math.max(0,Math.min(5,Math.round(n))); return '★'.repeat(n)+'☆'.repeat(5-n); }
+    function fmtDate(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts.seconds*1000);
+      return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    }
+    function emojiFor(cat) {
+      const s=(cat||'').toLowerCase();
+      if(s.includes('protein'))   return '🥛';
+      if(s.includes('pre'))       return '⚡';
+      if(s.includes('creatine'))  return '💪';
+      if(s.includes('vitamin'))   return '🌿';
+      if(s.includes('hydration')) return '💧';
+      if(s.includes('equipment')) return '🏋️';
+      if(s.includes('apparel'))   return '👕';
+      if(s.includes('recovery'))  return '🧊';
+      return '📦';
+    }
+
+    // ── MAIN INIT ──
+    async function init() {
+      try {
+        const snap = await getDoc(doc(db, 'products', productId));
+        if (!snap.exists()) { show('pdError'); return; }
+        currentProduct = { id: snap.id, ...snap.data() };
+        populateHero(currentProduct);
+        show('pdContent');
+        // Kick off all parallel loads
+        await Promise.all([
+          loadBrand(currentProduct.brandId),
+          loadMoreFromBrand(currentProduct.brandId, currentProduct.id),
+          loadAlsoLike(currentProduct.category, currentProduct.id),
+          loadReviews(),
+        ]);
+        // Wire wishlist button
+        document.getElementById('wishlistBtn').addEventListener('click', toggleWishlist);
+
+        // Auth for review form + wishlist state
+        onAuthStateChanged(auth, function(user) {
+          currentUser = user;
+          renderReviewForm(user);
+          if (user) {
+            loadNotifications(user.uid);
+            loadWishlistStatus(user.uid);
+          }
+          // Show/hide wishlist link in mobile nav
+          const mwl = document.getElementById('navMobileWishlist');
+          if (mwl) mwl.style.display = user ? 'block' : 'none';
+        });
+      } catch(e) {
+        console.error('Product init error:', e);
+        show('pdError');
+      }
+    }
+
+    // ── POPULATE HERO ──
+    function populateHero(p) {
+      document.title = (p.name || 'Product') + ' – FITR';
+
+      // Breadcrumb
+      document.getElementById('bcName').textContent = p.name || '';
+      if (p.category) {
+        document.getElementById('bcCategory').textContent = p.category;
+        document.getElementById('bcSep').style.display = 'inline';
+      }
+
+      document.getElementById('pdTitle').textContent    = p.name || '';
+      document.getElementById('pdBrandName').textContent = p.brandName || 'Brand';
+      document.getElementById('moreBrandLabel').textContent = p.brandName || 'This Brand';
+
+      // Gallery
+      const images = Array.isArray(p.images) && p.images.length ? p.images : (p.imageUrl ? [p.imageUrl] : []);
+      galleryImages = images;
+      carouselIdx = 0;
+      renderGallery();
+
+      // Variations
+      renderVariations(p);
+
+      // Sizing guide
+      renderSizeGuide(p);
+
+      // Price
+      const price = parseFloat(p.price || 0);
+      const comp  = parseFloat(p.comparePrice || 0);
+      document.getElementById('pdPrice').textContent = '$' + price.toFixed(2);
+      if (comp > price) {
+        document.getElementById('pdCompare').textContent = '$' + comp.toFixed(2);
+        document.getElementById('pdCompare').style.display = 'block';
+        const saved = comp - price;
+        const pct   = Math.round((saved / comp) * 100);
+        document.getElementById('pdSavings').textContent = `You save $${saved.toFixed(2)} (${pct}%)`;
+        document.getElementById('pdSavings').style.display = 'block';
+      }
+
+      // Stock
+      const stockEl = document.getElementById('pdStockStatus');
+      const stock = p.stock ?? 999;
+      if (stock === 0) {
+        stockEl.textContent = '✗ Out of Stock';
+        stockEl.className = 'pd-stock-out';
+        document.getElementById('addCartBtn').disabled = true;
+        document.getElementById('buyNowBtn').disabled = true;
+      } else if (stock <= 10) {
+        stockEl.textContent = `⚠ Only ${stock} left in stock`;
+        stockEl.className = 'pd-stock-low';
+      } else {
+        stockEl.textContent = '✓ In Stock';
+        stockEl.className = 'pd-stock-ok';
+      }
+
+      // About bullets (split description by newline / period+newline / semicolons)
+      const desc = p.description || '';
+      const bullets = desc
+        .split(/\n+|;\s*/)
+        .map(function(s) { return s.trim().replace(/^[-•·]\s*/, ''); })
+        .filter(function(s) { return s.length > 2; });
+      const bulletsEl = document.getElementById('itemBullets');
+      if (bullets.length) {
+        bulletsEl.innerHTML = bullets.map(function(b) { return '<li>' + esc(b) + '</li>'; }).join('');
+      } else if (desc) {
+        bulletsEl.innerHTML = '<li>' + esc(desc) + '</li>';
+      } else {
+        bulletsEl.innerHTML = '<li>No additional details provided for this product.</li>';
+      }
+
+      // Details table
+      const rows = [];
+      if (p.brandName)  rows.push(['Brand', p.brandName]);
+      if (p.category)   rows.push(['Category', p.category]);
+      if (p.sku)        rows.push(['SKU / Item #', p.sku]);
+      if (p.weight)     rows.push(['Weight', p.weight]);
+      if (p.dimensions) rows.push(['Dimensions', p.dimensions]);
+      if (p.flavor)     rows.push(['Flavor', p.flavor]);
+      if (p.size)       rows.push(['Size / Servings', p.size]);
+      rows.push(['Availability', stock > 0 ? 'In Stock' : 'Out of Stock']);
+      rows.push(['Returns', '30-day free returns via FITR']);
+      document.getElementById('detailsBody').innerHTML = rows.map(function(r) {
+        return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>';
+      }).join('');
+
+      // Cart buttons
+      setupCartButtons(p);
+    }
+
+    function renderGallery() {
+      const mainImg = document.getElementById('pdMainImg');
+      const emoji   = document.getElementById('pdEmoji');
+      const thumbs  = document.getElementById('pdThumbs');
+      const prev    = document.getElementById('carouselPrev');
+      const next    = document.getElementById('carouselNext');
+
+      // Remove any existing img
+      mainImg.querySelectorAll('img').forEach(function(el) { el.remove(); });
+
+      if (!galleryImages.length) {
+        emoji.textContent = emojiFor(currentProduct ? currentProduct.category : '');
+        emoji.style.display = 'block';
+        thumbs.innerHTML = '';
+        if (prev) prev.style.display = 'none';
+        if (next) next.style.display = 'none';
+        return;
+      }
+
+      emoji.style.display = 'none';
+      const img = document.createElement('img');
+      img.src = galleryImages[carouselIdx];
+      img.alt = currentProduct ? currentProduct.name : 'Product';
+      img.onerror = function() { img.remove(); emoji.style.display = 'block'; };
+      mainImg.insertBefore(img, emoji);
+
+      // Thumbnails
+      thumbs.innerHTML = galleryImages.map(function(url, i) {
+        return '<div class="pd-thumb' + (i === carouselIdx ? ' active' : '') + '" onclick="carouselGoTo(' + i + ')" style="cursor:pointer;">' +
+          '<img src="' + esc(url) + '" alt="Photo ' + (i+1) + '" onerror="this.parentElement.style.display=\'none\'" />' +
+        '</div>';
+      }).join('');
+
+      // Arrows
+      if (galleryImages.length > 1) {
+        if (prev) { prev.style.display = 'flex'; prev.disabled = carouselIdx === 0; }
+        if (next) { next.style.display = 'flex'; next.disabled = carouselIdx === galleryImages.length - 1; }
+      } else {
+        if (prev) prev.style.display = 'none';
+        if (next) next.style.display = 'none';
+      }
+    }
+
+    window.carouselMove = function(dir) {
+      carouselIdx = Math.max(0, Math.min(galleryImages.length - 1, carouselIdx + dir));
+      renderGallery();
+    };
+
+    window.carouselGoTo = function(i) {
+      carouselIdx = i;
+      renderGallery();
+    };
+
+    function renderVariations(p) {
+      const wrap = document.getElementById('pdVariations');
+      if (!p.variations || !p.variations.length) { wrap.innerHTML = ''; return; }
+      wrap.innerHTML = p.variations.map(function(grp) {
+        var opts = (grp.options || []).filter(function(o) { return o.value; });
+        if (!opts.length) return '';
+        var optsHtml = opts.map(function(opt) {
+          var hasImg = opt.imageUrl ? ' has-img' : '';
+          var imgEl  = opt.imageUrl ? '<img class="pd-var-btn-img" src="' + esc(opt.imageUrl) + '" alt="' + esc(opt.value) + '" />' : '';
+          return '<button class="pd-var-btn' + hasImg + '" data-value="' + esc(opt.value) + '" ' +
+            'onclick="selectVariation(\'' + esc(grp.name) + '\',\'' + esc(opt.value) + '\',' + (opt.imageUrl ? '\'' + esc(opt.imageUrl) + '\'' : 'null') + ')">' +
+            imgEl + esc(opt.value) + '</button>';
+        }).join('');
+        return '<div class="pd-var-section">' +
+          '<div class="pd-var-label">' + esc(grp.name) + ': <span class="selected-val" id="varSelectedLbl_' + esc(grp.name) + '"></span></div>' +
+          '<div class="pd-var-options" id="varOpts_' + esc(grp.name) + '">' + optsHtml + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    window.selectVariation = function(groupName, value, imageUrl) {
+      selectedVariations[groupName] = value;
+      // Update button states
+      var container = document.getElementById('varOpts_' + groupName);
+      if (container) {
+        container.querySelectorAll('.pd-var-btn').forEach(function(btn) {
+          btn.classList.toggle('selected', btn.dataset.value === value);
+        });
+        // Clear any required-highlight when user makes a selection
+        container.style.outline = '';
+      }
+      // Update label
+      var lbl = document.getElementById('varSelectedLbl_' + groupName);
+      if (lbl) { lbl.textContent = value; lbl.style.color = ''; }
+      // If this option has an image, show it in the gallery
+      if (imageUrl) {
+        var existing = galleryImages.indexOf(imageUrl);
+        if (existing >= 0) {
+          carouselIdx = existing;
+        } else {
+          galleryImages = [imageUrl].concat(galleryImages.filter(function(u) { return u !== imageUrl; }));
+          carouselIdx = 0;
+        }
+        renderGallery();
+      }
+    };
+
+    window.toggleSizeGuide = function() {
+      var wrap = document.getElementById('pdSizeGuideWrap');
+      if (wrap) wrap.classList.toggle('open');
+    };
+
+    function renderSizeGuide(p) {
+      if (!p.sizingGuide || !p.sizingGuide.length) return;
+      var section = document.getElementById('pdSizeGuideSection');
+      var wrap    = document.getElementById('pdSizeGuideWrap');
+      if (!section || !wrap) return;
+      section.style.display = 'block';
+      wrap.innerHTML = '<table class="pd-size-table"><thead><tr><th>Size</th><th>Details</th></tr></thead><tbody>' +
+        p.sizingGuide.filter(function(r) { return r.size; }).map(function(r) {
+          return '<tr><td><strong>' + esc(r.size) + '</strong></td><td>' + esc(r.info || '') + '</td></tr>';
+        }).join('') +
+      '</tbody></table>';
+    }
+
+    // ── CART BUTTONS ──
+    function setupCartButtons(p) {
+      const addBtn = document.getElementById('addCartBtn');
+      const buyBtn = document.getElementById('buyNowBtn');
+      const cart   = window.getCart ? window.getCart() : (function() { try { return JSON.parse(localStorage.getItem('fitr_cart')||'[]'); } catch(e) { return []; } })();
+      const inCart = cart.some(function(c) { return c.product && c.product.id === p.id; });
+      if (inCart) { addBtn.textContent = '✓ Added to Cart'; addBtn.classList.add('added'); }
+
+      function checkVariantsSelected() {
+        var variations = p.variations || [];
+        if (!variations.length) return true;
+        var missing = variations.filter(function(v) { return !selectedVariations[v.name]; });
+        if (missing.length) {
+          // Highlight unselected groups with red border and scroll to first one
+          var firstEl = null;
+          variations.forEach(function(v) {
+            var optsEl = document.getElementById('varOpts_' + v.name);
+            var lblEl  = document.getElementById('varSelectedLbl_' + v.name);
+            if (!selectedVariations[v.name]) {
+              if (optsEl) optsEl.style.outline = '2px solid #e63946';
+              if (lblEl)  lblEl.textContent = '— required';
+              if (lblEl)  lblEl.style.color = '#e63946';
+              if (!firstEl && optsEl) firstEl = optsEl;
+            }
+          });
+          if (firstEl) firstEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return false;
+        }
+        return true;
+      }
+
+      addBtn.addEventListener('click', function() {
+        const c = window.getCart ? window.getCart() : (function() { try { return JSON.parse(localStorage.getItem('fitr_cart')||'[]'); } catch(e) { return []; } })();
+        if (c.some(function(x) { return x.product && x.product.id === p.id; })) {
+          window.location.href = 'shop.html'; return;
+        }
+        if (!checkVariantsSelected()) return;
+        const obj = { id: p.id, name: p.name, brand: p.brandName||'FITR Seller', brandId: p.brandId||'', price: parseFloat(p.price||0), img: p.imageUrl||'', emoji: emojiFor(p.category), variations: p.variations || [] };
+        c.push({ product: obj, qty: parseInt(document.getElementById('qtyVal').textContent, 10) || 1, selectedVariants: Object.assign({}, selectedVariations) });
+        if (window.saveCart) window.saveCart(c); else localStorage.setItem('fitr_cart', JSON.stringify(c));
+        addBtn.textContent = '✓ Added to Cart'; addBtn.classList.add('added');
+        window.updateCartBadge && window.updateCartBadge();
+      });
+
+      buyBtn.addEventListener('click', function() {
+        if (!checkVariantsSelected()) return;
+        const obj = { id: p.id, name: p.name, brand: p.brandName||'FITR Seller', brandId: p.brandId||'', price: parseFloat(p.price||0), img: p.imageUrl||'', emoji: emojiFor(p.category), variations: p.variations || [] };
+        const singleCart = [{ product: obj, qty: parseInt(document.getElementById('qtyVal').textContent, 10) || 1, selectedVariants: Object.assign({}, selectedVariations) }];
+        localStorage.setItem('fitr_cart', JSON.stringify(singleCart));
+        window.location.href = 'checkout.html';
+      });
+    }
+
+    // ── BRAND SECTION ──
+    async function loadBrand(brandId) {
+      const wrap = document.getElementById('brandSectionInner');
+      if (!brandId) { wrap.innerHTML = '<div style="color:#888;font-size:13px;">Brand information not available.</div>'; return; }
+      try {
+        const snap = await getDoc(doc(db, 'brands', brandId));
+        const b = snap.exists() ? snap.data() : {};
+        const initial = (b.brandName || 'B').charAt(0).toUpperCase();
+        const website = b.website ? (b.website.startsWith('http') ? b.website : 'https://' + b.website) : null;
+        const instagram = b.instagram ? ('https://instagram.com/' + b.instagram.replace('@','')) : null;
+        const avatarHtml = b.logoUrl
+          ? '<div class="brand-avatar" style="overflow:hidden;padding:0;"><img src="' + esc(b.logoUrl) + '" alt="' + esc(b.brandName||'Brand') + '" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent=\'' + esc(initial) + '\'" /></div>'
+          : '<div class="brand-avatar">' + esc(initial) + '</div>';
+        wrap.innerHTML =
+          avatarHtml +
+          '<div class="brand-info">' +
+            '<div class="brand-name-big">' + esc(b.brandName || 'Brand') + '</div>' +
+            '<div class="brand-tagline">FITR Verified Seller</div>' +
+            (b.bio ? '<div class="brand-bio">' + esc(b.bio) + '</div>' : '') +
+            '<div class="brand-links">' +
+              '<a class="brand-link-btn" href="brand.html?id=' + encodeURIComponent(currentProduct.brandId||'') + '">🛍 View all products</a>' +
+              (website ? '<a class="brand-link-btn" href="' + esc(website) + '" target="_blank" rel="noopener">🌐 Website</a>' : '') +
+              (instagram ? '<a class="brand-link-btn" href="' + esc(instagram) + '" target="_blank" rel="noopener">📷 Instagram</a>' : '') +
+            '</div>' +
+          '</div>';
+      } catch(e) {
+        wrap.innerHTML = '<div style="color:#888;font-size:13px;">Could not load brand info.</div>';
+      }
+    }
+
+    // ── MORE FROM BRAND ──
+    async function loadMoreFromBrand(brandId, excludeId) {
+      const wrap = document.getElementById('moreBrandWrap');
+      const shelf = document.getElementById('moreBrandShelf');
+      if (!brandId) { wrap.style.display = 'none'; return; }
+      try {
+        const q    = query(collection(db, 'products'), where('brandId','==',brandId), where('status','==','active'), limit(10));
+        const snap = await getDocs(q);
+        const items = [];
+        snap.forEach(function(d) { if (d.id !== excludeId) items.push({ id: d.id, ...d.data() }); });
+        if (!items.length) { wrap.style.display = 'none'; return; }
+        shelf.innerHTML = items.map(function(p) { return buildShelfCard(p); }).join('');
+        attachShelfEvents(shelf);
+      } catch(e) { wrap.style.display = 'none'; }
+    }
+
+    // ── YOU MAY ALSO LIKE ──
+    async function loadAlsoLike(category, excludeId) {
+      const wrap  = document.getElementById('alsoLikeWrap');
+      const shelf = document.getElementById('alsoLikeShelf');
+      if (!category) { wrap.style.display = 'none'; return; }
+      try {
+        const q    = query(collection(db, 'products'), where('category','==',category), where('status','==','active'), limit(12));
+        const snap = await getDocs(q);
+        const items = [];
+        snap.forEach(function(d) { if (d.id !== excludeId) items.push({ id: d.id, ...d.data() }); });
+        if (!items.length) { wrap.style.display = 'none'; return; }
+        shelf.innerHTML = items.map(function(p) { return buildShelfCard(p); }).join('');
+        attachShelfEvents(shelf);
+      } catch(e) { wrap.style.display = 'none'; }
+    }
+
+    function buildShelfCard(p) {
+      const price = parseFloat(p.price || 0).toFixed(2);
+      const imgHtml = p.imageUrl
+        ? '<img src="' + esc(p.imageUrl) + '" alt="' + esc(p.name) + '" onerror="this.style.display=\'none\'" />'
+        : emojiFor(p.category);
+      return '<div class="shelf-card" onclick="location.href=\'product.html?id=' + encodeURIComponent(p.productId || p.id) + '\'">' +
+        '<div class="shelf-card-img">' + imgHtml + '</div>' +
+        '<div class="shelf-card-body">' +
+          '<div class="shelf-card-brand">' + esc(p.brandName || '') + '</div>' +
+          '<div class="shelf-card-name">' + esc(p.name || '') + '</div>' +
+          '<div class="shelf-card-price">$' + price + '</div>' +
+          '<button class="shelf-card-add" ' +
+            'data-id="' + esc(p.productId || p.id) + '" ' +
+            'data-name="' + esc(p.name || '') + '" ' +
+            'data-brand="' + esc(p.brandName || '') + '" ' +
+            'data-brandid="' + esc(p.brandId || '') + '" ' +
+            'data-price="' + price + '" ' +
+            'data-img="' + esc(p.imageUrl || '') + '" ' +
+            'data-emoji="' + esc(emojiFor(p.category)) + '" ' +
+            'onclick="event.stopPropagation()">+ Add to Cart</button>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function attachShelfEvents(container) {
+      container.querySelectorAll('.shelf-card-add').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var d = btn.dataset;
+          var cart = (function() { try { return JSON.parse(localStorage.getItem('fitr_cart')||'[]'); } catch(e) { return []; } })();
+          if (cart.some(function(c) { return c.product && c.product.id === d.id; })) {
+            btn.textContent = '✓ Added'; btn.classList.add('added'); return;
+          }
+          cart.push({ product: { id: d.id, name: d.name, brand: d.brand, brandId: d.brandid, price: parseFloat(d.price), img: d.img, emoji: d.emoji }, qty: 1 });
+          localStorage.setItem('fitr_cart', JSON.stringify(cart));
+          btn.textContent = '✓ Added'; btn.classList.add('added');
+          window.updateCartBadge && window.updateCartBadge();
+        });
+      });
+    }
+
+    // ── REVIEWS ──
+    async function loadReviews() {
+      const listEl = document.getElementById('reviewsList');
+      listEl.innerHTML = '<div style="color:#888;font-size:13px;padding:8px 0;">Loading reviews…</div>';
+      try {
+        const q    = query(collection(db, 'products', productId, 'reviews'), orderBy('createdAt','desc'), limit(50));
+        const snap = await getDocs(q);
+        allReviewDocs = snap.docs;
+        const reviews = snap.docs.map(function(d) { return { id: d.id, ...d.data() }; });
+        const count   = reviews.length;
+        const avg     = count ? reviews.reduce(function(s,r) { return s + (r.rating||5); }, 0) / count : 0;
+
+        // Update rating displays
+        const starsStr2 = starsStr(avg);
+        document.getElementById('pdStars').textContent     = starsStr2;
+        document.getElementById('pdRatingNum').textContent  = count ? avg.toFixed(1) : '—';
+        document.getElementById('pdReviewLink').textContent = '(' + count + ' review' + (count===1?'':'s') + ')';
+
+        if (count > 0) {
+          const ms = document.getElementById('reviewsMasthead');
+          ms.style.display = 'grid';
+          document.getElementById('revBigNum').textContent   = avg.toFixed(1);
+          document.getElementById('revBigStars').textContent = starsStr2;
+          document.getElementById('revBigCount').textContent = count + ' review' + (count===1?'':'s');
+
+          // Rating bars
+          var counts5 = [0,0,0,0,0];
+          reviews.forEach(function(r) { var i = Math.min(4, Math.max(0, (r.rating||5)-1)); counts5[i]++; });
+          var barsHtml = [5,4,3,2,1].map(function(star) {
+            var n = counts5[star-1];
+            var pct = count ? Math.round((n/count)*100) : 0;
+            return '<div class="rbar-row"><span class="rbar-label">' + star + ' ★</span><div class="rbar-track"><div class="rbar-fill" style="width:' + pct + '%"></div></div><span class="rbar-pct">' + pct + '%</span></div>';
+          }).join('');
+          document.getElementById('ratingBars').innerHTML = barsHtml;
+        }
+
+        if (!count) {
+          listEl.innerHTML = '<div style="color:#888;font-size:13px;padding:12px 0;">No reviews yet — be the first to review this product!</div>';
+        } else {
+          listEl.innerHTML = reviews.map(function(r) {
+            var initial = (r.displayName || 'C').charAt(0).toUpperCase();
+            return '<div class="review-card">' +
+              '<div class="review-header">' +
+                '<span class="review-author">' +
+                  '<span class="review-avatar">' + esc(initial) + '</span>' +
+                  esc(r.displayName || 'Verified Customer') +
+                '</span>' +
+                '<span class="review-date">' + fmtDate(r.createdAt) + '</span>' +
+              '</div>' +
+              '<div class="review-stars">' + starsStr(r.rating||5) + '</div>' +
+              '<div class="review-text">' + esc(r.text || '') + '</div>' +
+              (r.verifiedPurchase ? '<span class="verified-badge">✓ Verified Purchase</span>' : '') +
+            '</div>';
+          }).join('');
+        }
+      } catch(e) {
+        listEl.innerHTML = '<div style="color:#888;font-size:13px;">Could not load reviews.</div>';
+        console.warn('Reviews error:', e.message);
+      }
+    }
+
+    // ── REVIEW FORM ──
+    function renderReviewForm(user) {
+      if (!user) {
+        document.getElementById('reviewLoginPrompt').style.display = 'block';
+        return;
+      }
+      // Check if already reviewed
+      var alreadyReviewed = allReviewDocs.some(function(d) { return d.data().uid === user.uid; });
+      if (alreadyReviewed) {
+        document.getElementById('reviewFormCard').innerHTML = '<div style="color:#00A87D;font-size:14px;">✓ You have already reviewed this product.</div>';
+        document.getElementById('reviewFormCard').style.display = 'block';
+        return;
+      }
+      document.getElementById('reviewFormCard').style.display = 'block';
+      setupReviewForm(user);
+    }
+
+    function setupReviewForm(user) {
+      const stars     = document.querySelectorAll('.star-btn');
+      const submitBtn = document.getElementById('submitReviewBtn');
+      const textarea  = document.getElementById('reviewText');
+
+      stars.forEach(function(btn) {
+        btn.addEventListener('mouseenter', function() { highlightStars(parseInt(btn.dataset.val)); });
+        btn.addEventListener('mouseleave', function() { highlightStars(selectedRating); });
+        btn.addEventListener('click', function() {
+          selectedRating = parseInt(btn.dataset.val);
+          highlightStars(selectedRating);
+          submitBtn.disabled = false;
+        });
+      });
+
+      submitBtn.addEventListener('click', async function() {
+        if (!selectedRating) return;
+        var text = textarea.value.replace(/[<>"]/g,'').trim();
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting…';
+        try {
+          await addDoc(collection(db, 'products', productId, 'reviews'), {
+            uid:             user.uid,
+            displayName:     user.displayName || user.email?.split('@')[0] || 'Customer',
+            rating:          selectedRating,
+            text:            text,
+            createdAt:       serverTimestamp(),
+            verifiedPurchase: false,
+          });
+          document.getElementById('reviewMsg').textContent = '✓ Review submitted! Thank you.';
+          document.getElementById('reviewMsg').className   = 'review-msg ok';
+          submitBtn.textContent = '✓ Submitted';
+          setTimeout(function() { loadReviews(); }, 800);
+        } catch(e) {
+          document.getElementById('reviewMsg').textContent = 'Error submitting. Please try again.';
+          document.getElementById('reviewMsg').className   = 'review-msg err';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Review';
+        }
+      });
+    }
+
+    function highlightStars(n) {
+      document.querySelectorAll('.star-btn').forEach(function(btn) {
+        btn.classList.toggle('active', parseInt(btn.dataset.val) <= n);
+      });
+    }
+
+    // ── WISHLIST ──
+    async function loadWishlistStatus(uid) {
+      try {
+        const snap = await getDoc(doc(db, 'users', uid, 'wishlist', productId));
+        isWishlisted = snap.exists();
+        updateWishlistBtn();
+      } catch(e) { /* silent */ }
+    }
+
+    function updateWishlistBtn() {
+      const btn = document.getElementById('wishlistBtn');
+      if (!btn) return;
+      btn.innerHTML = isWishlisted ? '♥ Saved to Wishlist' : '♡ Save to Wishlist';
+      btn.classList.toggle('wishlisted', isWishlisted);
+    }
+
+    async function toggleWishlist() {
+      if (!currentUser) { window.location.href = 'auth.html'; return; }
+      const ref = doc(db, 'users', currentUser.uid, 'wishlist', productId);
+      const btn = document.getElementById('wishlistBtn');
+      btn.disabled = true;
+      try {
+        if (isWishlisted) {
+          await deleteDoc(ref);
+          isWishlisted = false;
+        } else {
+          const p = currentProduct;
+          await setDoc(ref, {
+            productId: p.productId || p.id,
+            name:      p.name || '',
+            brand:     p.brandName || '',
+            brandId:   p.brandId || '',
+            price:     parseFloat(p.price || 0),
+            img:       p.imageUrl || '',
+            category:  p.category || '',
+            addedAt:   serverTimestamp(),
+          });
+          isWishlisted = true;
+        }
+        updateWishlistBtn();
+      } catch(e) {
+        console.warn('Wishlist toggle error:', e.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ── NOTIFICATIONS ──
+    async function loadNotifications(uid) {
+      try {
+        let announcements = [];
+        try {
+          const annSnap = await getDocs(query(collection(db,'announcements'), orderBy('createdAt','desc'), limit(10)));
+          annSnap.forEach(function(d) { announcements.push({ id: d.id, ...d.data(), read: true, source: 'announcement' }); });
+        } catch(_) {}
+
+        function mergeAndRender(userSnap) {
+          const items = [];
+          userSnap.docs.forEach(function(d) { items.push({ id: d.id, ...d.data(), source: 'user' }); });
+          announcements.forEach(function(a) { items.push(a); });
+          items.sort(function(a,b) { return (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0); });
+          var unread = items.filter(function(n) { return !n.read; }).length;
+          if (typeof window.setBellCount === 'function') window.setBellCount(unread);
+          if (typeof window.setBellItems === 'function') window.setBellItems(items);
+
+          var markAllBtn = document.getElementById('bellMarkAll');
+          if (markAllBtn && !markAllBtn._wired) {
+            markAllBtn._wired = true;
+            markAllBtn.addEventListener('click', function() {
+              var b = writeBatch(db);
+              userSnap.docs.forEach(function(d) {
+                if (!d.data().read) b.update(doc(db,'users',uid,'notifications',d.id), { read: true });
+              });
+              b.commit();
+            });
+          }
+        }
+
+        onSnapshot(query(collection(db,'users',uid,'notifications'), orderBy('createdAt','desc'), limit(20)), mergeAndRender);
+      } catch(e) { /* silent */ }
+    }
+  </script>
+</body>
+</html>
